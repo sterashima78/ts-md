@@ -5,5 +5,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b"
+  },
+  "dependencies": {
+    "@sterashima78/ts-md-core": "workspace:*"
   }
 }
