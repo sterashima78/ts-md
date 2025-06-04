@@ -10,6 +10,7 @@
     "types": ["node", "vitest/globals"],
     "declaration": true,
     "outDir": "dist",
+    "baseUrl": ".",
     "paths": {
       "@sterashima78/ts-md-core": ["packages/core/src"],
       "@sterashima78/ts-md-vite-plugin": ["packages/vite-plugin/src"],
@@ -18,8 +19,7 @@
       "@sterashima78/ts-md-vscode": ["packages/vscode/src"],
       "@sterashima78/ts-md-cli": ["packages/cli/src"],
       "@sterashima78/ts-md-monaco": ["packages/monaco/src"]
-    },
-    "baseUrl": "."
+    }
   },
   "exclude": ["dist", "node_modules"]
 }
