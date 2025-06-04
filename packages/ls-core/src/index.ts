@@ -1,5 +1,9 @@
 import { collectVirtualFiles } from '@sterashima78/ts-md-core';
-import type { EmbeddedLanguagePlugin, IScriptSnapshot, VirtualCode } from './types';
+import type {
+  EmbeddedLanguagePlugin,
+  IScriptSnapshot,
+  VirtualCode,
+} from './types';
 
 function createSnapshot(text: string): IScriptSnapshot {
   return {
