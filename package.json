@@ -1,0 +1,14 @@
+{
+  "name": "ts-md-platform",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "typecheck": "tsmd check"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.1"
+  }
+}

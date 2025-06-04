@@ -1,0 +1,9 @@
+{
+  "name": "@sterashima78/ts-md-core",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
