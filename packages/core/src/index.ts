@@ -1,93 +1,94 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs';
+import path from 'node:path';
 
 export interface Chunk {
-  code: string
-  start: number
-  file: string
-  name: string
+  code: string;
+  start: number;
+  file: string;
+  name: string;
 }
 
-export type ChunkDictionary = Record<string, Chunk>
+export type ChunkDictionary = Record<string, Chunk>;
 
 /**
  * Markdown から TypeScript のコードチャンクを抽出する
  */
 export function parseChunks(md: string, uri: string): ChunkDictionary {
-  const lines = md.split(/\r?\n/)
-  const chunks: ChunkDictionary = {}
+  const lines = md.split(/\r?\n/);
+  const chunks: ChunkDictionary = {};
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    const m = line.match(/^```ts\s+(\S+)/)
+    const line = lines[i];
+    const m = line.match(/^```ts\s+(\S+)/);
     if (m) {
-      const name = m[1]
-      const start = i + 2
-      const codeLines: string[] = []
-      i++
+      const name = m[1];
+      const start = i + 2;
+      const codeLines: string[] = [];
+      i++;
       while (i < lines.length && lines[i] !== '```') {
-        codeLines.push(lines[i])
-        i++
+        codeLines.push(lines[i]);
+        i++;
       }
-      chunks[name] = { code: codeLines.join('\n'), start, file: uri, name }
+      chunks[name] = { code: codeLines.join('\n'), start, file: uri, name };
     }
   }
-  return chunks
+  return chunks;
 }
 
 export interface ImportInfo {
-  file: string
-  name: string
+  file: string;
+  name: string;
 }
 
 /**
  * チャンクインポート "#path:name" を importer からの相対パスで解決する
  */
 export function resolveImport(id: string, importer: string): ImportInfo | null {
-  if (!id.startsWith('#')) return null
-  const body = id.slice(1)
-  const idx = body.lastIndexOf(':')
-  if (idx === -1) return null
-  const filePart = body.slice(0, idx)
-  const name = body.slice(idx + 1)
-  const importerDir = path.dirname(importer)
-  const file = path.resolve(importerDir, filePart)
-  return { file, name }
+  if (!id.startsWith('#')) return null;
+  const body = id.slice(1);
+  const idx = body.lastIndexOf(':');
+  if (idx === -1) return null;
+  const filePart = body.slice(0, idx);
+  const name = body.slice(idx + 1);
+  const importerDir = path.dirname(importer);
+  const file = path.resolve(importerDir, filePart);
+  return { file, name };
 }
 
 /**
  * エントリ Markdown ファイルから再帰的に仮想ファイルを収集する
  */
 export function collectVirtualFiles(entry: string): Record<string, Chunk> {
-  const result: Record<string, Chunk> = {}
-  const visited = new Set<string>()
-  const stack = new Set<string>()
+  const result: Record<string, Chunk> = {};
+  const visited = new Set<string>();
+  const stack = new Set<string>();
 
   function dfs(file: string) {
     if (stack.has(file)) {
-      throw new Error(`circular dependency detected: ${file}`)
+      throw new Error(`circular dependency detected: ${file}`);
     }
-    if (visited.has(file)) return
-    stack.add(file)
-    const md = fs.readFileSync(file, 'utf8')
-    const chunks = parseChunks(md, file)
+    if (visited.has(file)) return;
+    stack.add(file);
+    const md = fs.readFileSync(file, 'utf8');
+    const chunks = parseChunks(md, file);
     for (const chunk of Object.values(chunks)) {
-      result[`${chunk.file}:${chunk.name}`] = chunk
+      result[`${chunk.file}:${chunk.name}`] = chunk;
     }
-    visited.add(file)
+    visited.add(file);
     for (const chunk of Object.values(chunks)) {
-      const importRegex = /import\s+['"](#.+?)['"]/g
-      let match: RegExpExecArray | null
-      while ((match = importRegex.exec(chunk.code))) {
-        const info = resolveImport(match[1], file)
+      const importRegex = /import\s+['"](#.+?)['"]/g;
+      let match: RegExpExecArray | null = importRegex.exec(chunk.code);
+      while (match) {
+        const info = resolveImport(match[1], file);
         if (info) {
-          const depFile = info.file
-          dfs(depFile)
+          const depFile = info.file;
+          dfs(depFile);
         }
+        match = importRegex.exec(chunk.code);
       }
     }
-    stack.delete(file)
+    stack.delete(file);
   }
 
-  dfs(path.resolve(entry))
-  return result
+  dfs(path.resolve(entry));
+  return result;
 }
