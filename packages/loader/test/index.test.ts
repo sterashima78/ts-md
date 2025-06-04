@@ -8,6 +8,9 @@ describe('ts-md-loader', () => {
   const md = path.join(dir, 'doc.ts.md');
   const loaderSrc = path.join(__dirname, '..', 'src', 'index.ts');
   const builtLoader = path.join(dir, 'loader.mjs');
+  const coreSrc = path.join(__dirname, '..', '..', 'core', 'src', 'index.ts');
+  const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
+  const builtCore = path.join(coreDist, 'index.js');
 
   beforeAll(() => {
     fs.mkdirSync(dir, { recursive: true });
@@ -25,10 +28,21 @@ describe('ts-md-loader', () => {
       },
     });
     fs.writeFileSync(builtLoader, result.outputText);
+
+    const coreSource = fs.readFileSync(coreSrc, 'utf8');
+    fs.mkdirSync(coreDist, { recursive: true });
+    const coreResult = ts.transpileModule(coreSource, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+      },
+    });
+    fs.writeFileSync(builtCore, coreResult.outputText);
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(coreDist, { recursive: true, force: true });
   });
 
   it('runs markdown file', () => {

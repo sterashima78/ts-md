@@ -31,7 +31,11 @@ importers:
 
   packages/core: {}
 
-  packages/loader: {}
+  packages/loader:
+    dependencies:
+      '@sterashima78/ts-md-core':
+        specifier: workspace:*
+        version: link:../core
 
   packages/ls-core: {}
 

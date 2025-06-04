@@ -1,54 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import ts from 'typescript';
-// Minimal implementations from @sterashima78/ts-md-core to avoid dependencies
-interface Chunk {
-  code: string;
-  start: number;
-  file: string;
-  name: string;
-}
-
-type ChunkDictionary = Record<string, Chunk>;
-
-function parseChunks(md: string, uri: string): ChunkDictionary {
-  const lines = md.split(/\r?\n/);
-  const chunks: ChunkDictionary = {};
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const m = line.match(/^```ts\s+(\S+)/);
-    if (m) {
-      const name = m[1];
-      const start = i + 2;
-      const codeLines: string[] = [];
-      i++;
-      while (i < lines.length && lines[i] !== '```') {
-        codeLines.push(lines[i]);
-        i++;
-      }
-      chunks[name] = { code: codeLines.join('\n'), start, file: uri, name };
-    }
-  }
-  return chunks;
-}
-
-interface ImportInfo {
-  file: string;
-  name: string;
-}
-
-function resolveImport(id: string, importer: string): ImportInfo | null {
-  if (!id.startsWith('#')) return null;
-  const body = id.slice(1);
-  const idx = body.lastIndexOf(':');
-  if (idx === -1) return null;
-  const filePart = body.slice(0, idx);
-  const name = body.slice(idx + 1);
-  const importerDir = path.dirname(importer);
-  const file = path.resolve(importerDir, filePart);
-  return { file, name };
-}
 
 type Resolve = (
   specifier: string,
