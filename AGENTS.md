@@ -139,6 +139,9 @@ ls-core診断数アサート
 vscodevscode-test 起動確認
 clitsmd check exit code
 
+AGENTS.md をはじめ指示書に変更を加えた場合は、`pnpm lint` と
+`pnpm typecheck` を実行して整合性を確認すること。
+
 
 
 ---
