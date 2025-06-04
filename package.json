@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
-    "typecheck": "tsmd check"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0",
