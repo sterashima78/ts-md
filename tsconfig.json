@@ -9,7 +9,17 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "vitest/globals"],
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@sterashima78/ts-md-core": ["packages/core/src"],
+      "@sterashima78/ts-md-vite-plugin": ["packages/vite-plugin/src"],
+      "@sterashima78/ts-md-loader": ["packages/loader/src"],
+      "@sterashima78/ts-md-ls-core": ["packages/ls-core/src"],
+      "@sterashima78/ts-md-vscode": ["packages/vscode/src"],
+      "@sterashima78/ts-md-cli": ["packages/cli/src"],
+      "@sterashima78/ts-md-monaco": ["packages/monaco/src"]
+    },
+    "baseUrl": "."
   },
   "exclude": ["dist", "node_modules"]
 }
