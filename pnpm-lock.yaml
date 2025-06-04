@@ -30,7 +30,11 @@ importers:
 
   packages/loader: {}
 
-  packages/ls-core: {}
+  packages/ls-core:
+    dependencies:
+      '@sterashima78/ts-md-core':
+        specifier: workspace:*
+        version: link:../core
 
   packages/monaco: {}
 
