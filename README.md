@@ -7,7 +7,7 @@ Monorepo for literate TypeScript development tools.
 ```bash
 pnpm i
 pnpm dev            # Vite + HMR
-pnpm test           # Vitest
+pnpm test           # Vitest run
 pnpm typecheck      # tsmd check
 code .              # VS Code extension
 ```
