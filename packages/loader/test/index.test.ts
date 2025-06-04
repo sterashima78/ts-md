@@ -1,6 +1,6 @@
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
 import ts from 'typescript';
 
 describe('ts-md-loader', () => {
@@ -13,11 +13,16 @@ describe('ts-md-loader', () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       md,
-      ['# Doc', '', '```ts main', "console.log('loader works')", '```'].join('\n'),
+      ['# Doc', '', '```ts main', "console.log('loader works')", '```'].join(
+        '\n',
+      ),
     );
     const source = fs.readFileSync(loaderSrc, 'utf8');
     const result = ts.transpileModule(source, {
-      compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ESNext },
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+      },
     });
     fs.writeFileSync(builtLoader, result.outputText);
   });
@@ -27,7 +32,9 @@ describe('ts-md-loader', () => {
   });
 
   it('runs markdown file', () => {
-    const out = execSync(`node --loader ${builtLoader} ${md}`, { encoding: 'utf8' });
+    const out = execSync(`node --loader ${builtLoader} ${md}`, {
+      encoding: 'utf8',
+    });
     expect(out.trim()).toBe('loader works');
   });
 });

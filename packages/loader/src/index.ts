@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL, fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
 // Minimal implementations from @sterashima78/ts-md-core to avoid dependencies
 interface Chunk {
@@ -65,8 +65,12 @@ type Load = (
 const VIRTUAL_PREFIX = 'ts-md:';
 
 export const resolve: Resolve = async (specifier, context, defaultResolve) => {
-  const parentURL = context.parentURL ? fileURLToPath(context.parentURL) : undefined;
-  const specPath = specifier.startsWith('file:') ? fileURLToPath(specifier) : specifier;
+  const parentURL = context.parentURL
+    ? fileURLToPath(context.parentURL)
+    : undefined;
+  const specPath = specifier.startsWith('file:')
+    ? fileURLToPath(specifier)
+    : specifier;
   if (specifier.startsWith('#') && parentURL) {
     const info = resolveImport(specifier, parentURL);
     if (info) {
@@ -90,7 +94,7 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
     return { url: pathToFileURL(abs).href, shortCircuit: true };
   }
 
-  return defaultResolve(specifier, context, defaultResolve as any);
+  return defaultResolve(specifier, context, defaultResolve);
 };
 
 export const load: Load = async (url, context, defaultLoad) => {
@@ -112,7 +116,11 @@ export const load: Load = async (url, context, defaultLoad) => {
         sourceMap: false,
       },
     });
-    return { format: 'module', source: tsResult.outputText, shortCircuit: true };
+    return {
+      format: 'module',
+      source: tsResult.outputText,
+      shortCircuit: true,
+    };
   }
 
   if (url.startsWith('file:') && url.endsWith('.ts')) {
@@ -125,8 +133,12 @@ export const load: Load = async (url, context, defaultLoad) => {
         sourceMap: false,
       },
     });
-    return { format: 'module', source: tsResult.outputText, shortCircuit: true };
+    return {
+      format: 'module',
+      source: tsResult.outputText,
+      shortCircuit: true,
+    };
   }
 
-  return defaultLoad(url, context, defaultLoad as any);
+  return defaultLoad(url, context, defaultLoad);
 };
