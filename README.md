@@ -8,6 +8,6 @@ Monorepo for literate TypeScript development tools.
 pnpm i
 pnpm dev            # Vite + HMR
 pnpm test           # Vitest run
-pnpm typecheck      # tsmd check
+pnpm typecheck      # tsc --noEmit
 code .              # VS Code extension
 ```
