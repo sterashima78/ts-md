@@ -9,7 +9,11 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "vitest/globals"],
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@sterashima78/ts-md-core": ["packages/core/src"]
+    }
   },
   "exclude": ["dist", "node_modules"]
 }
