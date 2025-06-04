@@ -7,7 +7,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["node", "vitest/globals"],
     "declaration": true,
     "outDir": "dist"
-  }
+  },
+  "exclude": ["dist", "node_modules"]
 }
