@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0",
