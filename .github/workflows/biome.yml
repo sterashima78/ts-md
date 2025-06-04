@@ -1,0 +1,19 @@
+name: check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  biome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Run Biome Check
+        run: npx -y @biomejs/biome check .
