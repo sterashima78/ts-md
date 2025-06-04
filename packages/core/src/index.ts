@@ -75,7 +75,7 @@ export function collectVirtualFiles(entry: string): Record<string, Chunk> {
     }
     visited.add(file);
     for (const chunk of Object.values(chunks)) {
-      const importRegex = /import\s+['"](#.+?)['"]/g;
+      const importRegex = /import\s+(?:.+?\s+from\s+)?['"](#.+?)['"]/g;
       let match: RegExpExecArray | null = importRegex.exec(chunk.code);
       while (match) {
         const info = resolveImport(match[1], file);
