@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "test": "vitest",
+    "test": "vitest run",
     "typecheck": "tsmd check"
   },
   "devDependencies": {
