@@ -1,23 +1,41 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { tsMdPlugin } from '../src';
+
+let tsMdPlugin: typeof import('../src').tsMdPlugin;
 
 describe('ts-md-vite-plugin', () => {
   const dir = path.join(__dirname, 'fixtures');
   const mdPath = path.join(dir, 'doc.ts.md');
   const entry = path.join(dir, 'entry.ts');
 
-  beforeAll(() => {
+  beforeAll(async () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       mdPath,
       ['# Doc', '', '```ts main', "export const msg = 'hi'", '```'].join('\n'),
     );
     fs.writeFileSync(entry, "import '#./doc.ts.md:main';");
+
+    const coreSrc = path.join(__dirname, '..', '..', 'core', 'src', 'index.ts');
+    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
+    const builtCore = path.join(coreDist, 'index.js');
+    const coreSource = fs.readFileSync(coreSrc, 'utf8');
+    fs.mkdirSync(coreDist, { recursive: true });
+    const coreResult = require('typescript').transpileModule(coreSource, {
+      compilerOptions: {
+        module: require('typescript').ModuleKind.ESNext,
+        target: require('typescript').ScriptTarget.ESNext,
+      },
+    });
+    fs.writeFileSync(builtCore, coreResult.outputText);
+
+    tsMdPlugin = (await import('../src')).tsMdPlugin;
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
+    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
+    fs.rmSync(coreDist, { recursive: true, force: true });
   });
 
   it('loads chunk code', async () => {

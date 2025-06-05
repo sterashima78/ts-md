@@ -46,9 +46,10 @@ describe('ts-md-loader', () => {
   });
 
   it('runs markdown file', () => {
-    const out = execSync(`node --loader ${builtLoader} ${md}`, {
-      encoding: 'utf8',
-    });
+    const out = execSync(
+      `node --import tsx/esm --loader ${builtLoader} ${md}`,
+      { encoding: 'utf8' },
+    );
     expect(out.trim()).toBe('loader works');
   });
 });

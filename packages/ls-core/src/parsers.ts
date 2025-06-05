@@ -1,5 +1,5 @@
+import { parseChunks } from '@sterashima78/ts-md-core';
 import type ts from 'typescript';
-import { parseChunks } from '../../core/src';
 
 /** キャッシュ付きで Markdown をチャンク辞書へ */
 export function getChunkDict(snapshot: ts.IScriptSnapshot, uri: string) {

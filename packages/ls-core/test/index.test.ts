@@ -10,14 +10,15 @@ import {
 } from '@volar/language-service';
 import ts from 'typescript';
 import { URI } from 'vscode-uri';
-import { type TsMdVirtualFile, createTsMdPlugin } from '../src';
+import type { TsMdVirtualFile } from '../src';
+let createTsMdPlugin: typeof import('../src').createTsMdPlugin;
 
 describe('ts-md-ls-core diagnostics', () => {
   const dir = path.join(__dirname, 'fixtures');
   const aPath = path.join(dir, 'a.ts.md');
   const mainPath = path.join(dir, 'main.ts.md');
 
-  beforeAll(() => {
+  beforeAll(async () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       aPath,
@@ -37,10 +38,26 @@ describe('ts-md-ls-core diagnostics', () => {
         '```',
       ].join('\n'),
     );
+
+    const coreSrc = path.join(__dirname, '..', '..', 'core', 'src', 'index.ts');
+    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
+    const builtCore = path.join(coreDist, 'index.js');
+    const coreSource = fs.readFileSync(coreSrc, 'utf8');
+    fs.mkdirSync(coreDist, { recursive: true });
+    const coreResult = ts.transpileModule(coreSource, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+      },
+    });
+    fs.writeFileSync(builtCore, coreResult.outputText);
+    createTsMdPlugin = (await import('../src')).createTsMdPlugin;
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
+    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
+    fs.rmSync(coreDist, { recursive: true, force: true });
   });
 
   it('reports diagnostics across docs', async () => {
