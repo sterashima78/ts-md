@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { ChunkDictionary } from '@sterashima78/ts-md-core';
+import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import type { Plugin } from 'vite';
-import type { ChunkDictionary } from '../../core/src';
-import { parseChunks, resolveImport } from '../../core/src';
 
 export interface TsMdPluginOptions {
   alias?: Record<string, string>;

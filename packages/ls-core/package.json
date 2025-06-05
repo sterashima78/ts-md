@@ -1,9 +1,18 @@
 {
   "name": "@sterashima78/ts-md-ls-core",
   "version": "0.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b"
+  },
+  "dependencies": {
+    "@volar/language-core": "^2.4.14",
+    "@sterashima78/ts-md-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@volar/language-service": "^2.4.14",
+    "vscode-uri": "^3.0.8"
   }
 }
