@@ -12,7 +12,9 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@sterashima78/ts-md-core": ["packages/core/src"]
+      "@sterashima78/ts-md-core": ["packages/core/src"],
+      "@sterashima78/ts-md-loader": ["packages/loader/src"],
+      "@sterashima78/ts-md-ls-core": ["packages/ls-core/src"]
     }
   },
   "exclude": ["dist", "node_modules"]
