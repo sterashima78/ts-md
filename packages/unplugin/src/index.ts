@@ -17,10 +17,10 @@ export const unplugin = createUnplugin(
       enforce: 'pre',
       resolveId(id, importer) {
         if (!id.startsWith('#') || !importer) return;
-        const info = resolveImport(id, importer);
-        if (!info) return;
-        const absPath = info.file;
-        const chunk = info.name;
+          const info = resolveImport(id, importer);
+          if (!info) return;
+          const absPath = info.absPath;
+          const chunk = info.chunk;
         return `\0ts-md:${absPath}?c=${chunk}`;
       },
       async load(id) {
@@ -49,11 +49,11 @@ export const unplugin = createUnplugin(
       const cached = cache.get(file);
       if (cached && !force) return cached;
       const md = await fs.readFile(file, 'utf8');
-      const chunks = parseChunks(md, file);
-      const dict: Record<string, string> = {};
-      for (const [name, chunk] of Object.entries(chunks)) {
-        dict[name] = chunk.code;
-      }
+        const chunks = parseChunks(md, file);
+        const dict: Record<string, string> = {};
+        for (const [name, chunk] of Object.entries(chunks)) {
+          dict[name] = chunk;
+        }
       cache.set(file, dict);
       return dict;
     }
