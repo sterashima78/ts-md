@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Plugin } from 'rollup';
 
-let tsMdPlugin: typeof import('../src').tsMdPlugin;
+let unpluginFactory: typeof import('../src').unplugin;
 
-describe('ts-md-vite-plugin', () => {
+describe('ts-md-unplugin', () => {
   const dir = path.join(__dirname, 'fixtures');
   const mdPath = path.join(dir, 'doc.ts.md');
   const entry = path.join(dir, 'entry.ts');
@@ -29,7 +30,7 @@ describe('ts-md-vite-plugin', () => {
     });
     fs.writeFileSync(builtCore, coreResult.outputText);
 
-    tsMdPlugin = (await import('../src')).tsMdPlugin;
+    unpluginFactory = (await import('../src')).unplugin;
   });
 
   afterAll(() => {
@@ -39,20 +40,14 @@ describe('ts-md-vite-plugin', () => {
   });
 
   it('loads chunk code', async () => {
-    const plugin = tsMdPlugin();
-    const resolve = plugin.resolveId as unknown as (
-      id: string,
-      importer: string,
-    ) => string | null;
-    const resolved = resolve.call(plugin, '#./doc.ts.md:main', entry);
+    const plugin = unpluginFactory.rollup();
+    const p = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
+    // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
+    const resolved = (p as any).resolveId('#./doc.ts.md:main', entry);
     expect(resolved).toBeTruthy();
     const id = resolved as string;
-    const ctx = { addWatchFile() {} };
-    const load = plugin.load as unknown as (
-      this: { addWatchFile(file: string): void },
-      id: string,
-    ) => Promise<string | { code: string } | null>;
-    const loaded = await load.call(ctx, id);
+    // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
+    const loaded = await (p as any).load(id);
     const code = typeof loaded === 'string' ? loaded : loaded?.code;
     expect(code?.trim()).toBe("export const msg = 'hi'");
   });
