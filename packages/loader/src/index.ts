@@ -30,7 +30,7 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
     if (info) {
       const abs = path.resolve(info.file);
       const url = `${VIRTUAL_PREFIX}${abs}:${info.name}`;
-      return { url, shortCircuit: true };
+      return { url, format: 'module', shortCircuit: true };
     }
   }
 
@@ -38,14 +38,22 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
     const abs = parentURL
       ? path.resolve(path.dirname(parentURL), specPath)
       : path.resolve(specPath);
-    return { url: `${VIRTUAL_PREFIX}${abs}:main`, shortCircuit: true };
+    return {
+      url: `${VIRTUAL_PREFIX}${abs}:main`,
+      format: 'module',
+      shortCircuit: true,
+    };
   }
 
   if (specPath.endsWith('.ts')) {
     const abs = parentURL
       ? path.resolve(path.dirname(parentURL), specPath)
       : path.resolve(specPath);
-    return { url: pathToFileURL(abs).href, shortCircuit: true };
+    return {
+      url: pathToFileURL(abs).href,
+      format: 'module',
+      shortCircuit: true,
+    };
   }
 
   return defaultResolve(specifier, context, defaultResolve);
