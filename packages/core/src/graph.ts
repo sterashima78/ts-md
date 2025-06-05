@@ -1,5 +1,5 @@
-import { resolveImport } from './resolver';
 import type { ChunkDict } from './parser';
+import { resolveImport } from './resolver';
 
 export function detectCycle(
   entry: string,
@@ -19,8 +19,10 @@ export function detectCycle(
     const code = dict?.[chunk];
     if (code) {
       const importRegex = /import\s+(?:.+?\s+from\s+)?['"](#.+?)['"]/g;
-      let m: RegExpExecArray | null;
-      while ((m = importRegex.exec(code))) {
+      let m: RegExpExecArray | null = null;
+      while (true) {
+        m = importRegex.exec(code);
+        if (!m) break;
         const info = resolveImport(m[1], file);
         if (info) {
           const child = `${info.absPath}:${info.chunk}`;

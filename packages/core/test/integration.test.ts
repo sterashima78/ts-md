@@ -1,22 +1,14 @@
-import { describe, expect, it } from 'vitest';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { describe, expect, it } from 'vitest';
 import { parseChunks } from '../src/parser';
-import { tangle } from '../src/tangle';
 import { resolveImport } from '../src/resolver';
+import { tangle } from '../src/tangle';
 
-const md = [
-  '```ts main',
-  "import '#./dep.ts.md:dep'",
-  '```',
-].join('\n');
+const md = ['```ts main', "import '#./dep.ts.md:dep'", '```'].join('\n');
 
-const depMd = [
-  '```ts dep',
-  'export const msg = 1',
-  '```',
-].join('\n');
+const depMd = ['```ts dep', 'export const msg = 1', '```'].join('\n');
 
 describe('integration', () => {
   it('roundtrip', async () => {

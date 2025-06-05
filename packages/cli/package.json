@@ -1,12 +1,31 @@
 {
   "name": "@sterashima78/ts-md-cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "tsmd": "./dist/index.js"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsc -b",
-    "typecheck": "tsc --noEmit",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@sterashima78/ts-md-core": "workspace:*",
+    "@sterashima78/ts-md-loader": "workspace:*",
+    "@sterashima78/ts-md-ls-core": "workspace:*",
+    "commander": "^11",
+    "fast-glob": "^3.3.3",
+    "picocolors": "^1.0.0",
+    "typescript": "^5.5",
+    "tsx": "^4",
+    "@volar/language-service": "^2"
+  },
+  "devDependencies": {
+    "tsup": "^8",
+    "vitest": "^1"
   }
 }
