@@ -18,7 +18,7 @@
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-ls-core": "workspace:*",
     "commander": "^11",
-    "fast-glob": "^4",
+    "fast-glob": "^3.3.3",
     "picocolors": "^1.0.0",
     "typescript": "^5.5",
     "tsx": "^4",
