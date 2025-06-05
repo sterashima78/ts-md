@@ -9,8 +9,14 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.0",
+    "unist-util-visit": "^5.0.0",
+    "mdast": "^3.0.0"
   }
 }
