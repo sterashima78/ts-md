@@ -1,9 +1,9 @@
-import ts from 'typescript';
-import { createLanguageService } from '@volar/language-service';
+import fs from 'node:fs';
 import { tsMdLanguagePlugin } from '@sterashima78/ts-md-ls-core';
-import { expandGlobs } from '../utils/globs';
+import { createLanguageService } from '@volar/language-service';
 import pc from 'picocolors';
-import fs from "node:fs";
+import ts from 'typescript';
+import { expandGlobs } from '../utils/globs';
 
 export async function runCheck(globs: string[]) {
   const files = await expandGlobs(globs);
@@ -13,21 +13,20 @@ export async function runCheck(globs: string[]) {
     fileName: f,
     languageId: 'ts-md',
     snapshot: ts.ScriptSnapshot.fromString(
-      fs.readFileSync(f, 'utf8') as unknown as string
+      fs.readFileSync(f, 'utf8') as unknown as string,
     ),
   }));
 
-  const ls = createLanguageService(
-    docs,
-    { plugins: [tsMdLanguagePlugin], ts }
-  );
+  const ls = createLanguageService(docs, { plugins: [tsMdLanguagePlugin], ts });
 
   let errorCount = 0;
   for (const file of files) {
     const diags = ls.doValidation(file);
-    diags.forEach((d) =>
-      console.error(`${pc.red('error')} ${file}:${d.range.start.line + 1}:${d.range.start.character + 1} ${d.message}`),
-    );
+    for (const d of diags) {
+      console.error(
+        `${pc.red('error')} ${file}:${d.range.start.line + 1}:${d.range.start.character + 1} ${d.message}`,
+      );
+    }
     errorCount += diags.length;
   }
   if (errorCount) process.exit(1);

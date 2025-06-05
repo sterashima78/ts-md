@@ -1,5 +1,5 @@
-import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 import { extIsTs } from './utils';
 

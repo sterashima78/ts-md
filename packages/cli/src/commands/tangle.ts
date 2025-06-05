@@ -1,12 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { parseChunks } from '@sterashima78/ts-md-core';
 import { expandGlobs } from '../utils/globs';
 
-export async function runTangle(
-  inputGlobs: string[],
-  outDir = 'dist'
-) {
+export async function runTangle(inputGlobs: string[], outDir = 'dist') {
   const files = await expandGlobs(inputGlobs);
   await fs.mkdir(outDir, { recursive: true });
 
