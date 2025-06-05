@@ -17,26 +17,33 @@ describe('ts-md-unplugin', () => {
     );
     fs.writeFileSync(entry, "import '#./doc.ts.md:main';");
 
-    const coreSrc = path.join(__dirname, '..', '..', 'core', 'src', 'index.ts');
+    const coreSrcDir = path.join(__dirname, '..', '..', 'core', 'src');
     const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
-    const builtCore = path.join(coreDist, 'index.js');
-    const coreSource = fs.readFileSync(coreSrc, 'utf8');
     fs.mkdirSync(coreDist, { recursive: true });
-    const coreResult = require('typescript').transpileModule(coreSource, {
-      compilerOptions: {
-        module: require('typescript').ModuleKind.ESNext,
-        target: require('typescript').ScriptTarget.ESNext,
-      },
-    });
-    fs.writeFileSync(builtCore, coreResult.outputText);
+    for (const file of fs.readdirSync(coreSrcDir)) {
+      if (!file.endsWith('.ts')) continue;
+      const src = path.join(coreSrcDir, file);
+      const dest = path.join(coreDist, file.replace(/\.ts$/, '.js'));
+      const source = fs.readFileSync(src, 'utf8');
+      const result = require('typescript').transpileModule(source, {
+        compilerOptions: {
+          module: require('typescript').ModuleKind.ESNext,
+          target: require('typescript').ScriptTarget.ESNext,
+        },
+      });
+      const js = result.outputText.replace(
+        /from '(\.\/.+?)'/g,
+        (m, p) => `from '${p}.js'`,
+      );
+      fs.writeFileSync(dest, js);
+    }
 
     unpluginFactory = (await import('../src')).unplugin;
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
-    fs.rmSync(coreDist, { recursive: true, force: true });
+    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('loads chunk code', async () => {

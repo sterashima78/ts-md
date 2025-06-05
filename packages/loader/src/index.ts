@@ -28,8 +28,8 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
   if (specifier.startsWith('#') && parentURL) {
     const info = resolveImport(specifier, parentURL);
     if (info) {
-      const abs = path.resolve(info.file);
-      const url = `${VIRTUAL_PREFIX}${abs}:${info.name}`;
+      const abs = path.resolve(info.absPath);
+      const url = `${VIRTUAL_PREFIX}${abs}:${info.chunk}`;
       return { url, format: 'module', shortCircuit: true };
     }
   }
@@ -71,7 +71,7 @@ export const load: Load = async (url, context, defaultLoad) => {
     if (!chunk) {
       throw new Error(`chunk '${name}' not found in ${file}`);
     }
-    const tsResult = ts.transpileModule(chunk.code, {
+    const tsResult = ts.transpileModule(chunk, {
       compilerOptions: {
         module: ts.ModuleKind.ESNext,
         target: ts.ScriptTarget.ESNext,

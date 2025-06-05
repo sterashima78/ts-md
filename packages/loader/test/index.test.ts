@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
 describe('ts-md-loader', () => {
@@ -8,7 +9,7 @@ describe('ts-md-loader', () => {
   const md = path.join(dir, 'doc.ts.md');
   const loaderSrc = path.join(__dirname, '..', 'src', 'index.ts');
   const builtLoader = path.join(dir, 'loader.mjs');
-  const coreSrc = path.join(__dirname, '..', '..', 'core', 'src', 'index.ts');
+  const coreSrcDir = path.join(__dirname, '..', '..', 'core', 'src');
   const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
   const builtCore = path.join(coreDist, 'index.js');
 
@@ -27,22 +28,35 @@ describe('ts-md-loader', () => {
         target: ts.ScriptTarget.ESNext,
       },
     });
-    fs.writeFileSync(builtLoader, result.outputText);
+    const loaderCode = result.outputText.replace(
+      '@sterashima78/ts-md-core',
+      pathToFileURL(builtCore).href,
+    );
+    fs.writeFileSync(builtLoader, loaderCode);
 
-    const coreSource = fs.readFileSync(coreSrc, 'utf8');
     fs.mkdirSync(coreDist, { recursive: true });
-    const coreResult = ts.transpileModule(coreSource, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ESNext,
-      },
-    });
-    fs.writeFileSync(builtCore, coreResult.outputText);
+    for (const file of fs.readdirSync(coreSrcDir)) {
+      if (!file.endsWith('.ts')) continue;
+      const src = path.join(coreSrcDir, file);
+      const dest = path.join(coreDist, file.replace(/\.ts$/, '.js'));
+      const srcText = fs.readFileSync(src, 'utf8');
+      const out = ts.transpileModule(srcText, {
+        compilerOptions: {
+          module: ts.ModuleKind.ESNext,
+          target: ts.ScriptTarget.ESNext,
+        },
+      });
+      const js = out.outputText.replace(
+        /from '(\.\/.+?)'/g,
+        (m, p) => `from '${p}.js'`,
+      );
+      fs.writeFileSync(dest, js);
+    }
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    fs.rmSync(coreDist, { recursive: true, force: true });
+    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('runs markdown file', () => {

@@ -19,8 +19,8 @@ export const unplugin = createUnplugin(
         if (!id.startsWith('#') || !importer) return;
         const info = resolveImport(id, importer);
         if (!info) return;
-        const absPath = info.file;
-        const chunk = info.name;
+        const absPath = info.absPath;
+        const chunk = info.chunk;
         return `\0ts-md:${absPath}?c=${chunk}`;
       },
       async load(id) {
@@ -52,7 +52,7 @@ export const unplugin = createUnplugin(
       const chunks = parseChunks(md, file);
       const dict: Record<string, string> = {};
       for (const [name, chunk] of Object.entries(chunks)) {
-        dict[name] = chunk.code;
+        dict[name] = chunk;
       }
       cache.set(file, dict);
       return dict;
