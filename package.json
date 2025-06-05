@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
     "lint": "biome check"
   },
   "devDependencies": {
@@ -14,9 +15,11 @@
     "rollup": "^4.41.1",
     "tsup": "^8.5.0",
     "tsx": "^4.8.1",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "unplugin": "^2.3.5",
     "vite": "^6.3.5",
     "vitest": "^3.2.1"
-  }
+  },
+  "packageManager": "pnpm@9.15.4"
 }
