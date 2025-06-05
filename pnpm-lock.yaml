@@ -14,9 +14,6 @@ importers:
       '@rollup/pluginutils':
         specifier: ^5.1.4
         version: 5.1.4(rollup@4.41.1)
-      '@types/mdast':
-        specifier: ^4.0.4
-        version: 4.0.4
       '@types/node':
         specifier: ^22.15.29
         version: 22.15.29

@@ -1,7 +1,6 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import { visit } from 'unist-util-visit';
-import type { Root } from 'mdast';
 import { extIsTs } from './utils';
 
 export interface ChunkDict {
@@ -9,7 +8,7 @@ export interface ChunkDict {
 }
 
 export function parseChunks(markdown: string, uri: string): ChunkDict {
-  const tree = unified().use(remarkParse).parse(markdown) as Root;
+  const tree = unified().use(remarkParse).parse(markdown);
   const dict: ChunkDict = {};
   let pendingFile: string | null = null;
 
