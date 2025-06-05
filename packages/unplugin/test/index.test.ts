@@ -31,7 +31,10 @@ describe('ts-md-unplugin', () => {
           target: require('typescript').ScriptTarget.ESNext,
         },
       });
-      const js = result.outputText.replace(/from '(\.\/.+?)'/g, (m, p) => `from '${p}.js'`);
+      const js = result.outputText.replace(
+        /from '(\.\/.+?)'/g,
+        (m, p) => `from '${p}.js'`,
+      );
       fs.writeFileSync(dest, js);
     }
 
@@ -40,8 +43,7 @@ describe('ts-md-unplugin', () => {
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
-    fs.rmSync(coreDist, { recursive: true, force: true });
+    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('loads chunk code', async () => {

@@ -53,7 +53,10 @@ describe('ts-md-ls-core diagnostics', () => {
           target: ts.ScriptTarget.ESNext,
         },
       });
-      const js = out.outputText.replace(/from '(\.\/.+?)'/g, (m, p) => `from '${p}.js'`);
+      const js = out.outputText.replace(
+        /from '(\.\/.+?)'/g,
+        (m, p) => `from '${p}.js'`,
+      );
       fs.writeFileSync(dest, js);
     }
     const builtCore = path.join(coreDist, 'index.js');
@@ -62,8 +65,7 @@ describe('ts-md-ls-core diagnostics', () => {
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
-    fs.rmSync(coreDist, { recursive: true, force: true });
+    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('reports diagnostics across docs', async () => {

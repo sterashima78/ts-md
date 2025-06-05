@@ -46,14 +46,17 @@ describe('ts-md-loader', () => {
           target: ts.ScriptTarget.ESNext,
         },
       });
-      const js = out.outputText.replace(/from '(\.\/.+?)'/g, (m, p) => `from '${p}.js'`);
+      const js = out.outputText.replace(
+        /from '(\.\/.+?)'/g,
+        (m, p) => `from '${p}.js'`,
+      );
       fs.writeFileSync(dest, js);
     }
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    fs.rmSync(coreDist, { recursive: true, force: true });
+    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('runs markdown file', () => {
