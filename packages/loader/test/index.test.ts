@@ -1,14 +1,21 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 describe('ts-md-loader', () => {
   const dir = path.join(__dirname, 'fixtures');
   const md = path.join(dir, 'doc.ts.md');
-  const loaderSrc = path.join(__dirname, '..', '..', '..', 'dist', 'loader', 'src', 'index.js');
+  const loaderSrc = path.join(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'dist',
+    'loader',
+    'src',
+    'index.js',
+  );
   const builtLoader = path.join(dir, 'loader.mjs');
-  const builtCore = path.join(__dirname, '..', '..', 'core', 'dist', 'index.js');
 
   beforeAll(() => {
     fs.mkdirSync(dir, { recursive: true });
@@ -19,10 +26,7 @@ describe('ts-md-loader', () => {
       ),
     );
     const source = fs.readFileSync(loaderSrc, 'utf8');
-    const loaderCode = source.replace(
-      '@sterashima78/ts-md-core',
-      pathToFileURL(builtCore).href,
-    );
+    const loaderCode = source;
     fs.writeFileSync(builtLoader, loaderCode);
   });
 
