@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 import type { LanguagePlugin } from '@volar/language-core';
 import {
   type Language,
@@ -39,33 +38,11 @@ describe('ts-md-ls-core diagnostics', () => {
       ].join('\n'),
     );
 
-    const coreSrcDir = path.join(__dirname, '..', '..', 'core', 'src');
-    const coreDist = path.join(__dirname, '..', '..', 'core', 'dist');
-    fs.mkdirSync(coreDist, { recursive: true });
-    for (const file of fs.readdirSync(coreSrcDir)) {
-      if (!file.endsWith('.ts')) continue;
-      const src = path.join(coreSrcDir, file);
-      const dest = path.join(coreDist, file.replace(/\.ts$/, '.js'));
-      const source = fs.readFileSync(src, 'utf8');
-      const out = ts.transpileModule(source, {
-        compilerOptions: {
-          module: ts.ModuleKind.ESNext,
-          target: ts.ScriptTarget.ESNext,
-        },
-      });
-      const js = out.outputText.replace(
-        /from '(\.\/.+?)'/g,
-        (m, p) => `from '${p}.js'`,
-      );
-      fs.writeFileSync(dest, js);
-    }
-    const builtCore = path.join(coreDist, 'index.js');
     createTsMdPlugin = (await import('../src')).createTsMdPlugin;
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
-    // keep coreDist to avoid conflicts across parallel tests
   });
 
   it('reports diagnostics across docs', async () => {
