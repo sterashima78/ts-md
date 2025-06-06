@@ -1,4 +1,11 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@sterashima78/ts-md-ls-core": ["../ls-core/src"]
+    }
+  },
+  "include": ["src", "src/types.d.ts"]
 }
