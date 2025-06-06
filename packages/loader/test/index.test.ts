@@ -2,21 +2,13 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import ts from 'typescript';
 
 describe('ts-md-loader', () => {
   const dir = path.join(__dirname, 'fixtures');
   const md = path.join(dir, 'doc.ts.md');
-  const loaderSrc = path.join(__dirname, '..', 'src', 'index.ts');
+  const loaderSrc = path.join(__dirname, '..', '..', '..', 'dist', 'loader', 'src', 'index.js');
   const builtLoader = path.join(dir, 'loader.mjs');
-  const builtCore = path.join(
-    __dirname,
-    '..',
-    '..',
-    'core',
-    'dist',
-    'index.js',
-  );
+  const builtCore = path.join(__dirname, '..', '..', 'core', 'dist', 'index.js');
 
   beforeAll(() => {
     fs.mkdirSync(dir, { recursive: true });
@@ -27,13 +19,7 @@ describe('ts-md-loader', () => {
       ),
     );
     const source = fs.readFileSync(loaderSrc, 'utf8');
-    const result = ts.transpileModule(source, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ESNext,
-      },
-    });
-    const loaderCode = result.outputText.replace(
+    const loaderCode = source.replace(
       '@sterashima78/ts-md-core',
       pathToFileURL(builtCore).href,
     );
