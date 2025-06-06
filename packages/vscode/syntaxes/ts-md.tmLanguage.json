@@ -1,0 +1,9 @@
+{
+  "scopeName": "source.tsmd",
+  "patterns": [{ "include": "text.html.markdown" }],
+  "injections": {
+    "L:markup.fenced_code.block.ts": {
+      "patterns": [{ "include": "source.ts" }]
+    }
+  }
+}
