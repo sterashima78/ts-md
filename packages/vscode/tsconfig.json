@@ -1,4 +1,15 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "dist",
+    "composite": true,
+    "types": ["node", "vscode"],
+    "baseUrl": ".",
+    "rootDir": "../..",
+    "paths": {
+      "@sterashima78/ts-md-ls-core": ["../ls-core/src"]
+    }
+  },
+  "include": ["src", "../ls-core/src"]
 }
