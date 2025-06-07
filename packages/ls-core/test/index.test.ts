@@ -8,6 +8,7 @@ import {
   createLanguageService,
 } from '@volar/language-service';
 import ts from 'typescript';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { URI } from 'vscode-uri';
 import type { TsMdVirtualFile } from '../src';
 let createTsMdPlugin: typeof import('../src').createTsMdPlugin;
