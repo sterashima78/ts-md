@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "type": "module",
   "bin": {
-    "tsmd": "./dist/index.js"
+    "tsmd": "./index.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": ["dist", "index.js"],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
