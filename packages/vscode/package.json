@@ -5,8 +5,7 @@
   "types": "dist/extension.d.ts",
   "files": ["dist"],
   "scripts": {
-    "compile": "esbuild src/server/server.ts --bundle --platform=node --format=cjs --outfile=dist/server.js",
-    "build": "pnpm run compile",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
@@ -20,7 +19,6 @@
   "devDependencies": {
     "@types/vscode": "^1.89.0",
     "@vscode/test-electron": "^2.4.2",
-    "esbuild": "^0.20.2",
     "typescript": "^5.5.0",
     "vitest": "^1.5.1",
     "vsce": "^2.15.0"
