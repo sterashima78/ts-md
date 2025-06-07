@@ -94,6 +94,15 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
 
+  packages/e2e:
+    dependencies:
+      '@sterashima78/ts-md-cli':
+        specifier: workspace:*
+        version: link:../cli
+      '@sterashima78/ts-md-loader':
+        specifier: workspace:*
+        version: link:../loader
+
   packages/loader:
     dependencies:
       '@sterashima78/ts-md-core':

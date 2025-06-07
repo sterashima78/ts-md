@@ -1,0 +1,13 @@
+{
+  "name": "@sterashima78/ts-md-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sterashima78/ts-md-cli": "workspace:*",
+    "@sterashima78/ts-md-loader": "workspace:*"
+  }
+}
