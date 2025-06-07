@@ -1,2 +1,2 @@
-export { tsMdLanguagePlugin as createTsMdPlugin } from './plugin';
-export type { TsMdVirtualFile } from './virtual-file';
+export { tsMdLanguagePlugin as createTsMdPlugin } from './plugin.js';
+export type { TsMdVirtualFile } from './virtual-file.js';

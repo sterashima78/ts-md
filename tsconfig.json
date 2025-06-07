@@ -9,13 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "vitest/globals"],
     "declaration": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "@sterashima78/ts-md-core": ["packages/core/src"],
-      "@sterashima78/ts-md-unplugin": ["packages/unplugin/src"],
-      "@sterashima78/ts-md-unplugin/*": ["packages/unplugin/src/*"]
-    }
+    "outDir": "${configDir}/dist",
+    "baseUrl": "."
   },
   "exclude": ["dist", "node_modules"]
 }
