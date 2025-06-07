@@ -7,4 +7,5 @@ export default defineConfig({
   dts: true,
   target: 'node18',
   clean: true,
+  external: ['vscode'],
 });
