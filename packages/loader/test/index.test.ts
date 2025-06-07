@@ -1,20 +1,12 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('ts-md-loader', () => {
   const dir = path.join(__dirname, 'fixtures');
   const md = path.join(dir, 'doc.ts.md');
-  const loaderSrc = path.join(
-    __dirname,
-    '..',
-    '..',
-    '..',
-    'dist',
-    'loader',
-    'src',
-    'index.js',
-  );
+  const loaderSrc = path.join(__dirname, '..', 'dist', 'index.js');
   const builtLoader = path.join(dir, 'loader.mjs');
 
   beforeAll(() => {
