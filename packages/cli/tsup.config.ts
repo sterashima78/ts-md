@@ -16,6 +16,7 @@ export default defineConfig({
     '@sterashima78/ts-md-ls-core',
     '@sterashima78/ts-md-core',
     '@sterashima78/ts-md-loader',
+    'vscode-uri',
     'tsx/esm',
   ],
 });
