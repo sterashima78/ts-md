@@ -6,9 +6,8 @@ Monorepo for literate TypeScript development tools.
 
 ```bash
 pnpm i
-pnpm add -D @sterashima78/ts-md-unplugin
 pnpm dev            # Vite + HMR
-pnpm test           # Vitest run
-pnpm typecheck      # tsc --noEmit
-code .              # VS Code extension
+pnpm test           # Vitest
+pnpm typecheck      # tsmd check
+code .              # VS Code \u62e1\u5f35
 ```
