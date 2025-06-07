@@ -9,7 +9,7 @@ This extension provides language support for `.ts.md` files.
 ## Development
 
 ```bash
-pnpm -F @sterashima78/ts-md-vscode compile
+pnpm -F @sterashima78/ts-md-vscode build
 code --extensionDevelopmentPath=packages/vscode
 ```
 
