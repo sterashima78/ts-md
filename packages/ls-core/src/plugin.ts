@@ -2,8 +2,8 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { LanguagePlugin } from '@volar/language-core';
 import type ts from 'typescript';
-import { getChunkDict } from './parsers';
-import { TsMdVirtualFile } from './virtual-file';
+import { getChunkDict } from './parsers.js';
+import { TsMdVirtualFile } from './virtual-file.js';
 
 export const tsMdLanguagePlugin = {
   getLanguageId(fileName: string) {

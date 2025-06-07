@@ -5,7 +5,7 @@
   "types": "dist/extension.d.ts",
   "files": ["dist"],
   "scripts": {
-    "compile": "tsc -b && esbuild src/server/server.ts --bundle --platform=node --format=cjs --outfile=dist/server.js",
+    "compile": "esbuild src/server/server.ts --bundle --platform=node --format=cjs --outfile=dist/server.js",
     "build": "pnpm run compile",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

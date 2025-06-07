@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { tsMdLanguagePlugin } from '@sterashima78/ts-md-ls-core';
+import { createTsMdPlugin as tsMdLanguagePlugin } from '@sterashima78/ts-md-ls-core';
 import { createLanguageService } from '@volar/language-service';
 import pc from 'picocolors';
 import ts from 'typescript';

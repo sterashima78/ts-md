@@ -1,5 +1,10 @@
 # Example
 
 ```ts main
-console.log('hello ts-md')
+import { msg } from "#foo" 
+console.log(msg)
+```
+
+```ts foo
+export const msg = 'hello ts-md'
 ```
