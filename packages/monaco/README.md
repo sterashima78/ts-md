@@ -25,3 +25,9 @@ createTsMdWorker(monaco);
 ```
 
 > When using via CDN, ensure `monaco-editor` workers are served correctly.
+
+## Structure
+- `src/browser/` – worker creation helpers and language registration
+- `src/react/` – `<TsMdEditor>` component
+- `src/index.ts` – public exports
+- `test/` – unit tests for the React component

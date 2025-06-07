@@ -12,3 +12,10 @@ This extension provides language support for `.ts.md` files.
 pnpm -F @sterashima78/ts-md-vscode compile
 code --extensionDevelopmentPath=packages/vscode
 ```
+
+## Structure
+- `src/extension.ts` – extension entry point
+- `src/server/` – language server implementation
+- `src/codelens.ts` – adds CodeLens for chunks
+- `src/commands.ts` – commands invoking the CLI
+- `syntaxes/` – TextMate grammar for highlighting
