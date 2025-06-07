@@ -13,9 +13,18 @@ describe('ts-md-loader', () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       md,
-      ['# Doc', '', '```ts main', "console.log('loader works')", '```'].join(
-        '\n',
-      ),
+      [
+        '# Doc',
+        '',
+        '```ts foo',
+        "export const msg = 'loader works'",
+        '```',
+        '',
+        '```ts main',
+        'import { msg } from "#foo"',
+        'console.log(msg)',
+        '```',
+      ].join('\n'),
     );
     const source = fs.readFileSync(loaderSrc, 'utf8');
     const loaderCode = source;
@@ -27,12 +36,9 @@ describe('ts-md-loader', () => {
   });
 
   it('runs markdown file', () => {
-    const out = execSync(
-      `node --import tsx/esm --loader ${builtLoader} ${md}`,
-      {
-        encoding: 'utf8',
-      },
-    );
+    const out = execSync(`node --loader ${builtLoader} ${md}`, {
+      encoding: 'utf8',
+    });
     expect(out.trim()).toBe('loader works');
   });
 });

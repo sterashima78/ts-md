@@ -10,4 +10,8 @@ describe('resolveImport', () => {
     const res = resolveImport('#../foo.ts.md:baz', '/a/b/c/app.ts.md');
     expect(res).toEqual({ absPath: '/a/b/foo.ts.md', chunk: 'baz' });
   });
+  it('resolves chunk in same file', () => {
+    const res = resolveImport('#qux', '/a/b/doc.ts.md');
+    expect(res).toEqual({ absPath: '/a/b/doc.ts.md', chunk: 'qux' });
+  });
 });
