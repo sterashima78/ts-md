@@ -12,10 +12,9 @@
   },
   "dependencies": {
     "@volar/language-core": "^2.4.14",
+    "@volar/language-service": "^2.4.14",
+    "vscode-uri": "^3.0.8",
     "@sterashima78/ts-md-core": "workspace:*"
   },
-  "devDependencies": {
-    "@volar/language-service": "^2.4.14",
-    "vscode-uri": "^3.0.8"
-  }
+  "devDependencies": {}
 }
