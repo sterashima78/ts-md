@@ -53,9 +53,6 @@ importers:
       '@sterashima78/ts-md-ls-core':
         specifier: workspace:*
         version: link:../ls-core
-      '@volar/language-service':
-        specifier: ^2
-        version: 2.4.14
       commander:
         specifier: ^11
         version: 11.1.0
@@ -68,12 +65,6 @@ importers:
       tsx:
         specifier: ^4
         version: 4.19.4
-      typescript:
-        specifier: ^5.5
-        version: 5.8.3
-      vscode-uri:
-        specifier: ^3.0.8
-        version: 3.1.0
     devDependencies:
       tsup:
         specifier: ^8
@@ -84,9 +75,6 @@ importers:
 
   packages/core:
     dependencies:
-      mdast:
-        specifier: ^3.0.0
-        version: 3.0.0
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
@@ -144,9 +132,6 @@ importers:
       react:
         specifier: ^18.3.0
         version: 18.3.1
-      react-dom:
-        specifier: ^18.3.0
-        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@testing-library/react':
         specifier: ^14.1.2
@@ -1656,10 +1641,6 @@ packages:
 
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
-
-  mdast@3.0.0:
-    resolution: {integrity: sha512-xySmf8g4fPKMeC07jXGz971EkLbWAJ83s4US2Tj9lEdnZ142UP5grN73H1Xd3HzrdbU5o9GYYP/y8F9ZSwLE9g==}
-    deprecated: '`mdast` was renamed to `remark`'
 
   mdurl@1.0.1:
     resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
@@ -4108,8 +4089,6 @@ snapshots:
   mdast-util-to-string@4.0.0:
     dependencies:
       '@types/mdast': 4.0.4
-
-  mdast@3.0.0: {}
 
   mdurl@1.0.1: {}
 

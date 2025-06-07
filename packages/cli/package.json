@@ -20,10 +20,7 @@
     "commander": "^11",
     "fast-glob": "^3.3.3",
     "picocolors": "^1.0.0",
-    "vscode-uri": "^3.0.8",
-    "typescript": "^5.5",
-    "tsx": "^4",
-    "@volar/language-service": "^2"
+    "tsx": "^4"
   },
   "devDependencies": {
     "tsup": "^8",
