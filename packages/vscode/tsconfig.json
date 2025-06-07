@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "dist",
-    "composite": true,
+    "composite": false,
     "types": ["node", "vscode"],
     "baseUrl": ".",
     "rootDir": "../..",
