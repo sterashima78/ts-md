@@ -19,9 +19,16 @@ type Load = (
 const VIRTUAL_PREFIX = 'ts-md:';
 
 export const resolve: Resolve = async (specifier, context, defaultResolve) => {
-  const parentURL = context.parentURL
-    ? fileURLToPath(context.parentURL)
-    : undefined;
+  let parentURL: string | undefined;
+  if (context.parentURL) {
+    if (context.parentURL.startsWith(VIRTUAL_PREFIX)) {
+      const body = context.parentURL.slice(VIRTUAL_PREFIX.length);
+      const idx = body.lastIndexOf(':');
+      parentURL = body.slice(0, idx);
+    } else {
+      parentURL = fileURLToPath(context.parentURL);
+    }
+  }
   const specPath = specifier.startsWith('file:')
     ? fileURLToPath(specifier)
     : specifier;
