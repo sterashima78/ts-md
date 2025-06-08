@@ -8,6 +8,10 @@ const fixture = path.join(__dirname, 'fixtures', 'app.ts.md');
 const bad = path.join(__dirname, 'fixtures', 'error.ts.md');
 const multi = path.join(__dirname, 'fixtures', 'multi.ts.md');
 const multiBad = path.join(__dirname, 'fixtures', 'multi-error.ts.md');
+const crossMain = path.join(__dirname, 'fixtures', 'cross-main.ts.md');
+const crossDep = path.join(__dirname, 'fixtures', 'cross-dep.ts.md');
+const crossErrMain = path.join(__dirname, 'fixtures', 'cross-error-main.ts.md');
+const crossErrDep = path.join(__dirname, 'fixtures', 'cross-error-dep.ts.md');
 
 const pkgRoot = path.join(__dirname, '..');
 
@@ -56,6 +60,26 @@ describe('e2e', () => {
   it('fails to check invalid markdown with multiple code blocks', () => {
     try {
       execSync(`pnpm exec tsmd check ${multiBad}`, {
+        cwd: pkgRoot,
+        encoding: 'utf8',
+        stdio: 'pipe',
+      });
+      throw new Error('expected failure');
+    } catch (err) {
+      const e = err as { stderr: string };
+      expect(e.stderr).toMatch(
+        "Type 'number' is not assignable to type 'string'",
+      );
+    }
+  }, 20000);
+
+  it('checks markdown across documents', () => {
+    execSync(`pnpm exec tsmd check ${crossMain} ${crossDep}`, { cwd: pkgRoot });
+  }, 20000);
+
+  it('fails to check invalid markdown across documents', () => {
+    try {
+      execSync(`pnpm exec tsmd check ${crossErrMain} ${crossErrDep}`, {
         cwd: pkgRoot,
         encoding: 'utf8',
         stdio: 'pipe',
