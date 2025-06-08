@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 
 const fixture = path.join(__dirname, 'fixtures', 'app.ts.md');
 const bad = path.join(__dirname, 'fixtures', 'error.ts.md');
+const multi = path.join(__dirname, 'fixtures', 'multi.ts.md');
+const multiBad = path.join(__dirname, 'fixtures', 'multi-error.ts.md');
 
 const pkgRoot = path.join(__dirname, '..');
 
@@ -34,6 +36,26 @@ describe('e2e', () => {
   it('fails to check invalid markdown via CLI', () => {
     try {
       execSync(`pnpm exec tsmd check ${bad}`, {
+        cwd: pkgRoot,
+        encoding: 'utf8',
+        stdio: 'pipe',
+      });
+      throw new Error('expected failure');
+    } catch (err) {
+      const e = err as { stderr: string };
+      expect(e.stderr).toMatch(
+        "Type 'number' is not assignable to type 'string'",
+      );
+    }
+  }, 20000);
+
+  it('checks markdown with multiple code blocks', () => {
+    execSync(`pnpm exec tsmd check ${multi}`, { cwd: pkgRoot });
+  }, 20000);
+
+  it('fails to check invalid markdown with multiple code blocks', () => {
+    try {
+      execSync(`pnpm exec tsmd check ${multiBad}`, {
         cwd: pkgRoot,
         encoding: 'utf8',
         stdio: 'pipe',
