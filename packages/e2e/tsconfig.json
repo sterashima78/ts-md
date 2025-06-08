@@ -1,4 +1,12 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["test"]
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2020",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "strict": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*"]
 }

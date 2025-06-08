@@ -2,12 +2,19 @@
   "name": "@sterashima78/ts-md-e2e",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "test": "vitest run",
+    "test": "xvfb-run -a vitest run --reporter verbose",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "vitest": "^1.5.1",
+    "@vscode/test-electron": "^2.4.2",
     "@sterashima78/ts-md-cli": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.89.0",
+    "typescript": "^5.5.0"
   }
 }
