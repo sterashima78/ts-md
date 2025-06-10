@@ -11,7 +11,8 @@
     "vitest": "^1.5.1",
     "@vscode/test-electron": "^2.4.2",
     "@sterashima78/ts-md-cli": "workspace:*",
-    "@sterashima78/ts-md-loader": "workspace:*"
+    "@sterashima78/ts-md-loader": "workspace:*",
+    "@sterashima78/ts-md-vscode": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "^1.89.0",

@@ -93,6 +93,9 @@ importers:
       '@sterashima78/ts-md-loader':
         specifier: workspace:*
         version: link:../loader
+      '@sterashima78/ts-md-vscode':
+        specifier: workspace:*
+        version: link:../vscode
       '@vscode/test-electron':
         specifier: ^2.4.2
         version: 2.5.2
@@ -188,6 +191,12 @@ importers:
       vscode-languageclient:
         specifier: ^9.0.1
         version: 9.0.1
+      vscode-languageserver:
+        specifier: ^9.0.1
+        version: 9.0.1
+      vscode-languageserver-textdocument:
+        specifier: ^1.0.1
+        version: 1.0.12
       vscode-uri:
         specifier: ^3.0.8
         version: 3.1.0

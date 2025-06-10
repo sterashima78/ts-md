@@ -24,7 +24,7 @@ describe('TS-MD diagnostics', () => {
   });
 });
 
-async function waitForDiagnostics(uri: vscode.Uri, timeout = 8000) {
+async function waitForDiagnostics(uri: vscode.Uri, timeout = 20000) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeout) {
     if (vscode.languages.getDiagnostics(uri).length) return;

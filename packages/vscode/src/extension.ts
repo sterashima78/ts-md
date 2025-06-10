@@ -11,7 +11,7 @@ import { registerCommands } from './commands';
 let client: LanguageClient;
 
 export async function activate(ctx: vscode.ExtensionContext) {
-  const serverModule = ctx.asAbsolutePath('dist/server.js');
+  const serverModule = ctx.asAbsolutePath('dist/server/server.js');
 
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.stdio },
