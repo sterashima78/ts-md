@@ -1,10 +1,10 @@
-import type * as vscode from 'vscode';
 import {
   LanguageClient,
   type LanguageClientOptions,
   type ServerOptions,
   TransportKind,
-} from 'vscode-languageclient/node';
+} from '@volar/vscode/node';
+import type * as vscode from 'vscode';
 import { registerCodeLens } from './codelens';
 import { registerCommands } from './commands';
 
