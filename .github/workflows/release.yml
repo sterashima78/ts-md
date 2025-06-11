@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Publish packages
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          version: pnpm version-packages
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Package VS Code extension
+        if: steps.changesets.outputs.published == 'true'
+        run: pnpm --filter @sterashima78/ts-md-vscode package
+      - name: Attach VS Code extension to release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED: ${{ steps.changesets.outputs.publishedPackages }}
+        run: |
+          PACKAGE="@sterashima78/ts-md-vscode"
+          VERSION=$(node -e "const pkgs=JSON.parse(process.env.PUBLISHED);const p=pkgs.find(x=>x.name===process.env.PACKAGE);if(p) process.stdout.write(p.version);")
+          if [ -n "$VERSION" ]; then
+            TAG="$PACKAGE@$VERSION"
+            gh release upload "$TAG" packages/vscode/*.vsix --repo "$GITHUB_REPOSITORY" --clobber
+          fi
