@@ -19,14 +19,12 @@ jobs:
           version: 9
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
-      - name: Build packages
-        run: pnpm build
       - name: Publish packages
         id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm release
-          version: pnpm version-packages && pnpm biome format . --write
+          version: pnpm version-packages
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
