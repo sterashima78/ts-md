@@ -1,12 +1,14 @@
 {
   "name": "@sterashima78/ts-md-vscode",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "dist/extension.js",
   "types": "dist/extension.d.ts",
   "engines": {
     "vscode": "^1.85.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup && tsx scripts/postbuild.ts",
     "package": "vsce package",
@@ -27,14 +29,23 @@
     "vitest": "^1.5.1",
     "vsce": "^2.15.0"
   },
-  "activationEvents": ["onLanguage:ts-md"],
+  "activationEvents": [
+    "onLanguage:ts-md"
+  ],
   "contributes": {
     "languages": [
       {
         "id": "ts-md",
-        "aliases": ["TypeScript Markdown", "ts-md"],
-        "extensions": [".ts.md"],
-        "filenamePatterns": ["*.ts.md"],
+        "aliases": [
+          "TypeScript Markdown",
+          "ts-md"
+        ],
+        "extensions": [
+          ".ts.md"
+        ],
+        "filenamePatterns": [
+          "*.ts.md"
+        ],
         "configuration": "./dist/language-configuration.json"
       }
     ],
