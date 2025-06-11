@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "main": "dist/extension.js",
   "types": "dist/extension.d.ts",
-  "engines": { "vscode": "^1.85.0" },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
   "files": ["dist"],
   "scripts": {
     "build": "tsup && tsx scripts/postbuild.ts",
@@ -57,5 +59,9 @@
         "title": "TS-MD: Tangle to Files"
       }
     ]
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   }
 }

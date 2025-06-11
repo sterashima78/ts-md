@@ -17,5 +17,9 @@
   "devDependencies": {
     "@types/vscode": "^1.89.0",
     "typescript": "^5.5.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   }
 }

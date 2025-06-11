@@ -25,5 +25,9 @@
   "devDependencies": {
     "tsup": "^8",
     "vitest": "^1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   }
 }

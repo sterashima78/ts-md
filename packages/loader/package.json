@@ -11,5 +11,9 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   }
 }

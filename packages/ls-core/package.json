@@ -16,5 +16,9 @@
     "vscode-uri": "^3.0.8",
     "@sterashima78/ts-md-core": "workspace:*"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
 }
