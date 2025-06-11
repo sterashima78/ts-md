@@ -1,32 +1,38 @@
 import { collectDiagnostics } from '@sterashima78/ts-md-ls-core';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { provider as fileSystemProvider } from '@volar/language-server/lib/fileSystemProviders/node';
+import { createSimpleProject } from '@volar/language-server/lib/project/simpleProject';
+import { createServerBase } from '@volar/language-server/lib/server';
+import type { SnapshotDocument } from '@volar/language-server/lib/utils/snapshotDocument';
 import {
   DiagnosticSeverity,
-  type InitializeParams,
-  ProposedFeatures,
+  type ExperimentalFeatures,
+  type ServerCapabilities,
   TextDocumentSyncKind,
-  TextDocuments,
   createConnection,
-} from 'vscode-languageserver/node';
+} from '@volar/language-server/node';
 import { URI } from 'vscode-uri';
 
-const connection = createConnection(ProposedFeatures.all);
-const documents = new TextDocuments(TextDocument);
+const connection = createConnection();
+const server = createServerBase(connection, { timer: { setImmediate } });
+server.fileSystem.install('file', fileSystemProvider);
+const { documents } = server;
 
-connection.onInitialize((_params: InitializeParams) => ({
-  capabilities: {
-    textDocumentSync: TextDocumentSyncKind.Incremental,
+server.onInitialize(
+  (serverCapabilities: ServerCapabilities<ExperimentalFeatures>) => {
+    serverCapabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
   },
-}));
-
-documents.onDidOpen((e: { document: TextDocument }) =>
-  sendDiagnostics(e.document),
-);
-documents.onDidChangeContent((e: { document: TextDocument }) =>
-  sendDiagnostics(e.document),
 );
 
-async function sendDiagnostics(doc: TextDocument) {
+connection.onInitialize((params) =>
+  server.initialize(params, createSimpleProject([]), []),
+);
+connection.onInitialized(() => server.initialized());
+connection.onShutdown(() => server.shutdown());
+
+documents.onDidOpen((e) => void sendDiagnostics(e.document));
+documents.onDidChangeContent((e) => void sendDiagnostics(e.document));
+
+async function sendDiagnostics(doc: SnapshotDocument) {
   const file = URI.parse(doc.uri).fsPath;
   const result = await collectDiagnostics([file]);
   const diagnostics = (result[file] ?? []).map((d) => ({
@@ -38,5 +44,4 @@ async function sendDiagnostics(doc: TextDocument) {
   connection.sendDiagnostics({ uri: doc.uri, diagnostics });
 }
 
-documents.listen(connection);
 connection.listen();
