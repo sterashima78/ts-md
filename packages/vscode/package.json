@@ -6,7 +6,8 @@
   "engines": { "vscode": "^1.85.0" },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && tsx scripts/postbuild.ts",
+    "package": "vsce package",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "download": "tsx scripts/download.ts"
@@ -39,7 +40,7 @@
       {
         "language": "ts-md",
         "scopeName": "source.tsmd",
-        "path": "./syntaxes/ts-md.tmLanguage.json"
+        "path": "./dist/syntaxes/ts-md.tmLanguage.json"
       }
     ],
     "commands": [
