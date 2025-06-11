@@ -8,7 +8,7 @@ export default defineConfig({
     'src/webpack.ts',
     'src/esbuild.ts',
   ],
-  format: ['esm', 'cjs'],
+  format: ['esm'],
   dts: true,
   clean: true,
 });
