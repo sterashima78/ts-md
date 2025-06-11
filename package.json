@@ -8,7 +8,8 @@
     "typecheck": "turbo run typecheck",
     "lint": "biome check",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && pnpm biome format . --write",
+    "prerelease": "turbo run build",
     "release": "pnpm changeset publish"
   },
   "devDependencies": {
