@@ -1,6 +1,6 @@
 {
   "name": "@sterashima78/ts-md-vscode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/extension.js",
   "types": "dist/extension.d.ts",
   "engines": {

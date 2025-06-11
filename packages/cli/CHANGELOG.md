@@ -1,5 +1,16 @@
 # @sterashima78/ts-md-cli
 
+## 0.1.2
+
+### Patch Changes
+
+- [#60](https://github.com/sterashima78/ts-md/pull/60) [`0936ce6`](https://github.com/sterashima78/ts-md/commit/0936ce6de639715128b9cf816df3529ce0b3c369) Thanks [@sterashima78](https://github.com/sterashima78)! - リリースプロセスのやり直し
+
+- Updated dependencies [[`0936ce6`](https://github.com/sterashima78/ts-md/commit/0936ce6de639715128b9cf816df3529ce0b3c369)]:
+  - @sterashima78/ts-md-core@0.0.2
+  - @sterashima78/ts-md-loader@0.0.2
+  - @sterashima78/ts-md-ls-core@0.0.2
+
 ## 0.1.1
 
 ### Patch Changes
