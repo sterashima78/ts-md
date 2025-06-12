@@ -8,3 +8,11 @@ pnpm -F @sterashima78/ts-md-sandbox build:tsup
 pnpm -F @sterashima78/ts-md-sandbox build:vite
 pnpm -F @sterashima78/ts-md-sandbox start
 ```
+
+## ts ファイルから ts.md をインポートする例
+
+`src/import-example.ts` では `.ts` ファイルから `.ts.md` ファイルのチャンクをインポートしています。
+
+```ts
+import '#./app.ts.md:foo'
+```
