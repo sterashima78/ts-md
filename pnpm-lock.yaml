@@ -17,30 +17,18 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.4
         version: 2.29.4
-      '@rollup/pluginutils':
-        specifier: ^5.1.4
-        version: 5.1.4(rollup@4.41.1)
       '@types/node':
         specifier: ^22.15.29
         version: 22.15.29
-      rollup:
-        specifier: ^4.41.1
-        version: 4.41.1
       tsup:
         specifier: ^8.5.0
         version: 8.5.0(postcss@8.5.4)(tsx@4.19.4)(typescript@5.8.3)
-      tsx:
-        specifier: ^4.8.1
-        version: 4.19.4
       turbo:
         specifier: ^2.5.4
         version: 2.5.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
-      unplugin:
-        specifier: ^2.3.5
-        version: 2.3.5
       vite:
         specifier: ^6.3.5
         version: 6.3.5(@types/node@22.15.29)(tsx@4.19.4)
@@ -179,9 +167,18 @@ importers:
 
   packages/unplugin:
     dependencies:
+      '@rollup/pluginutils':
+        specifier: ^5.1.4
+        version: 5.1.4(rollup@4.41.1)
       '@sterashima78/ts-md-core':
         specifier: workspace:*
         version: link:../core
+      rollup:
+        specifier: ^4.41.1
+        version: 4.41.1
+      unplugin:
+        specifier: ^2.3.5
+        version: 2.3.5
 
   packages/vscode:
     dependencies:
@@ -194,6 +191,9 @@ importers:
       '@volar/vscode':
         specifier: ^2.4.14
         version: 2.4.14
+      tsx:
+        specifier: ^4.8.1
+        version: 4.19.4
       vscode-uri:
         specifier: ^3.0.8
         version: 3.1.0
