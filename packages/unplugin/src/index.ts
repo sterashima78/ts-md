@@ -7,11 +7,10 @@ export interface Options {
   include?: RegExp;
 }
 
-export const unplugin = createUnplugin((options: Options | undefined, meta) => {
+export const unplugin = createUnplugin((options: Options | undefined) => {
   const { include = /\.ts\.md$/ } = options ?? {};
   const filter = createFilter(include);
   const cache = new Map<string, Record<string, string>>();
-  const isEsbuild = meta.framework === 'esbuild';
 
   return {
     name: 'ts-md',
@@ -22,22 +21,12 @@ export const unplugin = createUnplugin((options: Options | undefined, meta) => {
       if (!info) return;
       const absPath = info.absPath;
       const chunk = info.chunk;
-      if (isEsbuild) {
-        return { id: absPath, namespace: 'ts-md', suffix: `?c=${chunk}` };
-      }
       return `\0ts-md:${absPath}?c=${chunk}`;
     },
     async load(id) {
       if (!filter(id)) {
         if (id.startsWith('\0ts-md:')) {
           const m = id.match(/^\0ts-md:(.+?)\?c=(.+)$/);
-          if (!m) return;
-          const [, abs, chunk] = m;
-          const dict = cache.get(abs) ?? (await parseFile(abs));
-          return dict[chunk];
-        }
-        if (isEsbuild) {
-          const m = id.match(/^(.+?)\?c=(.+)$/);
           if (!m) return;
           const [, abs, chunk] = m;
           const dict = cache.get(abs) ?? (await parseFile(abs));
