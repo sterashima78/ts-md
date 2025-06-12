@@ -1,0 +1,15 @@
+{
+  "name": "@sterashima78/ts-md-sandbox",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@sterashima78/ts-md-unplugin": "workspace:*"
+  }
+}

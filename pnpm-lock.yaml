@@ -169,6 +169,12 @@ importers:
         specifier: ^1.5.1
         version: 1.6.1(@types/node@22.15.29)(jsdom@24.1.3)
 
+  packages/sandbox:
+    dependencies:
+      '@sterashima78/ts-md-unplugin':
+        specifier: workspace:*
+        version: link:../unplugin
+
   packages/unplugin:
     dependencies:
       '@rollup/pluginutils':
