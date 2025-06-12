@@ -80,7 +80,7 @@ importers:
         version: 5.0.0
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: ^0.0.3
+        specifier: 0.0.3
         version: 0.0.3
 
   packages/e2e:
