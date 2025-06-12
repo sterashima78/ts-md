@@ -21,5 +21,8 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
+  },
+  "devDependencies": {
+    "@sterashima78/ts-md-unplugin": "^0.0.3"
   }
 }
