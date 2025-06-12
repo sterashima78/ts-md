@@ -5,9 +5,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        app: resolve(__dirname, 'src/index.ts'),
+        importExample: resolve(__dirname, 'src/import-example.ts'),
+      },
       formats: ['es'],
-      fileName: 'app',
     },
     outDir: 'dist/vite',
     emptyOutDir: true,
