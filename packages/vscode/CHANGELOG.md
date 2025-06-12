@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-vscode
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @sterashima78/ts-md-ls-core@0.0.3
+
 ## 0.0.3
 
 ### Patch Changes
