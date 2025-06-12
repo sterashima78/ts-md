@@ -8,10 +8,13 @@
     "build:tsup": "tsup",
     "build:vite": "vite build",
     "build": "pnpm build:vite && pnpm build:tsup",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsmd check 'src/**/*.ts.md'",
     "start": "node dist/tsup/app.js"
   },
   "dependencies": {
     "@sterashima78/ts-md-unplugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@sterashima78/ts-md-cli": "workspace:*"
   }
 }

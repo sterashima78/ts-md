@@ -8,6 +8,7 @@ export default defineConfig({
       entry: {
         app: resolve(__dirname, 'src/index.ts'),
         importExample: resolve(__dirname, 'src/import-example.ts'),
+        typeImportExample: resolve(__dirname, 'src/type-import-example.ts'),
       },
       formats: ['es'],
     },
