@@ -90,6 +90,10 @@ importers:
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
+    devDependencies:
+      '@sterashima78/ts-md-unplugin':
+        specifier: ^0.0.2
+        version: 0.0.2
 
   packages/e2e:
     dependencies:
@@ -830,6 +834,12 @@ packages:
 
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
+
+  '@sterashima78/ts-md-core@0.0.2':
+    resolution: {integrity: sha512-vBRJ/ChiYfY3R4yLkXRtKlKFF3SpoddEvNNITAnNxSPAz0diyK/F0YvcRVbzWqiz3Qp0d7jyTJmiTwNldKOvig==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.2/cdaa1b8542826886f6ba1dbe6fe8ccf47debd94d}
+
+  '@sterashima78/ts-md-unplugin@0.0.2':
+    resolution: {integrity: sha512-sPSxN8JuCSaEWP4ygENttvZUD9Jq5gWu3/C1GyxAhLqUaeM4KkjX8gLCOe/mqZmCIUpboQFq5agCYzHGZlL6Wg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.0.2/10737c14e5639a2204fd0f7bd44a1c797d692896}
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -3507,6 +3517,20 @@ snapshots:
     optional: true
 
   '@sinclair/typebox@0.27.8': {}
+
+  '@sterashima78/ts-md-core@0.0.2':
+    dependencies:
+      remark-parse: 11.0.0
+      unified: 11.0.5
+      unist-util-visit: 5.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sterashima78/ts-md-unplugin@0.0.2':
+    dependencies:
+      '@sterashima78/ts-md-core': 0.0.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@testing-library/dom@9.3.4':
     dependencies:

@@ -6,7 +6,8 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

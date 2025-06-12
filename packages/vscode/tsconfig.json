@@ -9,7 +9,8 @@
     "rootDir": "../..",
     "paths": {
       "@sterashima78/ts-md-ls-core": ["../ls-core/src"]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": ["src", "../ls-core/src"]
 }

@@ -5,7 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "@sterashima78/ts-md-ls-core": ["../ls-core/src"]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": ["src", "src/types.d.ts"]
 }
