@@ -80,8 +80,8 @@ importers:
         version: 5.0.0
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.0.3
-        version: 0.0.3
+        specifier: 0.0.4
+        version: 0.0.4
 
   packages/e2e:
     dependencies:
@@ -841,11 +841,11 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@sterashima78/ts-md-core@0.0.2':
-    resolution: {integrity: sha512-vBRJ/ChiYfY3R4yLkXRtKlKFF3SpoddEvNNITAnNxSPAz0diyK/F0YvcRVbzWqiz3Qp0d7jyTJmiTwNldKOvig==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.2/cdaa1b8542826886f6ba1dbe6fe8ccf47debd94d}
+  '@sterashima78/ts-md-core@0.0.3':
+    resolution: {integrity: sha512-VDEJvaEsLkmLZWFoQyk8p/mXThaiq46nhIG8Y4BtB1Nu5T1lkANiC5bQ/fL20a8CC0yNU3/Y9iAorRXhHa+Rqg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.3/c78e80cdb2156250de95b0060e07ab6aefe63917}
 
-  '@sterashima78/ts-md-unplugin@0.0.3':
-    resolution: {integrity: sha512-qUON6r089aClfiKe0uYnYmQ+nb8oUX2jQWeRVKcUBq7pM+dbki6pFzj2gTCZK3tmhVO6Qh5uJUcvmUZmgMxEDw==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.0.3/1284ea95b8ac62f32bdddf7232721690ca1c934b}
+  '@sterashima78/ts-md-unplugin@0.0.4':
+    resolution: {integrity: sha512-KVxAs0gV9vPIR60J0bKH/y0eJQC0go6b9PIuyC9xHYlJ5Z2VPMYbyRy1cVi/rJ1kPoy1nprKBYjjjso3e3Qy8Q==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.0.4/476f49d2b06936bdb3673c6eb56a746ada983674}
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -3524,7 +3524,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@sterashima78/ts-md-core@0.0.2':
+  '@sterashima78/ts-md-core@0.0.3':
     dependencies:
       remark-parse: 11.0.0
       unified: 11.0.5
@@ -3532,10 +3532,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-unplugin@0.0.3':
+  '@sterashima78/ts-md-unplugin@0.0.4':
     dependencies:
       '@rollup/pluginutils': 5.1.4(rollup@4.41.1)
-      '@sterashima78/ts-md-core': 0.0.2
+      '@sterashima78/ts-md-core': 0.0.3
       rollup: 4.41.1
       unplugin: 2.3.5
     transitivePeerDependencies:
