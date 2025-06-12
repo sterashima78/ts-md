@@ -1,6 +1,6 @@
 {
   "name": "@sterashima78/ts-md-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,6 +23,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "^0.0.3"
+    "@sterashima78/ts-md-unplugin": "^0.0.4"
   }
 }
