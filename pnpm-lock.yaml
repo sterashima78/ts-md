@@ -178,6 +178,9 @@ importers:
       '@sterashima78/ts-md-cli':
         specifier: workspace:*
         version: link:../cli
+      '@sterashima78/ts-md-core':
+        specifier: workspace:*
+        version: link:../core
 
   packages/unplugin:
     dependencies:

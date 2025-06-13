@@ -8,6 +8,7 @@ pnpm -F @sterashima78/ts-md-sandbox build:tsup
 pnpm -F @sterashima78/ts-md-sandbox build:vite
 pnpm -F @sterashima78/ts-md-sandbox start
 pnpm -F @sterashima78/ts-md-sandbox typecheck
+pnpm -F @sterashima78/ts-md-sandbox test
 ```
 
 ## ts ファイルから ts.md をインポートする例
