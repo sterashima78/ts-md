@@ -23,6 +23,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "0.0.4"
+    "@sterashima78/ts-md-unplugin": "0.1.0"
   }
 }

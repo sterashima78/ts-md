@@ -80,8 +80,8 @@ importers:
         version: 5.0.0
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.0.4
-        version: 0.0.4
+        specifier: 0.1.0
+        version: 0.1.0
 
   packages/e2e:
     dependencies:
@@ -851,8 +851,8 @@ packages:
   '@sterashima78/ts-md-core@0.0.3':
     resolution: {integrity: sha512-VDEJvaEsLkmLZWFoQyk8p/mXThaiq46nhIG8Y4BtB1Nu5T1lkANiC5bQ/fL20a8CC0yNU3/Y9iAorRXhHa+Rqg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.3/c78e80cdb2156250de95b0060e07ab6aefe63917}
 
-  '@sterashima78/ts-md-unplugin@0.0.4':
-    resolution: {integrity: sha512-KVxAs0gV9vPIR60J0bKH/y0eJQC0go6b9PIuyC9xHYlJ5Z2VPMYbyRy1cVi/rJ1kPoy1nprKBYjjjso3e3Qy8Q==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.0.4/476f49d2b06936bdb3673c6eb56a746ada983674}
+  '@sterashima78/ts-md-unplugin@0.1.0':
+    resolution: {integrity: sha512-OONJpjQm5N7COpufsE5RJX8xIN7CkcspPD9/tAQKqTI2HzssdaCe4FV7e7idjdCxGDV+6v/mTS5UVNxVmCH6yA==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.1.0/26fdec9f8ba75ab46dee5d9b7123362572f6c4de}
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -3539,7 +3539,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-unplugin@0.0.4':
+  '@sterashima78/ts-md-unplugin@0.1.0':
     dependencies:
       '@rollup/pluginutils': 5.1.4(rollup@4.41.1)
       '@sterashima78/ts-md-core': 0.0.3
