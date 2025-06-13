@@ -9,5 +9,6 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
   "ignore": ["@sterashima78/ts-md-e2e"]
 }
