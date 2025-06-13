@@ -27,3 +27,8 @@ import '#./app.ts.md:foo'
 ```ts
 import type { Greeter } from '#./types.ts.md:greeter'
 ```
+
+## モジュール間依存のある ts.md ファイルの例
+
+`src/mini-core` には複数の `.ts.md` ファイルが互いに import し合う簡易例を置いています。
+`src/mini-core/index.ts` 経由で各モジュールを参照できます。
