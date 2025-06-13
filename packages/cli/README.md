@@ -7,6 +7,7 @@ so that documents can be type-checked, tangled into real files and executed.
 - `check` – run type checking for the specified documents
 - `tangle` – extract chunks to the given directory
 - `run` – execute a document with the Node loader
+- `emit` – generate declaration files for the specified documents
 
 ## Structure
 - `src/commands/` – implementations of each command

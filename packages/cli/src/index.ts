@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { runCheck } from './commands/check';
+import { runEmit } from './commands/emit';
 import { runTsMd } from './commands/run';
 import { runTangle } from './commands/tangle';
 
@@ -17,6 +18,14 @@ program
   .description('Extract code chunks to real files')
   .action((globs: string[], opts: { outDir: string }) =>
     runTangle(globs, opts.outDir),
+  );
+
+program
+  .command('emit [globs...]')
+  .option('-o, --outDir <dir>', 'output directory', 'dist')
+  .description('Generate declaration files for .ts.md chunks')
+  .action((globs: string[], opts: { outDir: string }) =>
+    runEmit(globs, opts.outDir),
   );
 
 program

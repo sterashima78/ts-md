@@ -4,6 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   target: 'node18',
   format: ['esm'],
+  platform: 'node',
   shims: false,
   splitting: false,
   clean: true,
@@ -18,5 +19,6 @@ export default defineConfig({
     '@sterashima78/ts-md-loader',
     'vscode-uri',
     'tsx/esm',
+    'typescript',
   ],
 });
