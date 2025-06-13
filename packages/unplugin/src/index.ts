@@ -21,27 +21,28 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
       if (!info) return;
       const absPath = info.absPath;
       const chunk = info.chunk;
-      return `\0ts-md:${absPath}?c=${chunk}`;
+      return `${absPath}?block=${chunk}&lang.ts`;
     },
     async load(id) {
-      if (!filter(id)) {
-        if (id.startsWith('\0ts-md:')) {
-          const m = id.match(/^\0ts-md:(.+?)\?c=(.+)$/);
-          if (!m) return;
-          const [, abs, chunk] = m;
-          const dict = cache.get(abs) ?? (await parseFile(abs));
-          return dict[chunk];
-        }
-        return;
+      const [file, query] = id.split('?', 2);
+      if (!filter(file)) return;
+
+      const params = new URLSearchParams(query);
+      const block = params.get('block');
+
+      if (block) {
+        const dict = cache.get(file) ?? (await parseFile(file));
+        return dict[block];
       }
-      const dict = await parseFile(id);
+
+      const dict = await parseFile(file);
       return Object.keys(dict)
-        .filter((c) => /^(main|index)$/.test(c))
-        .map((c) => `import '#${id}:${c}'`)
+        .map((c) => `export * from '${file}?block=${c}&lang.ts'`)
         .join('\n');
     },
     async watchChange(id) {
-      if (filter(id)) await parseFile(id, true);
+      const file = id.split('?')[0];
+      if (filter(file)) await parseFile(file, true);
     },
   };
 
