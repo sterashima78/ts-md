@@ -1,5 +1,17 @@
 # @sterashima78/ts-md-unplugin
 
+## 0.1.0
+
+### Minor Changes
+
+- [#78](https://github.com/sterashima78/ts-md/pull/78) [`17288fb`](https://github.com/sterashima78/ts-md/commit/17288fb4abcd012e1344825fbb11fc03cdda3f3d) Thanks [@sterashima78](https://github.com/sterashima78)! - unplugin の仮想モジュール形式をクエリベースに変更し、
+  ts.md ファイルを各ブロックを再 export する TS として扱うようにしました。
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @sterashima78/ts-md-core@0.0.3
+
 ## 0.0.4
 
 ### Patch Changes
