@@ -10,13 +10,14 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsmd check --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "remark-parse": "^11.0.0",
     "unified": "^11.0.0",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "@sterashima78/ts-md-cli": "^0.2.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
