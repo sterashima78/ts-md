@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { LanguagePlugin } from '@volar/language-core';
-import type ts from 'typescript';
+import ts from 'typescript';
 import { getChunkDict } from './parsers.js';
 import { TsMdVirtualFile } from './virtual-file.js';
 
@@ -63,6 +63,22 @@ export const tsMdLanguagePlugin = {
         : (fromFile as unknown as { fsPath: string }).fsPath;
     const abs = path.resolve(path.dirname(baseFile), rel);
     return `#${pathToFileURL(abs).href}:${chunk}`;
+  },
+  typescript: {
+    extraFileExtensions: [
+      {
+        extension: 'ts.md',
+        isMixedContent: true,
+        scriptKind: ts.ScriptKind.TS,
+      },
+    ],
+    getServiceScript(root: TsMdVirtualFile) {
+      return {
+        code: root,
+        extension: '.ts',
+        scriptKind: ts.ScriptKind.TS,
+      };
+    },
   },
 } as LanguagePlugin<string, TsMdVirtualFile> & {
   resolveFileName(specifier: string, fromFile: string): string | undefined;
