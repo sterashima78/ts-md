@@ -9,7 +9,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup && tsx scripts/postbuild.ts",
-    "package": "vsce package",
+    "package": "tsx scripts/package.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "download": "tsx scripts/download.ts"
