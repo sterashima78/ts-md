@@ -20,6 +20,7 @@
     "commander": "^11",
     "fast-glob": "^3.3.3",
     "picocolors": "^1.0.0",
+    "@volar/kit": "^2.4.14",
     "tsx": "^4"
   },
   "devDependencies": {
