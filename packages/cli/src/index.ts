@@ -8,8 +8,9 @@ const program = new Command('tsmd');
 
 program
   .command('check [globs...]')
+  .allowUnknownOption()
   .description('Type-check .ts.md files')
-  .action((globs: string[]) => runCheck(globs));
+  .action((globs: string[], _opts: unknown, cmd: Command) => runCheck(globs));
 
 program
   .command('tangle [globs...]')
