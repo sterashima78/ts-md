@@ -13,6 +13,7 @@ export default defineConfig({
     'fast-glob',
     'picocolors',
     '@volar/language-service',
+    '@volar/kit',
     '@sterashima78/ts-md-ls-core',
     '@sterashima78/ts-md-core',
     '@sterashima78/ts-md-loader',
