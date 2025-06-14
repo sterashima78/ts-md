@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import type { LanguagePlugin } from '@volar/language-core';
 import {
@@ -161,4 +162,103 @@ export async function collectDiagnostics(
   }
 
   return result;
+}
+
+export async function emitDeclarations(files: string[], outDir: string) {
+  await fs.promises.mkdir(outDir, { recursive: true });
+  const emitted: string[] = [];
+  const written = new Set<string>();
+
+  for (const file of files) {
+    const md = fs.readFileSync(file, 'utf8');
+    const dict = parseChunks(md, file);
+
+    for (const [chunk, code] of Object.entries(dict)) {
+      const name = `${file}:${chunk}.ts`;
+      const options = {
+        declaration: true,
+        emitDeclarationOnly: true,
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+      } as ts.CompilerOptions;
+      const cache: Record<string, Record<string, string>> = {};
+      const host = ts.createCompilerHost(options);
+      function getChunkCode(p: string, c: string) {
+        if (!cache[p]) {
+          const mdText = fs.readFileSync(p, 'utf8');
+          cache[p] = parseChunks(mdText, p);
+        }
+        return cache[p][c];
+      }
+      host.getSourceFile = (f, l) => {
+        if (f === name) return ts.createSourceFile(f, code, l);
+        const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+        if (m) {
+          const chunkCode = getChunkCode(m[1], m[2]);
+          if (chunkCode) return ts.createSourceFile(f, chunkCode, l);
+        }
+        if (fs.existsSync(f))
+          return ts.createSourceFile(f, fs.readFileSync(f, 'utf8'), l);
+        return undefined;
+      };
+      host.readFile = (f) => {
+        if (f === name) return code;
+        const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+        if (m) {
+          const chunkCode = getChunkCode(m[1], m[2]);
+          if (chunkCode) return chunkCode;
+        }
+        if (fs.existsSync(f)) return fs.readFileSync(f, 'utf8').toString();
+        return undefined;
+      };
+      host.fileExists = (f) => {
+        if (f === name) return true;
+        const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+        if (m) {
+          const chunkCode = getChunkCode(m[1], m[2]);
+          return chunkCode !== undefined;
+        }
+        return fs.existsSync(f);
+      };
+      host.resolveModuleNames = (mods, containing) =>
+        mods.map((n) => {
+          const info = resolveImport(n, file);
+          if (info) {
+            return {
+              resolvedFileName: `${info.absPath}:${info.chunk}.ts`,
+              extension: ts.Extension.Ts,
+            } as ts.ResolvedModule;
+          }
+          const res = ts.resolveModuleName(
+            n,
+            containing,
+            options,
+            host,
+          ).resolvedModule;
+          return res as ts.ResolvedModule;
+        });
+      host.writeFile = (fname, text) => {
+        const m = /(.+\.ts\.md):(.+)\.d\.ts$/.exec(fname);
+        let target = fname;
+        if (m) {
+          target = path.join(
+            outDir,
+            path.basename(m[1], '.ts.md'),
+            `${m[2]}.d.ts`,
+          );
+        } else {
+          target = path.join(outDir, path.basename(fname));
+        }
+        if (written.has(target)) return;
+        fs.mkdirSync(path.dirname(target), { recursive: true });
+        fs.writeFileSync(target, text, 'utf8');
+        emitted.push(target);
+        written.add(target);
+      };
+      const program = ts.createProgram([name], options, host);
+      program.emit();
+    }
+  }
+
+  return emitted;
 }

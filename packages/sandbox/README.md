@@ -11,6 +11,8 @@ pnpm -F @sterashima78/ts-md-sandbox typecheck
 pnpm -F @sterashima78/ts-md-sandbox test
 ```
 
+ビルド後には `tsmd emit` により `dist/types` 配下へ型宣言ファイルが生成されます。
+
 ## ts ファイルから ts.md をインポートする例
 
 `src/import-example.ts` では `.ts` ファイルから `.ts.md` ファイルのチャンクをインポートしています。

@@ -6,6 +6,7 @@ so that documents can be type-checked, tangled into real files and executed.
 ## Commands
 - `check` – run type checking for the specified documents
 - `tangle` – extract chunks to the given directory
+- `emit` – generate declaration files for the specified documents
 - `run` – execute a document with the Node loader
 
 ## Structure
