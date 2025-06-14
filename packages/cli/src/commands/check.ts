@@ -1,6 +1,6 @@
 import {
   type TsMdDiagnosticsResult,
-  collectDiagnostics,
+  createTsMdChecker,
 } from '@sterashima78/ts-md-ls-core';
 import pc from 'picocolors';
 import { expandGlobs } from '../utils/globs';
@@ -9,7 +9,15 @@ export async function runCheck(globs: string[]) {
   const files = await expandGlobs(globs);
   if (!files.length) return console.log(pc.yellow('No .ts.md files found.'));
 
-  const result: TsMdDiagnosticsResult = await collectDiagnostics(files);
+  const checker = createTsMdChecker(files);
+  const result: TsMdDiagnosticsResult = {};
+  for (const file of files) {
+    const diags = await checker.check(file);
+    result[file] = diags.map((d) => ({
+      message: d.message,
+      range: d.range,
+    }));
+  }
   let errorCount = 0;
 
   for (const file of files) {

@@ -6,3 +6,7 @@ export {
   type TsMdDiagnostic,
   type TsMdDiagnosticsResult,
 } from './service.js';
+export {
+  createTsMdChecker,
+  collectDiagnosticsWithKit,
+} from './checker.js';
