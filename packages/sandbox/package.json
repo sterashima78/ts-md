@@ -8,7 +8,8 @@
     "build:tsup": "tsup",
     "build:vite": "vite build",
     "build": "pnpm build:vite && pnpm build:tsup",
-    "typecheck": "tsmd check 'src/**/*.ts.md'",
+    "typecheck": "tsmd check --noEmit",
+    "postbuild": "tsmd check --emitDeclarationOnly --outDir dist/types",
     "start": "node dist/tsup/app.js",
     "test": "vitest run"
   },
