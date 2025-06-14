@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-cli
 
+## 0.2.0
+
+### Minor Changes
+
+- [#88](https://github.com/sterashima78/ts-md/pull/88) [`6d6f468`](https://github.com/sterashima78/ts-md/commit/6d6f4682f55b88976b16a564c758f1773011453e) Thanks [@sterashima78](https://github.com/sterashima78)! - CLI で check コマンドに TypeScript オプションを渡せるようにしました。sandbox の typecheck では --noEmit を、postbuild では --emitDeclarationOnly を使用します。また、tsconfig に `.ts.md` を含め、ファイルグロブを渡さずにチェックするようにしました。
+
 ## 0.1.3
 
 ### Patch Changes
