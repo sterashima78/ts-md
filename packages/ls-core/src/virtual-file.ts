@@ -2,7 +2,7 @@ import type { VirtualCode } from '@volar/language-core';
 import type ts from 'typescript';
 
 export class TsMdVirtualFile implements VirtualCode {
-  id = 'root';
+  id!: string;
   languageId = 'ts';
   mappings: [] = [];
   embeddedCodes: VirtualCode[] = [];
@@ -12,6 +12,7 @@ export class TsMdVirtualFile implements VirtualCode {
     public uri: string,
     private dict: Record<string, string>,
   ) {
+    this.id = uri;
     this.refreshEmbedded();
   }
 
@@ -24,7 +25,7 @@ export class TsMdVirtualFile implements VirtualCode {
 
   private refreshEmbedded() {
     this.embeddedCodes = Object.entries(this.dict).map(([name, code]) => ({
-      id: `#${this.uri}:${name}`,
+      id: `${this.uri}:${name}`,
       languageId: 'ts',
       mappings: [],
       snapshot: {

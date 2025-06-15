@@ -6,7 +6,7 @@ import { parseChunks } from '../src/parser';
 import { resolveImport } from '../src/resolver';
 import { tangle } from '../src/tangle';
 
-const md = ['```ts main', "import '#./dep.ts.md:dep'", '```'].join('\n');
+const md = ['```ts main', "import './dep.ts.md:dep'", '```'].join('\n');
 
 const depMd = ['```ts dep', 'export const msg = 1', '```'].join('\n');
 
@@ -17,7 +17,7 @@ describe('integration', () => {
     const depDict = parseChunks(depMd, path.join(tmp, 'dep.ts.md'));
     const all = { ...dict, ...depDict };
     await tangle(all, path.join(tmp, 'doc.ts.md'), tmp);
-    const r = resolveImport('#./dep.ts.md:dep', path.join(tmp, 'doc.ts.md'));
+    const r = resolveImport('./dep.ts.md:dep', path.join(tmp, 'doc.ts.md'));
     const file = r?.absPath;
     const content = await fs.readFile(
       path.join(tmp, 'doc.ts', 'dep.ts'),

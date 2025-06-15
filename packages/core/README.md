@@ -5,7 +5,7 @@ imports and tangles code blocks into real files.
 
 ## Modules
 - `parser.ts` – extract named code chunks from Markdown
-- `resolver.ts` – resolve `#file:chunk` style imports
+ - `resolver.ts` – resolve `file.ts.md:chunk` and `:chunk` imports
 - `graph.ts` – detect import cycles between chunks
 - `tangle.ts` – write chunks to disk
 - `utils.ts` – helper functions

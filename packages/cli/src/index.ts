@@ -7,10 +7,10 @@ import { runTangle } from './commands/tangle';
 const program = new Command('tsmd');
 
 program
-  .command('check [globs...]')
+  .command('check [args...]')
   .allowUnknownOption()
-  .description('Type-check .ts.md files')
-  .action((globs: string[], _opts: unknown, cmd: Command) => runCheck(globs));
+  .description('tsc と同様に .ts.md を型チェックします')
+  .action(() => runCheck());
 
 program
   .command('tangle [globs...]')

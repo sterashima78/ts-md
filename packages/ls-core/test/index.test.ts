@@ -32,8 +32,8 @@ describe('ts-md-ls-core diagnostics', () => {
         '# Main',
         '',
         '```ts main',
-        "import '#./a.ts.md:foo'",
-        "import { msg } from '#./a.ts.md:foo'",
+        "import './a.ts.md:foo'",
+        "import { msg } from './a.ts.md:foo'",
         'console.log(msg)',
         '```',
       ].join('\n'),
@@ -58,7 +58,7 @@ describe('ts-md-ls-core diagnostics', () => {
       if (scripts.has(id)) return;
       let filePath: string;
       if (typeof id === 'string') {
-        const m = /^#(.+):/.exec(id);
+        const m = /^(.+):/.exec(id);
         if (!m) return;
         filePath = URI.parse(m[1]).fsPath;
       } else {

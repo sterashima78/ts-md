@@ -4,7 +4,7 @@ CLI toolset for working with `.ts.md` files. It wraps the core parser and loader
 so that documents can be type-checked, tangled into real files and executed.
 
 ## Commands
-- `check` – run type checking for the specified documents
+- `check` – tsc と同様に `.ts.md` を型チェックします
 - `tangle` – extract chunks to the given directory
 - `run` – execute a document with the Node loader
 
