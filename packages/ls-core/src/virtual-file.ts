@@ -10,6 +10,7 @@ export class TsMdVirtualFile implements VirtualCode {
   constructor(
     public snapshot: ts.IScriptSnapshot,
     public uri: string,
+    public filePath: string,
     private dict: Record<string, string>,
   ) {
     this.refreshEmbedded();
@@ -24,7 +25,7 @@ export class TsMdVirtualFile implements VirtualCode {
 
   private refreshEmbedded() {
     this.embeddedCodes = Object.entries(this.dict).map(([name, code]) => ({
-      id: `#${this.uri}:${name}`,
+      id: `${this.filePath}__${name}.ts`,
       languageId: 'ts',
       mappings: [],
       snapshot: {

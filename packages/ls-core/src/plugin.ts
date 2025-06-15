@@ -26,9 +26,9 @@ export const tsMdLanguagePlugin = {
     const dict = getChunkDict(snapshot, filePath);
     const uri =
       typeof fileName === 'string'
-        ? pathToFileURL(fileName).href
+        ? fileName
         : (fileName as unknown as { toString(): string }).toString();
-    return new TsMdVirtualFile(snapshot, uri, dict);
+    return new TsMdVirtualFile(snapshot, uri, filePath, dict);
   },
 
   updateVirtualCode(
