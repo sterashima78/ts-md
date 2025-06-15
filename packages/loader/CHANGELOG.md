@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-loader
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`e5c09be`](https://github.com/sterashima78/ts-md/commit/e5c09be043834ee3b874a34a9475637a9979cec8)]:
+  - @sterashima78/ts-md-core@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
