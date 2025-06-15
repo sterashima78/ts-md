@@ -79,8 +79,8 @@ importers:
   packages/core:
     dependencies:
       '@sterashima78/ts-md-cli':
-        specifier: ^0.2.0
-        version: 0.2.0(typescript@5.8.3)
+        specifier: ^0.2.1
+        version: 0.2.1(typescript@5.8.3)
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
@@ -92,8 +92,8 @@ importers:
         version: 5.0.0
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.1.1
+        version: 0.1.1(typescript@5.8.3)
 
   packages/e2e:
     dependencies:
@@ -860,21 +860,21 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@sterashima78/ts-md-cli@0.2.0':
-    resolution: {integrity: sha512-7M3z1Pp7yfYe7SFaLDwTN1/rEfD6J9LsYsAEcsJFU/tTHFutBzVkPiQCVUXufGEVXAWajxfKQ8StSSu5l+xf+A==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-cli/0.2.0/cec1256e913757f58f59f4ed8fdb1994d205a2d5}
+  '@sterashima78/ts-md-cli@0.2.1':
+    resolution: {integrity: sha512-CAIz+5TxfUafarE9e4UduLJLesgHFwBRd3EiAHCBd6PgCIGlcswEx/dCNpHr4CE9HvEh4ulX3tS1T75oRql2gA==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-cli/0.2.1/9457280970675c66528b9e1e342ffc6f462022f1}
     hasBin: true
 
-  '@sterashima78/ts-md-core@0.0.3':
-    resolution: {integrity: sha512-VDEJvaEsLkmLZWFoQyk8p/mXThaiq46nhIG8Y4BtB1Nu5T1lkANiC5bQ/fL20a8CC0yNU3/Y9iAorRXhHa+Rqg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.3/c78e80cdb2156250de95b0060e07ab6aefe63917}
+  '@sterashima78/ts-md-core@0.0.4':
+    resolution: {integrity: sha512-KMOoPn/eydwlGAATe3ugV8sVXPEn802lke0sMckVrPmZBY6wqXKCW0P93nWxbPy3dpHhDi9uzYggw4BttiDGJg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.0.4/e3c336f8b3d6669d2941715bcd2cbee5e7555107}
 
-  '@sterashima78/ts-md-loader@0.0.3':
-    resolution: {integrity: sha512-PDl8MDK7zTUY/+MAnQDVq7fP1+osrWj3m1XFasC09v3ZPrxgSf+o5gVuaOCo3hw8hjqFrMLn6XaqZPu3iInNXw==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-loader/0.0.3/c92ae54c7edfe8574ea58be2b15734966cef09ab}
+  '@sterashima78/ts-md-loader@0.0.4':
+    resolution: {integrity: sha512-jM8F5HfZI4+GkLpkaONEb6CFUSYzA/fxCXhhQIEHzL5XE9PTO/KoTSLLj3tI7k3u2oDQHX7TLzT9rPmagdmamA==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-loader/0.0.4/7e3a3d47f4d0a4b06a66c0baf339e1e80e965e4d}
 
-  '@sterashima78/ts-md-ls-core@0.0.3':
-    resolution: {integrity: sha512-uAXrOtIfP7MsjwuOQ7xPEvo3aPL+kLdWzP4p7hBxy0GDMwZHwqPSS1yDn13mbwsVBHWkDkWdEw2df3VzKWH10g==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-ls-core/0.0.3/90ee061332665cb6755c5525b0d2188d561acd5d}
+  '@sterashima78/ts-md-ls-core@0.0.4':
+    resolution: {integrity: sha512-JgxhZdHN4mXLJmkWNG0CYukmszpTTIUiMWd/LkIozo5smj2rCsOgCYqVTLtud1gsJyHHEJJ2zHN8YfwjpWvO7w==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-ls-core/0.0.4/5faad4312b5fc634357dc172b282a636e47db1ca}
 
-  '@sterashima78/ts-md-unplugin@0.1.0':
-    resolution: {integrity: sha512-OONJpjQm5N7COpufsE5RJX8xIN7CkcspPD9/tAQKqTI2HzssdaCe4FV7e7idjdCxGDV+6v/mTS5UVNxVmCH6yA==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.1.0/26fdec9f8ba75ab46dee5d9b7123362572f6c4de}
+  '@sterashima78/ts-md-unplugin@0.1.1':
+    resolution: {integrity: sha512-6y42MK8zmJNHJsDlSCCjPmMIxmec/rFS+6UlW9lJOqnyEMz6hp+DPSVAs1opz0/jKwYnrCzknYJ08zU6USmMhA==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.1.1/86f497e5c6b34214111317938f431fc7da9c5b79}
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -3561,11 +3561,11 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@sterashima78/ts-md-cli@0.2.0(typescript@5.8.3)':
+  '@sterashima78/ts-md-cli@0.2.1(typescript@5.8.3)':
     dependencies:
-      '@sterashima78/ts-md-core': 0.0.3
-      '@sterashima78/ts-md-loader': 0.0.3
-      '@sterashima78/ts-md-ls-core': 0.0.3
+      '@sterashima78/ts-md-core': 0.0.4(typescript@5.8.3)
+      '@sterashima78/ts-md-loader': 0.0.4
+      '@sterashima78/ts-md-ls-core': 0.0.4
       '@volar/kit': 2.4.14(typescript@5.8.3)
       '@volar/typescript': 2.4.14
       commander: 11.1.0
@@ -3576,37 +3576,40 @@ snapshots:
       - supports-color
       - typescript
 
-  '@sterashima78/ts-md-core@0.0.3':
+  '@sterashima78/ts-md-core@0.0.4(typescript@5.8.3)':
     dependencies:
+      '@sterashima78/ts-md-cli': 0.2.1(typescript@5.8.3)
       remark-parse: 11.0.0
       unified: 11.0.5
       unist-util-visit: 5.0.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
 
-  '@sterashima78/ts-md-loader@0.0.3':
+  '@sterashima78/ts-md-loader@0.0.4':
     dependencies:
-      '@sterashima78/ts-md-core': 0.0.3
+      '@sterashima78/ts-md-core': 0.0.4(typescript@5.8.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-ls-core@0.0.3':
+  '@sterashima78/ts-md-ls-core@0.0.4':
     dependencies:
-      '@sterashima78/ts-md-core': 0.0.3
+      '@sterashima78/ts-md-core': 0.0.4(typescript@5.8.3)
       '@volar/language-core': 2.4.14
       '@volar/language-service': 2.4.14
       vscode-uri: 3.1.0
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-unplugin@0.1.0':
+  '@sterashima78/ts-md-unplugin@0.1.1(typescript@5.8.3)':
     dependencies:
       '@rollup/pluginutils': 5.1.4(rollup@4.41.1)
-      '@sterashima78/ts-md-core': 0.0.3
+      '@sterashima78/ts-md-core': 0.0.4(typescript@5.8.3)
       rollup: 4.41.1
       unplugin: 2.3.5
     transitivePeerDependencies:
       - supports-color
+      - typescript
 
   '@testing-library/dom@9.3.4':
     dependencies:
