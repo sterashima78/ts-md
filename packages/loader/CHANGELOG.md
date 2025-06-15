@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-loader
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`12ae44e`](https://github.com/sterashima78/ts-md/commit/12ae44e085315ee854e6f2e2d7f8a78d4b6151b8)]:
+  - @sterashima78/ts-md-core@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-core
 
+## 0.1.1
+
+### Patch Changes
+
+- [#103](https://github.com/sterashima78/ts-md/pull/103) [`12ae44e`](https://github.com/sterashima78/ts-md/commit/12ae44e085315ee854e6f2e2d7f8a78d4b6151b8) Thanks [@sterashima78](https://github.com/sterashima78)! - core: ts-md-cli のバージョンを 0.3.0 に更新し devDependencies に移動
+
 ## 0.1.0
 
 ### Minor Changes
