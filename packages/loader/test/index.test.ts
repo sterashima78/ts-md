@@ -21,7 +21,7 @@ describe('ts-md-loader', () => {
         '```',
         '',
         '```ts main',
-        'import { msg } from "#foo"',
+        'import { msg } from ":foo"',
         'console.log(msg)',
         '```',
       ].join('\n'),

@@ -22,7 +22,7 @@ describe('loader e2e', () => {
         '```',
         '',
         '```ts main',
-        'import { msg } from "#foo"',
+        'import { msg } from ":foo"',
         'console.log(msg)',
         '```',
       ].join('\n'),

@@ -1,33 +1,31 @@
-import { createRequire } from 'node:module';
 import {
   type TsMdVirtualFile,
   createTsMdPlugin,
 } from '@sterashima78/ts-md-ls-core';
-import type { LanguagePlugin } from '@volar/language-core';
-import { runTsc } from '@volar/typescript/lib/quickstart/runTsc.js';
+import { createTypeScriptInferredChecker } from '@volar/kit';
+import type { Diagnostic, LanguagePlugin } from '@volar/language-service';
 import pc from 'picocolors';
+import type { URI } from 'vscode-uri';
 import { expandGlobs } from '../utils/globs';
 
-export async function runCheck(globs: string[]) {
-  const files = await expandGlobs(globs.filter((g) => !g.startsWith('-')));
+export async function runCheck(globs: string[] = []) {
+  const files = await expandGlobs(globs);
   if (!files.length) return console.log(pc.yellow('No .ts.md files found.'));
 
-  const require = createRequire(import.meta.url);
+  const checker = createTypeScriptInferredChecker(
+    [createTsMdPlugin as unknown as LanguagePlugin<URI, TsMdVirtualFile>],
+    [],
+    () => files,
+  );
 
-  // tsc \u306b\u6b21\u306e\u30d5\u30a1\u30a4\u30eb\u3092\u6e21\u3059
-  const idx = process.argv.indexOf('check');
-  const rest =
-    idx >= 0
-      ? process.argv.slice(idx + 1).filter((a) => a.startsWith('-'))
-      : [];
-  process.argv =
-    idx >= 0
-      ? [...process.argv.slice(0, idx), ...files, ...rest]
-      : [process.argv[0], process.argv[1], ...files];
+  let errorCount = 0;
+  for (const file of files) {
+    const diags = (await checker.check(file)) as Diagnostic[];
+    if (diags.length) {
+      console.error(checker.printErrors(file, diags));
+    }
+    errorCount += diags.length;
+  }
 
-  runTsc(require.resolve('typescript/lib/tsc'), ['.ts.md'], () => ({
-    languagePlugins: [
-      createTsMdPlugin as unknown as LanguagePlugin<string, TsMdVirtualFile>,
-    ],
-  }));
+  if (errorCount) process.exit(1);
 }

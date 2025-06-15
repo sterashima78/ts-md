@@ -4,17 +4,17 @@ export function resolveImport(
   specifier: string,
   importer: string,
 ): { absPath: string; chunk: string } | undefined {
-  if (!specifier.startsWith('#')) return undefined;
-  const body = specifier.slice(1);
-  if (!body) return undefined;
-  const cleanImporter = importer.replace(/^\0?ts-md:/, '').replace(/\?.*$/, '');
-  if (body.includes(':')) {
-    const idx = body.indexOf(':');
-    const rel = body.slice(0, idx);
-    const chunk = body.slice(idx + 1);
-    if (!rel || !chunk) return undefined;
-    const absPath = path.resolve(path.dirname(cleanImporter), rel);
-    return { absPath, chunk };
+  if (!(specifier.includes('.ts.md:') || specifier.startsWith(':'))) {
+    return undefined;
   }
-  return { absPath: cleanImporter, chunk: body };
+  const idx = specifier.lastIndexOf(':');
+  if (idx === -1) return undefined;
+  const rel = specifier.slice(0, idx);
+  const chunk = specifier.slice(idx + 1);
+  if (!chunk) return undefined;
+  const cleanImporter = importer.replace(/^\0?ts-md:/, '').replace(/\?.*$/, '');
+  const absPath = rel
+    ? path.resolve(path.dirname(cleanImporter), rel)
+    : cleanImporter;
+  return { absPath, chunk };
 }

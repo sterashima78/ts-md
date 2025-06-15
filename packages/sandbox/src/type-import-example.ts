@@ -1,4 +1,4 @@
-import type { Greeter } from '#./types.ts.md:greeter';
+import type { Greeter } from './types.ts.md:greeter';
 
 const greeter: Greeter = {
   greet(message) {

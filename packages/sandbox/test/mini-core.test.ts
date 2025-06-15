@@ -1,5 +1,5 @@
-import { tangle } from '#../src/mini-core/tangle.ts.md:tangle';
 import { describe, expect, it } from 'vitest';
+import { tangle } from '../src/mini-core/tangle.ts.md:tangle';
 
 describe('mini-core.ts.md', () => {
   it('imports across files', () => {

@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 import type { LanguagePlugin } from '@volar/language-core';
 import ts from 'typescript';
 import { getChunkDict } from './parsers.js';
@@ -26,7 +25,7 @@ export const tsMdLanguagePlugin = {
     const dict = getChunkDict(snapshot, filePath);
     const uri =
       typeof fileName === 'string'
-        ? pathToFileURL(fileName).href
+        ? fileName
         : (fileName as unknown as { toString(): string }).toString();
     return new TsMdVirtualFile(snapshot, uri, dict);
   },
@@ -51,23 +50,23 @@ export const tsMdLanguagePlugin = {
   },
 
   resolveFileName(specifier: string, fromFile: string) {
-    if (!specifier.startsWith('#')) return;
-    const body = specifier.slice(1);
-    const idx = body.lastIndexOf(':');
+    if (!(specifier.includes('.ts.md:') || specifier.startsWith(':'))) return;
+    const idx = specifier.lastIndexOf(':');
     if (idx === -1) return;
-    const rel = body.slice(0, idx);
-    const chunk = body.slice(idx + 1);
+    const rel = specifier.slice(0, idx);
+    const chunk = specifier.slice(idx + 1);
+    if (!chunk) return;
     const baseFile =
       typeof fromFile === 'string'
         ? fromFile
         : (fromFile as unknown as { fsPath: string }).fsPath;
-    const abs = path.resolve(path.dirname(baseFile), rel);
-    return `#${pathToFileURL(abs).href}:${chunk}`;
+    const abs = rel ? path.resolve(path.dirname(baseFile), rel) : baseFile;
+    return `${abs}:${chunk}`;
   },
   typescript: {
     extraFileExtensions: [
       {
-        extension: 'ts.md',
+        extension: 'md',
         isMixedContent: true,
         scriptKind: ts.ScriptKind.TS,
       },
@@ -78,6 +77,9 @@ export const tsMdLanguagePlugin = {
         extension: '.ts',
         scriptKind: ts.ScriptKind.TS,
       };
+    },
+    getScript(root: TsMdVirtualFile) {
+      return root.id.endsWith('.ts.md') ? root : undefined;
     },
   },
 } as LanguagePlugin<string, TsMdVirtualFile> & {

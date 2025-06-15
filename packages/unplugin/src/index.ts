@@ -16,7 +16,7 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
     name: 'ts-md',
     enforce: 'pre',
     resolveId(id, importer) {
-      if (!id.startsWith('#') || !importer) return;
+      if (!(id.includes('.ts.md:') || id.startsWith(':')) || !importer) return;
       const info = resolveImport(id, importer);
       if (!info) return;
       const absPath = info.absPath;

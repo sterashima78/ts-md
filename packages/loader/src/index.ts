@@ -32,7 +32,7 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
   const specPath = specifier.startsWith('file:')
     ? fileURLToPath(specifier)
     : specifier;
-  if (specifier.startsWith('#') && parentURL) {
+  if (parentURL) {
     const info = resolveImport(specifier, parentURL);
     if (info) {
       const abs = path.resolve(info.absPath);
