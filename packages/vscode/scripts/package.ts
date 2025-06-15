@@ -1,3 +1,7 @@
+// VS Code 拡張パッケージ処理でパッケージ名に
+// スラッシュを含むと失敗するため、
+// name を一時的に "ts-md" に更えてパッケージ完了後に
+// 元に戻す。
 import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
