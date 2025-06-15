@@ -17,14 +17,14 @@
   "dependencies": {
     "remark-parse": "^11.0.0",
     "unified": "^11.0.0",
-    "unist-util-visit": "^5.0.0",
-    "@sterashima78/ts-md-cli": "^0.2.1"
+    "unist-util-visit": "^5.0.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "0.1.1"
+    "@sterashima78/ts-md-unplugin": "0.2.0",
+    "@sterashima78/ts-md-cli": "^0.3.0"
   }
 }
