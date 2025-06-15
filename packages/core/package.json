@@ -10,6 +10,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
+    "postbuild": "tsmd check --emitDeclarationOnly --outDir dist",
     "typecheck": "tsmd check --noEmit",
     "test": "vitest run"
   },
