@@ -22,7 +22,7 @@
     "tsx": "^4.8.1"
   },
   "devDependencies": {
-    "@types/vscode": "^1.89.0",
+    "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.4.2",
     "typescript": "^5.5.0",
     "vitest": "^1.5.1",
