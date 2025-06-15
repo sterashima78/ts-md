@@ -1,5 +1,14 @@
 # @sterashima78/ts-md-core
 
+## 0.0.4
+
+### Patch Changes
+
+- [#95](https://github.com/sterashima78/ts-md/pull/95) [`e5c09be`](https://github.com/sterashima78/ts-md/commit/e5c09be043834ee3b874a34a9475637a9979cec8) Thanks [@sterashima78](https://github.com/sterashima78)! - ts-md-cli で型定義を生成するよう build 後処理を追加しました。
+
+- Updated dependencies []:
+  - @sterashima78/ts-md-cli@0.2.1
+
 ## 0.0.3
 
 ### Patch Changes
