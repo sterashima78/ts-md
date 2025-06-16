@@ -23,8 +23,8 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
   if (context.parentURL) {
     if (context.parentURL.startsWith(VIRTUAL_PREFIX)) {
       const body = context.parentURL.slice(VIRTUAL_PREFIX.length);
-      const idx = body.lastIndexOf(':');
-      parentURL = body.slice(0, idx);
+      const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(body);
+      parentURL = m ? m[1] : body;
     } else {
       parentURL = fileURLToPath(context.parentURL);
     }
@@ -36,7 +36,7 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
     const info = resolveImport(specifier, parentURL);
     if (info) {
       const abs = path.resolve(info.absPath);
-      const url = `${VIRTUAL_PREFIX}${abs}:${info.chunk}`;
+      const url = `${VIRTUAL_PREFIX}${abs}__${info.chunk}.ts`;
       return { url, format: 'module', shortCircuit: true };
     }
   }
@@ -46,7 +46,7 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
       ? path.resolve(path.dirname(parentURL), specPath)
       : path.resolve(specPath);
     return {
-      url: `${VIRTUAL_PREFIX}${abs}:main`,
+      url: `${VIRTUAL_PREFIX}${abs}__main.ts`,
       format: 'module',
       shortCircuit: true,
     };
@@ -69,9 +69,9 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
 export const load: Load = async (url, context, defaultLoad) => {
   if (url.startsWith(VIRTUAL_PREFIX)) {
     const body = url.slice(VIRTUAL_PREFIX.length);
-    const idx = body.lastIndexOf(':');
-    const file = body.slice(0, idx);
-    const name = body.slice(idx + 1);
+    const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(body);
+    if (!m) return defaultLoad(url, context, defaultLoad);
+    const [, file, name] = m;
     const md = fs.readFileSync(file, 'utf8');
     const chunks = parseChunks(md, file);
     const chunk = chunks[name];

@@ -25,7 +25,7 @@ export class TsMdVirtualFile implements VirtualCode {
 
   private refreshEmbedded() {
     this.embeddedCodes = Object.entries(this.dict).map(([name, code]) => ({
-      id: `${this.uri}:${name}`,
+      id: `${this.uri}__${name}.ts`,
       languageId: 'ts',
       mappings: [],
       snapshot: {

@@ -61,7 +61,7 @@ export const tsMdLanguagePlugin = {
         ? fromFile
         : (fromFile as unknown as { fsPath: string }).fsPath;
     const abs = rel ? path.resolve(path.dirname(baseFile), rel) : baseFile;
-    return `${abs}:${chunk}`;
+    return `${abs}__${chunk}.ts`;
   },
   typescript: {
     extraFileExtensions: [

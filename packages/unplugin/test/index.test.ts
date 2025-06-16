@@ -30,7 +30,7 @@ describe('ts-md-unplugin', () => {
     const p = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
     const resolved = (p as any).resolveId('./doc.ts.md:main', entry);
-    expect(resolved).toBe(`${mdPath}?block=main&lang.ts`);
+    expect(resolved).toBe(`${mdPath}__main.ts`);
     const id = resolved as string;
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
     const loaded = await (p as any).load(id);
@@ -44,6 +44,6 @@ describe('ts-md-unplugin', () => {
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
     const loaded = await (p as any).load(mdPath);
     const code = typeof loaded === 'string' ? loaded : loaded?.code;
-    expect(code?.trim()).toBe(`export * from '${mdPath}?block=main&lang.ts'`);
+    expect(code?.trim()).toBe(`export * from '${mdPath}__main.ts'`);
   });
 });
