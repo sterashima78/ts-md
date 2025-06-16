@@ -1,0 +1,24 @@
+{
+  "name": "@sterashima78/ts-md-tsc",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "ts-md-tsc": "./index.js"
+  },
+  "main": "dist/index.js",
+  "files": ["dist", "index.js"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@volar/typescript": "^2.4.14",
+    "@sterashima78/ts-md-ls-core": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
+}
