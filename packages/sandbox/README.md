@@ -1,6 +1,7 @@
 # @sterashima78/ts-md-sandbox
 
 unplugin の検証用サンドボックス。`.ts.md` ファイルを tsup または Vite でビルドして実行します。
+型チェックと型定義生成には `ts-md-tsc` を使用しています。
 
 ```
 pnpm -F @sterashima78/ts-md-sandbox build

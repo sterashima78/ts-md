@@ -193,6 +193,9 @@ importers:
       '@sterashima78/ts-md-core':
         specifier: workspace:*
         version: link:../core
+      '@sterashima78/ts-md-tsc':
+        specifier: workspace:*
+        version: link:../tsc
 
   packages/tsc:
     dependencies:
