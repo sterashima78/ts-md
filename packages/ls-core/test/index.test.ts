@@ -58,7 +58,7 @@ describe('ts-md-ls-core diagnostics', () => {
       if (scripts.has(id)) return;
       let filePath: string;
       if (typeof id === 'string') {
-        const m = /^(.+):/.exec(id);
+        const m = /^(.*)__/.exec(id);
         if (!m) return;
         filePath = URI.parse(m[1]).fsPath;
       } else {

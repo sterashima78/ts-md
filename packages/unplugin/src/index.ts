@@ -19,29 +19,26 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
       if (!(id.includes('.ts.md:') || id.startsWith(':')) || !importer) return;
       const info = resolveImport(id, importer);
       if (!info) return;
-      const absPath = info.absPath;
-      const chunk = info.chunk;
-      return `${absPath}?block=${chunk}&lang.ts`;
+      const { absPath, chunk } = info;
+      return `${absPath}__${chunk}.ts`;
     },
     async load(id) {
-      const [file, query] = id.split('?', 2);
-      if (!filter(file)) return;
-
-      const params = new URLSearchParams(query);
-      const block = params.get('block');
-
-      if (block) {
+      const chunkMatch = /(.*\.ts\.md)__(.+)\.ts$/.exec(id);
+      if (chunkMatch) {
+        const [, file, block] = chunkMatch;
+        if (!filter(file)) return;
         const dict = cache.get(file) ?? (await parseFile(file));
         return dict[block];
       }
-
-      const dict = await parseFile(file);
+      if (!filter(id)) return;
+      const dict = await parseFile(id);
       return Object.keys(dict)
-        .map((c) => `export * from '${file}?block=${c}&lang.ts'`)
+        .map((c) => `export * from '${id}__${c}.ts'`)
         .join('\n');
     },
     async watchChange(id) {
-      const file = id.split('?')[0];
+      const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(id);
+      const file = m ? m[1] : id;
       if (filter(file)) await parseFile(file, true);
     },
   };

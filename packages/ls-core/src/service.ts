@@ -34,7 +34,7 @@ export function createTsMdLanguageService(files: string[]) {
     if (scripts.has(id)) return;
     let filePath: string;
     if (typeof id === 'string') {
-      const m = /^(.+):/.exec(id);
+      const m = /^(.*)__/.exec(id);
       if (!m) return;
       filePath = URI.parse(m[1]).fsPath;
     } else {
@@ -77,7 +77,7 @@ export async function collectDiagnostics(
       const md = fs.readFileSync(file, 'utf8');
       const dict = parseChunks(md, file);
       for (const [chunk, code] of Object.entries(dict)) {
-        const name = `${file}:${chunk}.ts`;
+        const name = `${file}__${chunk}.ts`;
         const options = {
           noEmit: true,
           module: ts.ModuleKind.CommonJS,
@@ -93,7 +93,7 @@ export async function collectDiagnostics(
         }
         host.getSourceFile = (f, l) => {
           if (f === name) return ts.createSourceFile(f, code, l);
-          const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+          const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(f);
           if (m) {
             const chunkCode = getChunkCode(m[1], m[2]);
             if (chunkCode) return ts.createSourceFile(f, chunkCode, l);
@@ -102,7 +102,7 @@ export async function collectDiagnostics(
         };
         host.readFile = (f) => {
           if (f === name) return code;
-          const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+          const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(f);
           if (m) {
             const chunkCode = getChunkCode(m[1], m[2]);
             if (chunkCode) return chunkCode;
@@ -111,7 +111,7 @@ export async function collectDiagnostics(
         };
         host.fileExists = (f) => {
           if (f === name) return true;
-          const m = /(.+\.ts\.md):(.+)\.ts$/.exec(f);
+          const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(f);
           if (m) {
             const chunkCode = getChunkCode(m[1], m[2]);
             return chunkCode !== undefined;
@@ -123,7 +123,7 @@ export async function collectDiagnostics(
             const info = resolveImport(n, file);
             if (info) {
               return {
-                resolvedFileName: `${info.absPath}:${info.chunk}.ts`,
+                resolvedFileName: `${info.absPath}__${info.chunk}.ts`,
                 extension: ts.Extension.Ts,
               } as ts.ResolvedModule;
             }
