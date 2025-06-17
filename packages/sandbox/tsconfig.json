@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "allowArbitraryExtensions": true
+    "allowArbitraryExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "*.ts.md": ["*.ts.md__main.ts"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.md"]
+  "include": ["src/**/*.ts", "src/**/*.ts.md"]
 }

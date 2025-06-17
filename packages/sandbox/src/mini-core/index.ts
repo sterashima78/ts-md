@@ -1,4 +1,4 @@
-export { parse } from './parser.ts.md:parser';
-export { resolveImport } from './resolver.ts.md:resolver';
-export { detectCycle } from './graph.ts.md:graph';
-export { tangle } from './tangle.ts.md:tangle';
+export { parse } from './parser.js';
+export { resolveImport } from './resolver.js';
+export { detectCycle } from './graph.js';
+export { tangle } from './tangle.js';

@@ -1,2 +1,2 @@
-import './app.ts.md:main';
+import './app.js';
 export * from './mini-core/index.js';

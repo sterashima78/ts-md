@@ -3,12 +3,12 @@ import { resolveImport } from '../src/resolver';
 
 describe('resolveImport', () => {
   it('resolves relative path', () => {
-    const res = resolveImport('./foo.ts.md:bar', '/a/b/main.ts.md');
-    expect(res).toEqual({ absPath: '/a/b/foo.ts.md', chunk: 'bar' });
+    const res = resolveImport('./foo.ts.md', '/a/b/main.ts.md');
+    expect(res).toEqual({ absPath: '/a/b/foo.ts.md', chunk: 'main' });
   });
   it('resolves parent dir', () => {
-    const res = resolveImport('../foo.ts.md:baz', '/a/b/c/app.ts.md');
-    expect(res).toEqual({ absPath: '/a/b/foo.ts.md', chunk: 'baz' });
+    const res = resolveImport('../foo.ts.md', '/a/b/c/app.ts.md');
+    expect(res).toEqual({ absPath: '/a/b/foo.ts.md', chunk: 'main' });
   });
   it('resolves chunk in same file', () => {
     const res = resolveImport('./doc.ts.md:qux', '/a/b/doc.ts.md');

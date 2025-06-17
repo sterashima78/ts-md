@@ -1,1 +1,1 @@
-import './app.ts.md:foo';
+import './app.ts.md';

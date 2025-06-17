@@ -17,7 +17,7 @@ pnpm -F @sterashima78/ts-md-sandbox test
 `src/import-example.ts` では `.ts` ファイルから `.ts.md` ファイルのチャンクをインポートしています。
 
 ```ts
-import './app.ts.md:foo'
+import './app.ts.md'
 ```
 
 ## ts.md ファイルから type インポートする例
@@ -26,7 +26,7 @@ import './app.ts.md:foo'
 インポートしています。
 
 ```ts
-import type { Greeter } from './types.ts.md:greeter'
+import type { Greeter } from './types.ts.md'
 ```
 
 ## モジュール間依存のある ts.md ファイルの例
