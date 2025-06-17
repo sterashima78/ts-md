@@ -1,7 +1,7 @@
 # Parser
 
-```ts parser
-import { extIsTs } from './utils.ts.md:utils'
+```ts main
+import { extIsTs } from './utils.ts.md'
 
 export interface ChunkDict {
   [name: string]: string

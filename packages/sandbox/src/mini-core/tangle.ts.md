@@ -1,7 +1,7 @@
 # Tangle
 
-```ts tangle
-import { detectCycle } from './graph.ts.md:graph'
+```ts main
+import { detectCycle } from './graph.ts.md'
 
 export function tangle(entry: string): string {
   return detectCycle(entry)
