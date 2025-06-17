@@ -50,17 +50,22 @@ export const tsMdLanguagePlugin = {
   },
 
   resolveFileName(specifier: string, fromFile: string) {
+    const baseFile =
+      typeof fromFile === 'string'
+        ? fromFile
+        : (fromFile as unknown as { fsPath: string }).fsPath;
+    if (specifier.endsWith('.ts.md') && !specifier.includes(':')) {
+      const abs = path.resolve(path.dirname(baseFile), specifier);
+      return `${abs}__main.ts`;
+    }
     if (!(specifier.includes('.ts.md:') || specifier.startsWith(':'))) return;
     const idx = specifier.lastIndexOf(':');
     if (idx === -1) return;
     const rel = specifier.slice(0, idx);
     const chunk = specifier.slice(idx + 1);
     if (!chunk) return;
-    const baseFile =
-      typeof fromFile === 'string'
-        ? fromFile
-        : (fromFile as unknown as { fsPath: string }).fsPath;
     const abs = rel ? path.resolve(path.dirname(baseFile), rel) : baseFile;
+    if (path.resolve(abs) !== path.resolve(baseFile)) return;
     return `${abs}__${chunk}.ts`;
   },
   typescript: {
@@ -72,8 +77,9 @@ export const tsMdLanguagePlugin = {
       },
     ],
     getServiceScript(root: TsMdVirtualFile) {
+      const main = root.embeddedCodes.find((c) => c.id.endsWith('__main.ts'));
       return {
-        code: root,
+        code: (main ?? root) as TsMdVirtualFile,
         extension: '.ts',
         scriptKind: ts.ScriptKind.TS,
       };

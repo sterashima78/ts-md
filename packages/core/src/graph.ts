@@ -18,8 +18,7 @@ export function detectCycle(
     const dict = dictProvider(file);
     const code = dict?.[chunk];
     if (code) {
-      const importRegex =
-        /import\s+(?:.+?\s+from\s+)?['"]([^'"\n]*(?:\.ts\.md)?:[^'"\n]+)['"]/g;
+      const importRegex = /import\s+(?:.+?\s+from\s+)?['"]([^'"\n]+)['"]/g;
       let m: RegExpExecArray | null = null;
       while (true) {
         m = importRegex.exec(code);

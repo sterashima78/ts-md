@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { createFilter } from '@rollup/pluginutils';
 import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import { createUnplugin } from 'unplugin';
@@ -16,6 +17,11 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
     name: 'ts-md',
     enforce: 'pre',
     resolveId(id, importer) {
+      if (/\.ts\.md__.+\.ts$/.test(id)) return id;
+      if (id.endsWith('.ts.md')) {
+        const abs = importer ? path.resolve(path.dirname(importer), id) : id;
+        return `${abs}__main.ts`;
+      }
       if (!(id.includes('.ts.md:') || id.startsWith(':')) || !importer) return;
       const info = resolveImport(id, importer);
       if (!info) return;
@@ -32,9 +38,8 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
       }
       if (!filter(id)) return;
       const dict = await parseFile(id);
-      return Object.keys(dict)
-        .map((c) => `export * from '${id}__${c}.ts'`)
-        .join('\n');
+      if (!dict.main) return '';
+      return `export * from '${id}__main.ts'`;
     },
     async watchChange(id) {
       const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(id);

@@ -1,7 +1,7 @@
-import type { Greeter } from './types.ts.md:greeter';
+import type { Greeter } from './types.ts.md';
 
 const greeter: Greeter = {
-  greet(message) {
+  greet(message: string) {
     console.log(message);
   },
 };

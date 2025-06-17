@@ -22,9 +22,17 @@ describe('ts-md-ls-core diagnostics', () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       aPath,
-      ['# A', '', '```ts foo', "export const msg: number = 'hi'", '```'].join(
-        '\n',
-      ),
+      [
+        '# A',
+        '',
+        '```ts foo',
+        "export const msg: number = 'hi'",
+        '```',
+        '',
+        '```ts main',
+        "export { msg } from '#foo'",
+        '```',
+      ].join('\n'),
     );
     fs.writeFileSync(
       mainPath,
@@ -32,8 +40,8 @@ describe('ts-md-ls-core diagnostics', () => {
         '# Main',
         '',
         '```ts main',
-        "import './a.ts.md:foo'",
-        "import { msg } from './a.ts.md:foo'",
+        "import './a.ts.md'",
+        "import { msg } from './a.ts.md'",
         'console.log(msg)',
         '```',
       ].join('\n'),

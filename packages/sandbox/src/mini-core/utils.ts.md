@@ -1,5 +1,5 @@
 # Utils
 
-```ts utils
+```ts main
 export const extIsTs = (file: string): boolean => file.endsWith('.ts');
 ```
