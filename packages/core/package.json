@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@sterashima78/ts-md-unplugin": "0.2.0",
-    "@sterashima78/ts-md-cli": "^0.3.0"
+    "@sterashima78/ts-md-cli": "^0.3.0",
+    "@types/mdast": "^4.0.4"
   }
 }

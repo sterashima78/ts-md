@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseChunks } from '../src/parser';
+import { parseChunkInfos, parseChunks } from '../src/parser';
 
 const md = [
   '# Title',
@@ -23,5 +23,14 @@ describe('parseChunks', () => {
   it('extracts named chunks', () => {
     expect(Object.keys(dict)).toEqual(['foo', 'path/to/bar.ts']);
     expect(dict.foo.trim().split('\n').length).toBe(2);
+  });
+});
+
+describe('parseChunkInfos', () => {
+  const dict = parseChunkInfos(md, '/doc.ts.md');
+  it('includes start and end offsets', () => {
+    expect(dict.foo.start).toBeLessThan(dict.foo.end);
+    expect(dict.foo.code).toContain('console.log(3)');
+    expect(dict['path/to/bar.ts'].code).toContain('console.log(2)');
   });
 });
