@@ -1,11 +1,11 @@
-import type { Mapping, VirtualCode } from '@volar/language-core';
+import type { CodeMapping, Mapping, VirtualCode } from '@volar/language-core';
 import type ts from 'typescript';
 import { getChunkInfoDict } from './parsers.js';
 
 export class TsMdVirtualFile implements VirtualCode {
   id!: string;
-  languageId = 'ts';
-  mappings: [] = [];
+  languageId = 'markdown';
+  mappings: CodeMapping[] = [];
   embeddedCodes: VirtualCode[] = [];
   linkedCodeMappings: Mapping[] = [];
 
@@ -30,6 +30,21 @@ export class TsMdVirtualFile implements VirtualCode {
     this.embeddedCodes = [];
     this.linkedCodeMappings = [];
     this.dict = {};
+    this.mappings = [
+      {
+        sourceOffsets: [0],
+        generatedOffsets: [0],
+        lengths: [this.snapshot.getLength()],
+        data: {
+          completion: true,
+          format: true,
+          navigation: true,
+          semantic: true,
+          structure: true,
+          verification: true,
+        },
+      },
+    ];
 
     for (const [name, info] of Object.entries(infoDict)) {
       const { code, start } = info;
