@@ -1,5 +1,6 @@
 import path from 'node:path';
-import type { LanguagePlugin } from '@volar/language-core';
+import { type LanguagePlugin, forEachEmbeddedCode } from '@volar/language-core';
+import type { TypeScriptExtraServiceScript } from '@volar/typescript';
 import ts from 'typescript';
 import { getChunkDict } from './parsers.js';
 import { TsMdVirtualFile } from './virtual-file.js';
@@ -71,20 +72,35 @@ export const tsMdLanguagePlugin = {
   typescript: {
     extraFileExtensions: [
       {
-        extension: 'md',
+        extension: 'ts.md',
         isMixedContent: true,
-        scriptKind: ts.ScriptKind.TS,
+        scriptKind: ts.ScriptKind.Deferred,
       },
     ],
     getServiceScript(root: TsMdVirtualFile) {
-      return {
-        code: root,
-        extension: '.ts',
-        scriptKind: ts.ScriptKind.TS,
-      };
+      const main = root.embeddedCodes.find((c) => c.id.endsWith('__main.ts'));
+      if (main) {
+        return {
+          code: main,
+          extension: '.ts',
+          scriptKind: ts.ScriptKind.TS,
+        };
+      }
+      return undefined;
     },
-    getScript(root: TsMdVirtualFile) {
-      return root.id.endsWith('.ts.md') ? root : undefined;
+    getExtraServiceScripts(_fileName: string, root: TsMdVirtualFile) {
+      const scripts: TypeScriptExtraServiceScript[] = [];
+      for (const code of forEachEmbeddedCode(root)) {
+        if (code.languageId === 'ts') {
+          scripts.push({
+            fileName: code.id,
+            code,
+            extension: '.ts',
+            scriptKind: ts.ScriptKind.TS,
+          });
+        }
+      }
+      return scripts;
     },
   },
 } as LanguagePlugin<string, TsMdVirtualFile> & {

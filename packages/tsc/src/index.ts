@@ -8,8 +8,8 @@ const require = createRequire(import.meta.url);
 runTsc(
   require.resolve('typescript/lib/tsc'),
   {
-    extraSupportedExtensions: ['.md'],
-    extraExtensionsToRemove: ['.md'],
+    extraSupportedExtensions: ['.ts.md'],
+    extraExtensionsToRemove: ['.ts.md'],
   },
   () => ({
     languagePlugins: [createTsMdPlugin],

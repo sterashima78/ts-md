@@ -140,6 +140,9 @@ importers:
       '@volar/language-service':
         specifier: ^2.4.14
         version: 2.4.14
+      '@volar/typescript':
+        specifier: ^2.4.14
+        version: 2.4.14
       vscode-uri:
         specifier: ^3.0.8
         version: 3.1.0
