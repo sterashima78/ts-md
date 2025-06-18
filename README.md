@@ -2,6 +2,8 @@
 
 Monorepo for literate TypeScript development tools.
 
+このプロジェクトはAIコーディングの実践を試しているもので、ほぼすべてのコードはAIによって作成されたものです。
+
 ## Quick Start
 
 ```bash
