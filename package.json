@@ -18,6 +18,7 @@
     "@changesets/cli": "^2.29.4",
     "@types/node": "^22.15.29",
     "@volar/kit": "^2.4.14",
+    "ts-morph": "^26.0.0",
     "tsup": "^8.5.0",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3",

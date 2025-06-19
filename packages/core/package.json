@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "remark-parse": "^11.0.0",
+    "ts-morph": "^26.0.0",
     "unified": "^11.0.0",
     "unist-util-visit": "^5.0.0"
   },
@@ -24,8 +25,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "0.2.0",
     "@sterashima78/ts-md-cli": "^0.3.0",
+    "@sterashima78/ts-md-unplugin": "0.2.0",
     "@types/mdast": "^4.0.4"
   }
 }
