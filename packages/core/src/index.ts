@@ -4,3 +4,4 @@ export { resolveImport } from './resolver';
 export { detectCycle } from './graph';
 export { tangle } from './tangle';
 export * from './utils';
+export { bundleMarkdown } from './bundle.js';

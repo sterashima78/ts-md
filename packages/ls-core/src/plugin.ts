@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { bundleMarkdown } from '@sterashima78/ts-md-core';
 import { type LanguagePlugin, forEachEmbeddedCode } from '@volar/language-core';
 import type { TypeScriptExtraServiceScript } from '@volar/typescript';
 import ts from 'typescript';
@@ -79,14 +80,19 @@ export const tsMdLanguagePlugin = {
     ],
     getServiceScript(root: TsMdVirtualFile) {
       const main = root.embeddedCodes.find((c) => c.id.endsWith('__main.ts'));
-      if (main) {
-        return {
-          code: main,
-          extension: '.ts',
-          scriptKind: ts.ScriptKind.TS,
-        };
-      }
-      return undefined;
+      if (!main) return undefined;
+      const text = root.snapshot.getText(0, root.snapshot.getLength());
+      const codeText = bundleMarkdown(text, root.id, 'main');
+      main.snapshot = {
+        getText: (s, e) => codeText.slice(s, e),
+        getLength: () => codeText.length,
+        getChangeRange: () => undefined,
+      };
+      return {
+        code: main,
+        extension: '.ts',
+        scriptKind: ts.ScriptKind.TS,
+      };
     },
     getExtraServiceScripts(_fileName: string, root: TsMdVirtualFile) {
       const scripts: TypeScriptExtraServiceScript[] = [];
