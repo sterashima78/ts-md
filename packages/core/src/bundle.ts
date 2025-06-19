@@ -25,8 +25,9 @@ export function bundleMarkdown(
     prefixDeclarations(file, prefix);
   }
 
-  for (const file of Object.values(files)) {
+  for (const [name, file] of Object.entries(files)) {
     transformImportsExports(file);
+    if (name !== entry) removeExports(file);
   }
 
   let output = '';
@@ -168,5 +169,14 @@ function transformImportsExports(file: import('ts-morph').SourceFile) {
       }
       exp.replaceWithText(`export { ${parts.join(', ')} };`);
     }
+  }
+}
+
+function removeExports(file: import('ts-morph').SourceFile) {
+  for (const exp of file.getExportDeclarations()) {
+    exp.remove();
+  }
+  for (const ass of file.getExportAssignments()) {
+    ass.remove();
   }
 }
