@@ -19,5 +19,6 @@ describe('bundleMarkdown', () => {
   it('bundles chunks with prefix', () => {
     expect(code).toContain('const foo_msg');
     expect(code).toContain('console.log(foo_msg)');
+    expect(code).not.toContain('export { foo_msg as msg }');
   });
 });
