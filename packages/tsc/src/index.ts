@@ -27,6 +27,17 @@ try {
 } catch {
   // noop
 }
+const outDirArgIndex = args.findIndex((a) => a === '--outDir');
+if (outDirArgIndex >= 0) {
+  const v = args[outDirArgIndex + 1];
+  if (v) outDir = path.resolve(v);
+} else {
+  const prefixed = args.find((a) => a.startsWith('--outDir='));
+  if (prefixed) {
+    const v = prefixed.slice('--outDir='.length);
+    if (v) outDir = path.resolve(v);
+  }
+}
 
 process.on('exit', () => renameDts(outDir, path.dirname(tsconfigPath)));
 
@@ -55,10 +66,17 @@ function renameDts(outDir: string, configDir: string) {
       }
       if (!entry.isFile() || !p.endsWith('.d.ts')) continue;
       const rel = path.relative(outDir, p);
-      const src = path.join(configDir, rel.replace(/\.d\.ts$/, '.ts.md'));
-      if (fs.existsSync(src)) {
-        const dest = p.replace(/\.d\.ts$/, '.ts.md.d.ts');
-        fs.renameSync(p, dest);
+      const base = rel.replace(/\.d\.ts$/, '.ts.md');
+      const candidates = [
+        path.join(configDir, base),
+        path.join(configDir, 'src', base),
+      ];
+      for (const src of candidates) {
+        if (fs.existsSync(src)) {
+          const dest = p.replace(/\.d\.ts$/, '.ts.md.d.ts');
+          fs.renameSync(p, dest);
+          break;
+        }
       }
     }
   }
