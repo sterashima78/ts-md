@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "include": ["src"],
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext"
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowArbitraryExtensions": true
   }
 }
