@@ -1,5 +1,21 @@
 # @sterashima78/ts-md-core
 
+## 0.2.0
+
+### Minor Changes
+
+- [#114](https://github.com/sterashima78/ts-md/pull/114) [`2cd4486`](https://github.com/sterashima78/ts-md/commit/2cd44869c6d1888ba0df15b91c0ea69b909cb54e) Thanks [@sterashima78](https://github.com/sterashima78)! - メインコードブロックを起点に ts.md 内のコードを結合するバンドル処理を追加しました。
+
+- [#109](https://github.com/sterashima78/ts-md/pull/109) [`60ef1b3`](https://github.com/sterashima78/ts-md/commit/60ef1b33ea87d49ef0c323ccf1e58a5d9d79d7d3) Thanks [@sterashima78](https://github.com/sterashima78)! - チャンク名を指定した `.ts.md` ファイル間のインポートを廃止し、
+  `main` チャンクのみを他ファイルから参照できる仕様に変更しました。
+  他のチャンクは同一ファイル内でのみ参照できます。
+
+### Patch Changes
+
+- [#115](https://github.com/sterashima78/ts-md/pull/115) [`5bc7f40`](https://github.com/sterashima78/ts-md/commit/5bc7f40505c3732df04c541f1c51535c01b02941) Thanks [@sterashima78](https://github.com/sterashima78)! - バンドル出力から main 以外のチャンクの export を削除しました。
+
+- [#103](https://github.com/sterashima78/ts-md/pull/103) [`12ae44e`](https://github.com/sterashima78/ts-md/commit/12ae44e085315ee854e6f2e2d7f8a78d4b6151b8) Thanks [@sterashima78](https://github.com/sterashima78)! - core: ts-md-cli のバージョンを 0.3.0 に更新し devDependencies に移動
+
 ## 0.1.0
 
 ### Minor Changes
