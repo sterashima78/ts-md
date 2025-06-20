@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-monaco
 
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies [[`2cd4486`](https://github.com/sterashima78/ts-md/commit/2cd44869c6d1888ba0df15b91c0ea69b909cb54e), [`60ef1b3`](https://github.com/sterashima78/ts-md/commit/60ef1b33ea87d49ef0c323ccf1e58a5d9d79d7d3), [`bc02220`](https://github.com/sterashima78/ts-md/commit/bc02220aa7d443454b35479080bc253aa6443a26)]:
+  - @sterashima78/ts-md-ls-core@0.2.0
+
 ## 0.0.5
 
 ### Patch Changes

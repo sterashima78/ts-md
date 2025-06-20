@@ -1,5 +1,20 @@
 # @sterashima78/ts-md-unplugin
 
+## 0.3.0
+
+### Minor Changes
+
+- [#109](https://github.com/sterashima78/ts-md/pull/109) [`60ef1b3`](https://github.com/sterashima78/ts-md/commit/60ef1b33ea87d49ef0c323ccf1e58a5d9d79d7d3) Thanks [@sterashima78](https://github.com/sterashima78)! - チャンク名を指定した `.ts.md` ファイル間のインポートを廃止し、
+  `main` チャンクのみを他ファイルから参照できる仕様に変更しました。
+  他のチャンクは同一ファイル内でのみ参照できます。
+
+- [#105](https://github.com/sterashima78/ts-md/pull/105) [`bc02220`](https://github.com/sterashima78/ts-md/commit/bc02220aa7d443454b35479080bc253aa6443a26) Thanks [@sterashima78](https://github.com/sterashima78)! - 仮想モジュールの命名規則を `${filename}__${chunk}.ts` に統一しました。
+
+### Patch Changes
+
+- Updated dependencies [[`2cd4486`](https://github.com/sterashima78/ts-md/commit/2cd44869c6d1888ba0df15b91c0ea69b909cb54e), [`60ef1b3`](https://github.com/sterashima78/ts-md/commit/60ef1b33ea87d49ef0c323ccf1e58a5d9d79d7d3), [`5bc7f40`](https://github.com/sterashima78/ts-md/commit/5bc7f40505c3732df04c541f1c51535c01b02941), [`12ae44e`](https://github.com/sterashima78/ts-md/commit/12ae44e085315ee854e6f2e2d7f8a78d4b6151b8)]:
+  - @sterashima78/ts-md-core@0.2.0
+
 ## 0.2.0
 
 ### Minor Changes
