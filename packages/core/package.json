@@ -10,8 +10,8 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
-    "postbuild": "tsmd check --emitDeclarationOnly --outDir dist",
-    "typecheck": "tsmd check --noEmit",
+    "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",
+    "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
@@ -25,8 +25,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-cli": "^0.3.0",
-    "@sterashima78/ts-md-unplugin": "0.2.0",
+    "@sterashima78/ts-md-tsc": "^0.1.0",
+    "@sterashima78/ts-md-unplugin": "0.3.0",
     "@types/mdast": "^4.0.4"
   }
 }
