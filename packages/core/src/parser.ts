@@ -2,7 +2,7 @@ import type { Code, Html, Root } from 'mdast';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
-import { extIsTs } from './utils';
+import { extIsTs } from './utils.ts.md';
 
 export interface ChunkDict {
   [name: string]: string;

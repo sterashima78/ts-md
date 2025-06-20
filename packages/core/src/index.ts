@@ -3,5 +3,5 @@ export type { ChunkInfo } from './parser';
 export { resolveImport } from './resolver';
 export { detectCycle } from './graph';
 export { tangle } from './tangle';
-export * from './utils';
+export * from './utils.ts.md';
 export { bundleMarkdown } from './bundle.js';

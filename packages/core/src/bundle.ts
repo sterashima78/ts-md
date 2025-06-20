@@ -1,6 +1,6 @@
 import { Project, SyntaxKind } from 'ts-morph';
 import { parseChunkInfos } from './parser.js';
-import { escapeChunk } from './utils.js';
+import { escapeChunk } from './utils.ts.md';
 
 export function bundleMarkdown(
   markdown: string,

@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { ChunkDict } from './parser';
-import { escapeChunk } from './utils';
+import { escapeChunk } from './utils.ts.md';
 
 export async function tangle(
   dict: ChunkDict,
