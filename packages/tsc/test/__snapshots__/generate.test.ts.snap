@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ts-md-tsc > generates dts for mixed refs 1`] = `
+"declare function bar_bar(): string;
+export { bar_bar as bar };
+"
+`;
