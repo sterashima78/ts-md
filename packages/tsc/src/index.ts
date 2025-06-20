@@ -1,9 +1,34 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import { createTsMdPlugin } from '@sterashima78/ts-md-ls-core';
 import { runTsc } from '@volar/typescript/lib/quickstart/runTsc.js';
+import ts from 'typescript';
 
 const require = createRequire(import.meta.url);
+
+const args = process.argv.slice(2);
+const projectIdx = args.findIndex((a) => a === '-p' || a === '--project');
+const tsconfigPath =
+  projectIdx >= 0
+    ? path.resolve(args[projectIdx + 1])
+    : path.resolve('tsconfig.json');
+
+let outDir = path.join(path.dirname(tsconfigPath), 'dist');
+try {
+  const raw = ts.readConfigFile(tsconfigPath, ts.sys.readFile).config;
+  const parsed = ts.parseJsonConfigFileContent(
+    raw,
+    ts.sys,
+    path.dirname(tsconfigPath),
+  );
+  if (parsed.options.outDir) outDir = parsed.options.outDir;
+} catch {
+  // noop
+}
+
+process.on('exit', () => renameDts(outDir, path.dirname(tsconfigPath)));
 
 runTsc(
   require.resolve('typescript/lib/tsc'),
@@ -15,3 +40,26 @@ runTsc(
     languagePlugins: [createTsMdPlugin],
   }),
 );
+
+function renameDts(outDir: string, configDir: string) {
+  if (!fs.existsSync(outDir)) return;
+  const stack = [outDir];
+  while (stack.length) {
+    const dir = stack.pop();
+    if (!dir) continue;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(p);
+        continue;
+      }
+      if (!entry.isFile() || !p.endsWith('.d.ts')) continue;
+      const rel = path.relative(outDir, p);
+      const src = path.join(configDir, rel.replace(/\.d\.ts$/, '.ts.md'));
+      if (fs.existsSync(src)) {
+        const dest = p.replace(/\.d\.ts$/, '.ts.md.d.ts');
+        fs.renameSync(p, dest);
+      }
+    }
+  }
+}
