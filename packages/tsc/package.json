@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@volar/typescript": "^2.4.14",
-    "@sterashima78/ts-md-ls-core": "workspace:*"
+    "@sterashima78/ts-md-ls-core": "workspace:*",
+    "fast-glob": "^3.3.3",
+    "load-tsconfig": "^0.2.5"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

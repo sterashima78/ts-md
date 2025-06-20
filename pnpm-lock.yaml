@@ -217,6 +217,12 @@ importers:
       '@volar/typescript':
         specifier: ^2.4.14
         version: 2.4.14
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
+      load-tsconfig:
+        specifier: ^0.2.5
+        version: 0.2.5
 
   packages/unplugin:
     dependencies:
