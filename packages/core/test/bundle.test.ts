@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bundleMarkdown } from '../src/bundle';
+import { bundleMarkdown } from '../src/bundle.ts.md';
 
 const md = [
   '# Test',
