@@ -2,9 +2,9 @@ import tsMd from '@sterashima78/ts-md-unplugin/esbuild';
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: { index: 'src/index.ts.md' },
   format: ['esm'],
-  dts: true,
+  dts: false,
   clean: true,
   target: 'node18',
   outExtension: () => ({ js: '.js' }),
