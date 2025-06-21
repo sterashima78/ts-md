@@ -12,6 +12,9 @@
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*"
   },
+  "devDependencies": {
+    "@sterashima78/ts-md-unplugin": "0.3.0"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
