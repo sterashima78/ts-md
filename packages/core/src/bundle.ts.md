@@ -20,30 +20,34 @@ export function bundleMarkdown(
   entry = 'main',
 ): string {
   const infos = parseChunkInfos(markdown, uri);
-  const ordered = Object.entries(infos).sort((a, b) => a[1].start - b[1].start);
+  const orderedAll = Object.entries(infos).sort((a, b) => a[1].start - b[1].start);
+  const ordered = orderedAll.filter(([name]) => !name.endsWith('.test'));
   const project = new Project({
     useInMemoryFileSystem: true,
     compilerOptions: { allowJs: true },
   });
   const files: Record<string, import('ts-morph').SourceFile> = {};
-  for (const [name, info] of ordered) {
+  for (const [name, info] of orderedAll) {
     files[name] = project.createSourceFile(`${name}.ts`, info.code, {
       overwrite: true,
     });
   }
 
   for (const [name, file] of Object.entries(files)) {
+    if (name.endsWith('.test')) continue;
     const prefix = `${escapeChunk(name)}_`;
     prefixDeclarations(file, prefix);
   }
 
   for (const [name, file] of Object.entries(files)) {
+    if (name.endsWith('.test')) continue;
     transformImportsExports(file);
     if (name !== entry) removeExports(file);
   }
 
   let output = '';
-  for (const [name] of ordered) {
+  for (const [name] of orderedAll) {
+    if (name.endsWith('.test')) continue;
     if (name === entry) continue;
     output += `${files[name].getFullText()}\n`;
   }
@@ -197,6 +201,18 @@ export function transformImportsExports(file: import('ts-morph').SourceFile) {
         parts.push(`${prefix}${spec.getName()} as ${alias}`);
       }
       exp.replaceWithText(`export { ${parts.join(', ')} };`);
+    }
+  }
+
+  for (const call of file.getDescendantsOfKind(SyntaxKind.CallExpression)) {
+    if (call.getExpression().getKind() === SyntaxKind.ImportKeyword) {
+      const arg = call.getArguments()[0];
+      if (arg && arg.getKind() === SyntaxKind.StringLiteral) {
+        const mod = arg.getLiteralText();
+        if (mod.startsWith(':') && mod.endsWith('.test')) {
+          call.remove();
+        }
+      }
     }
   }
 }
