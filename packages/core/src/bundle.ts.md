@@ -239,4 +239,37 @@ export function removeExports(file: import('ts-morph').SourceFile) {
 
 ```ts main
 export { bundleMarkdown } from ':bundleMarkdown';
+
+if (import.meta.vitest) {
+  await import(':bundleMarkdown.test');
+}
+```
+
+## Tests
+
+```ts bundleMarkdown.test
+import { describe, expect, it } from 'vitest';
+import { bundleMarkdown } from ':bundleMarkdown';
+
+describe('bundleMarkdown', () => {
+  const md = [
+    '# Test',
+    '',
+    '`' + '`' + '`' + 'ts main',
+    "import { msg } from ':foo'",
+    'console.log(msg)',
+    '`' + '`' + '`',
+    '',
+    '`' + '`' + '`' + 'ts foo',
+    "export const msg = 'hi'",
+    '`' + '`' + '`',
+  ].join('\n');
+
+  const code = bundleMarkdown(md, '/doc.ts.md');
+  it('bundles chunks with prefix', () => {
+    expect(code).toContain('const foo_msg');
+    expect(code).toContain('console.log(foo_msg)');
+    expect(code).not.toContain('export { foo_msg as msg }');
+  });
+});
 ```
