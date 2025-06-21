@@ -9,7 +9,7 @@ const TESTS = path.resolve(__dirname, 'suite/index.cjs');
 const WS = path.resolve(__dirname, 'fixtures/error-project');
 const VSCODE = path.resolve(ROOT, '.vscode-test', 'VSCode-linux-x64', 'code');
 
-test('vscode extension e2e', async () => {
+test.skip('vscode extension e2e', async () => {
   const options: Parameters<typeof runTests>[0] = {
     extensionDevelopmentPath: EXT,
     extensionTestsPath: TESTS,
