@@ -1,3 +1,6 @@
+# Graph
+
+```ts main
 import type { ChunkDict } from './parser';
 import { resolveImport } from './resolver';
 
@@ -42,3 +45,4 @@ function split(node: string): [string, string] {
   const idx = node.lastIndexOf(':');
   return [node.slice(0, idx), node.slice(idx + 1)];
 }
+```
