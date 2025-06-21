@@ -69,16 +69,18 @@ export function prefixDeclarations(
   file: import('ts-morph').SourceFile,
   prefix: string,
 ) {
-  for (const stmt of file.getStatements()) {
+  for (let i = 0; i < file.getStatements().length; i++) {
+    const stmt = file.getStatements()[i];
     if (stmt.getKind() === SyntaxKind.VariableStatement) {
       const vs = stmt.asKindOrThrow(SyntaxKind.VariableStatement);
       const exports: string[] = [];
+      const isExport = vs.hasExportKeyword();
       for (const decl of vs.getDeclarationList().getDeclarations()) {
         const name = decl.getNameNode();
         if (name.getKind() === SyntaxKind.Identifier) {
           const orig = name.getText();
           (name as import('ts-morph').Identifier).rename(`${prefix}${orig}`);
-          if (vs.hasExportKeyword())
+          if (isExport)
             exports.push(`${prefix}${orig} as ${orig}`);
         }
       }
