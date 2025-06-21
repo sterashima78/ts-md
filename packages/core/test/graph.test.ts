@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectCycle } from '../src/graph';
+import { detectCycle } from '../src/graph.ts.md';
 import { resolveImport } from '../src/resolver';
 
 describe('detectCycle', () => {
