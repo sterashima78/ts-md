@@ -112,6 +112,9 @@ importers:
       '@sterashima78/ts-md-loader':
         specifier: workspace:*
         version: link:../loader
+      '@sterashima78/ts-md-tsc':
+        specifier: workspace:*
+        version: link:../tsc
       '@sterashima78/ts-md-vscode':
         specifier: workspace:*
         version: link:../vscode

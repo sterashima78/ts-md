@@ -3,12 +3,11 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const fixture = path.join(__dirname, 'fixtures', 'generate');
+const fixture = path.join(__dirname, 'fixtures', 'tsc');
 const tsconfig = path.join(fixture, 'tsconfig.json');
 
 async function runTsc() {
-  const cli = path.resolve(__dirname, '..', 'dist', 'index.js');
-  execSync(`node ${cli} -p ${tsconfig} --emitDeclarationOnly`, {
+  execSync(`pnpm exec ts-md-tsc -p ${tsconfig} --emitDeclarationOnly`, {
     cwd: fixture,
     stdio: 'inherit',
   });
