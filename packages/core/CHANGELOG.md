@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-core
 
+## 0.2.1
+
+### Patch Changes
+
+- [#137](https://github.com/sterashima78/ts-md/pull/137) [`e0c908c`](https://github.com/sterashima78/ts-md/commit/e0c908c120e78cde35c44a925c57ce25ff6dee65) Thanks [@sterashima78](https://github.com/sterashima78)! - ts.md のバンドル時に `.test` チャンクを除外するようにしました
+
 ## 0.2.0
 
 ### Minor Changes
