@@ -1,6 +1,10 @@
 # Resolver
 
-```ts main
+ts.md の import 文字列を絶対パスとチャンク名に分解するユーティリティです。
+
+## resolveImport: import 解析
+
+```ts resolveImport
 import path from 'node:path';
 
 export function resolveImport(
@@ -33,4 +37,10 @@ export function resolveImport(
   }
   return { absPath, chunk };
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { resolveImport } from ':resolveImport';
 ```
