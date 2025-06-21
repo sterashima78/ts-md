@@ -13,13 +13,32 @@ export function split(node: string): [string, string] {
 }
 ```
 
+## collectDependencies: import 抽出
+
+コード中の `import` 文から依存チャンクを列挙します。
+
+```ts collectDependencies
+import { resolveImport } from './resolver.ts.md';
+
+export function collectDependencies(code: string, file: string): string[] {
+  const deps: string[] = [];
+  const importRegex = /import\s+(?:.+?\s+from\s+)?['"]([^'"\n]+)['"]/g;
+  let m: RegExpExecArray | null = null;
+  while ((m = importRegex.exec(code))) {
+    const info = resolveImport(m[1], file);
+    if (info) deps.push(`${info.absPath}:${info.chunk}`);
+  }
+  return deps;
+}
+```
+
 ## detectCycle: 深さ優先探索による循環検出
 
 `entry` を起点に依存チャンクを辿り、循環が見つかった場合はその経路を返します。
 
 ```ts detectCycle
 import type { ChunkDict } from './parser.ts.md';
-import { resolveImport } from './resolver.ts.md';
+import { collectDependencies } from ':collectDependencies';
 import { split } from ':split';
 
 export function detectCycle(
@@ -39,17 +58,9 @@ export function detectCycle(
     const dict = dictProvider(file);
     const code = dict?.[chunk];
     if (code) {
-      const importRegex = /import\s+(?:.+?\s+from\s+)?['"]([^'"\n]+)['"]/g;
-      let m: RegExpExecArray | null = null;
-      while (true) {
-        m = importRegex.exec(code);
-        if (!m) break;
-        const info = resolveImport(m[1], file);
-        if (info) {
-          const child = `${info.absPath}:${info.chunk}`;
-          const res = dfs(child);
-          if (res) return res;
-        }
+      for (const child of collectDependencies(code, file)) {
+        const res = dfs(child);
+        if (res) return res;
       }
     }
     stack.pop();
@@ -59,18 +70,6 @@ export function detectCycle(
   return dfs(entry);
 }
 ```
-
-## 公開インタフェース
-
-```ts main
-export { detectCycle } from ':detectCycle';
-
-if (import.meta.vitest) {
-  await import(':detectCycle.test');
-}
-```
-
-## Tests
 
 ```ts detectCycle.test
 import { describe, expect, it } from 'vitest';
@@ -95,3 +94,11 @@ describe('detectCycle', () => {
 });
 ```
 
+## 公開インタフェース
+
+```ts main
+export { detectCycle } from ':detectCycle';
+
+if (import.meta.vitest) {
+  await import(':detectCycle.test');
+}

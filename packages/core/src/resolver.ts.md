@@ -2,22 +2,33 @@
 
 ts.md の import 文字列を絶対パスとチャンク名に分解するユーティリティです。
 
+## cleanImporter: インポート元の正規化
+
+余分なプレフィックスやクエリ文字を取り除きます。
+
+```ts cleanImporter
+export function cleanImporter(importer: string): string {
+  return importer
+    .replace(/^\0?ts-md:/, '')
+    .replace(/\?.*$/, '')
+    .replace(/__[^/]+\.ts$/, '');
+}
+```
+
 ## resolveImport: import 解析
 
 ```ts resolveImport
 import path from 'node:path';
+import { cleanImporter } from ':cleanImporter';
 
 export function resolveImport(
   specifier: string,
   importer: string,
 ): { absPath: string; chunk: string } | undefined {
-  const cleanImporter = importer
-    .replace(/^\0?ts-md:/, '')
-    .replace(/\?.*$/, '')
-    .replace(/__[^/]+\.ts$/, '');
+  const base = cleanImporter(importer);
 
   if (specifier.endsWith('.ts.md') && !specifier.includes(':')) {
-    const absPath = path.resolve(path.dirname(cleanImporter), specifier);
+    const absPath = path.resolve(path.dirname(base), specifier);
     return { absPath, chunk: 'main' };
   }
 
@@ -30,26 +41,14 @@ export function resolveImport(
   const chunk = specifier.slice(idx + 1);
   if (!chunk) return undefined;
   const absPath = rel
-    ? path.resolve(path.dirname(cleanImporter), rel)
-    : cleanImporter;
-  if (path.resolve(absPath) !== path.resolve(cleanImporter)) {
+    ? path.resolve(path.dirname(base), rel)
+    : base;
+  if (path.resolve(absPath) !== path.resolve(base)) {
     return undefined;
   }
   return { absPath, chunk };
 }
 ```
-
-## 公開インタフェース
-
-```ts main
-export { resolveImport } from ':resolveImport';
-
-if (import.meta.vitest) {
-  await import(':resolveImport.test');
-}
-```
-
-## Tests
 
 ```ts resolveImport.test
 import { describe, expect, it } from 'vitest';
@@ -74,3 +73,14 @@ describe('resolveImport', () => {
   });
 });
 ```
+
+## 公開インタフェース
+
+```ts main
+export { resolveImport } from ':resolveImport';
+
+if (import.meta.vitest) {
+  await import(':resolveImport.test');
+}
+```
+

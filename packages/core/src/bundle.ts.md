@@ -2,14 +2,38 @@
 
 複数のチャンクを結合して一つの TypeScript ファイルを生成するモジュールです。
 
+## loadSourceFiles: ts-morph プロジェクト生成
+
+チャンク情報を受け取り `ts-morph` のソースファイルとして読み込みます。
+
+```ts loadSourceFiles
+import { Project } from 'ts-morph';
+import type { ChunkInfo } from './parser.ts.md';
+
+export function loadSourceFiles(infos: Record<string, ChunkInfo>) {
+  const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: { allowJs: true },
+  });
+  const files: Record<string, import('ts-morph').SourceFile> = {};
+  for (const [name, info] of Object.entries(infos)) {
+    files[name] = project.createSourceFile(`${name}.ts`, info.code, {
+      overwrite: true,
+    });
+  }
+  return files;
+}
+```
+
 ## bundleMarkdown: チャンクの結合
 
 Markdown 内のチャンク群を解析し、宣言の衝突を避けながら単一ファイルへまとめます。
 
 ```ts bundleMarkdown
-import { Project, SyntaxKind } from 'ts-morph';
+import { SyntaxKind } from 'ts-morph';
 import { parseChunkInfos } from './parser.ts.md';
 import { escapeChunk } from './utils.ts.md';
+import { loadSourceFiles } from ':loadSourceFiles';
 import { prefixDeclarations } from ':prefixDeclarations';
 import { transformImportsExports } from ':transformImportsExports';
 import { removeExports } from ':removeExports';
@@ -22,16 +46,7 @@ export function bundleMarkdown(
   const infos = parseChunkInfos(markdown, uri);
   const orderedAll = Object.entries(infos).sort((a, b) => a[1].start - b[1].start);
   const ordered = orderedAll.filter(([name]) => !name.endsWith('.test'));
-  const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: { allowJs: true },
-  });
-  const files: Record<string, import('ts-morph').SourceFile> = {};
-  for (const [name, info] of orderedAll) {
-    files[name] = project.createSourceFile(`${name}.ts`, info.code, {
-      overwrite: true,
-    });
-  }
+  const files = loadSourceFiles(infos);
 
   for (const [name, file] of Object.entries(files)) {
     if (name.endsWith('.test')) continue;
@@ -56,6 +71,33 @@ export function bundleMarkdown(
   }
   return output;
 }
+```
+
+```ts bundleMarkdown.test
+import { describe, expect, it } from 'vitest';
+import { bundleMarkdown } from ':bundleMarkdown';
+
+const md = [
+  '# Test',
+  '',
+  '```ts main',
+  "import { msg } from ':foo'",
+  'console.log(msg)',
+  '```',
+  '',
+  '```ts foo',
+  "export const msg = 'hi'",
+  '```',
+].join('\n');
+
+describe('bundleMarkdown', () => {
+  const code = bundleMarkdown(md, '/doc.ts.md');
+  it('bundles chunks with prefix', () => {
+    expect(code).toContain('const foo_msg');
+    expect(code).toContain('console.log(foo_msg)');
+    expect(code).not.toContain('export { foo_msg as msg }');
+  });
+});
 ```
 
 ## prefixDeclarations: 宣言の衝突回避
@@ -243,31 +285,3 @@ if (import.meta.vitest) {
 }
 ```
 
-## Tests
-
-```ts bundleMarkdown.test
-import { describe, expect, it } from 'vitest';
-import { bundleMarkdown } from ':bundleMarkdown';
-
-const md = [
-  '# Test',
-  '',
-  '```ts main',
-  "import { msg } from ':foo'",
-  'console.log(msg)',
-  '```',
-  '',
-  '```ts foo',
-  "export const msg = 'hi'",
-  '```',
-].join('\n');
-
-describe('bundleMarkdown', () => {
-  const code = bundleMarkdown(md, '/doc.ts.md');
-  it('bundles chunks with prefix', () => {
-    expect(code).toContain('const foo_msg');
-    expect(code).toContain('console.log(foo_msg)');
-    expect(code).not.toContain('export { foo_msg as msg }');
-  });
-});
-```

@@ -2,6 +2,22 @@
 
 Markdown から抽出したチャンクを実際のファイルへ書き出すユーティリティです。
 
+## prepareOutput: 出力ディレクトリ作成
+
+基準ファイル名からディレクトリを決定し、存在しなければ生成します。
+
+```ts prepareOutput
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+export async function prepareOutput(baseFile: string, outDir: string): Promise<string> {
+  const baseName = path.basename(baseFile, path.extname(baseFile));
+  const baseOut = path.join(outDir, baseName);
+  await fs.mkdir(baseOut, { recursive: true });
+  return baseOut;
+}
+```
+
 ## tangle: チャンクの書き出し
 
 指定ディレクトリ内にチャンクごとのファイルを生成します。返り値は書き出したファイルのパス一覧です。
@@ -11,6 +27,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { ChunkDict } from './parser.ts.md';
 import { escapeChunk } from './utils.ts.md';
+import { prepareOutput } from ':prepareOutput';
 
 export async function tangle(
   dict: ChunkDict,
@@ -18,9 +35,7 @@ export async function tangle(
   outDir: string,
   rename?: (chunk: string) => string,
 ): Promise<string[]> {
-  const baseName = path.basename(baseFile, path.extname(baseFile));
-  const baseOut = path.join(outDir, baseName);
-  await fs.mkdir(baseOut, { recursive: true });
+  const baseOut = await prepareOutput(baseFile, outDir);
   const written: string[] = [];
 
   for (const [chunk, code] of Object.entries(dict)) {
@@ -34,18 +49,6 @@ export async function tangle(
   return written;
 }
 ```
-
-## 公開インタフェース
-
-```ts main
-export { tangle } from ':tangle';
-
-if (import.meta.vitest) {
-  await import(':tangle.test');
-}
-```
-
-## Tests
 
 ```ts tangle.test
 import fs from 'node:fs/promises';
@@ -66,3 +69,14 @@ describe('tangle', () => {
   });
 });
 ```
+
+## 公開インタフェース
+
+```ts main
+export { tangle } from ':tangle';
+
+if (import.meta.vitest) {
+  await import(':tangle.test');
+}
+```
+
