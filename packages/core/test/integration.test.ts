@@ -6,12 +6,19 @@ import { parseChunks } from '../src/parser.ts.md';
 import { resolveImport } from '../src/resolver.ts.md';
 import { tangle } from '../src/tangle.ts.md';
 
-const md = ['```ts main', "import './dep.ts.md'", '```'].join('\n');
-
-const depMd = ['```ts main', 'export const msg = 1', '```'].join('\n');
-
 describe('integration', () => {
   it('roundtrip', async () => {
+    const md = [
+      '`' + '`' + '`' + 'ts main',
+      "import './dep.ts.md'",
+      '`' + '`' + '`',
+    ].join('\n');
+
+    const depMd = [
+      '`' + '`' + '`' + 'ts main',
+      'export const msg = 1',
+      '`' + '`' + '`',
+    ].join('\n');
     const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'int-'));
     const dict = parseChunks(md, path.join(tmp, 'doc.ts.md'));
     const depDict = parseChunks(depMd, path.join(tmp, 'dep.ts.md'));

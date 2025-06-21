@@ -133,24 +133,24 @@ import { describe, expect, it } from 'vitest';
 import { parseChunks } from ':parseChunks';
 import { parseChunkInfos } from ':parseChunkInfos';
 
-const md = [
-  '# Title',
-  '',
-  '```ts foo',
-  'console.log(1)',
-  '```',
-  '',
-  '<!-- file: path/to/bar.ts -->',
-  '```ts bar',
-  'console.log(2)',
-  '```',
-  '',
-  '```ts foo',
-  'console.log(3)',
-  '```',
-].join('\n');
-
 describe('parseChunks', () => {
+  const md = [
+    '# Title',
+    '',
+    '`' + '`' + '`' + 'ts foo',
+    'console.log(1)',
+    '`' + '`' + '`',
+    '',
+    '<!-- file: path/to/bar.ts -->',
+    '`' + '`' + '`' + 'ts bar',
+    'console.log(2)',
+    '`' + '`' + '`',
+    '',
+    '`' + '`' + '`' + 'ts foo',
+    'console.log(3)',
+    '`' + '`' + '`',
+  ].join('\n');
+
   const dict = parseChunks(md, '/doc.ts.md');
   it('extracts named chunks', () => {
     expect(Object.keys(dict)).toEqual(['foo', 'path/to/bar.ts']);
@@ -159,6 +159,23 @@ describe('parseChunks', () => {
 });
 
 describe('parseChunkInfos', () => {
+  const md = [
+    '# Title',
+    '',
+    '`' + '`' + '`' + 'ts foo',
+    'console.log(1)',
+    '`' + '`' + '`',
+    '',
+    '<!-- file: path/to/bar.ts -->',
+    '`' + '`' + '`' + 'ts bar',
+    'console.log(2)',
+    '`' + '`' + '`',
+    '',
+    '`' + '`' + '`' + 'ts foo',
+    'console.log(3)',
+    '`' + '`' + '`',
+  ].join('\n');
+
   const dict = parseChunkInfos(md, '/doc.ts.md');
   it('includes start and end offsets', () => {
     expect(dict.foo.start).toBeLessThan(dict.foo.end);
