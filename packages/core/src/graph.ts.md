@@ -64,4 +64,34 @@ export function detectCycle(
 
 ```ts main
 export { detectCycle } from ':detectCycle';
+
+if (import.meta.vitest) {
+  await import(':detectCycle.test');
+}
 ```
+
+## Tests
+
+```ts detectCycle.test
+import { describe, expect, it } from 'vitest';
+import { detectCycle } from ':detectCycle';
+import { resolveImport } from './resolver.ts.md';
+
+describe('detectCycle', () => {
+  it('detects no cycle', () => {
+    const dicts = new Map<string, Record<string, string>>();
+    dicts.set('/a.ts.md', { main: "import './b.ts.md'" });
+    dicts.set('/b.ts.md', { main: 'export const x = 1' });
+    const res = detectCycle('/a.ts.md:main', (f) => dicts.get(f));
+    expect(res).toBeNull();
+  });
+
+  it('detects self cycle', () => {
+    const dicts = new Map<string, Record<string, string>>();
+    dicts.set('/a.ts.md', { main: "import './a.ts.md:main'" });
+    const res = detectCycle('/a.ts.md:main', (f) => dicts.get(f));
+    expect(res).toEqual(['/a.ts.md:main', '/a.ts.md:main']);
+  });
+});
+```
+

@@ -8,4 +8,7 @@ export default defineConfig({
   clean: true,
   target: 'node18',
   esbuildPlugins: [tsMd],
+  define: {
+    'import.meta.vitest': 'undefined',
+  },
 });
