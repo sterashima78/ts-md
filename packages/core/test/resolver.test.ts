@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveImport } from '../src/resolver';
+import { resolveImport } from '../src/resolver.ts.md';
 
 describe('resolveImport', () => {
   it('resolves relative path', () => {
