@@ -1,8 +1,26 @@
 # Graph
 
-```ts main
+依存グラフを探索して循環参照を検出するモジュールです。
+
+## split: ノード文字列の分解
+
+ノードは `file:chunk` という形式で与えられるため、末尾の `:` を境にファイル名とチャンク名へ分けます。
+
+```ts split
+export function split(node: string): [string, string] {
+  const idx = node.lastIndexOf(':');
+  return [node.slice(0, idx), node.slice(idx + 1)];
+}
+```
+
+## detectCycle: 深さ優先探索による循環検出
+
+`entry` を起点に依存チャンクを辿り、循環が見つかった場合はその経路を返します。
+
+```ts detectCycle
 import type { ChunkDict } from './parser.ts.md';
 import { resolveImport } from './resolver.ts.md';
+import { split } from ':split';
 
 export function detectCycle(
   entry: string,
@@ -40,9 +58,10 @@ export function detectCycle(
 
   return dfs(entry);
 }
+```
 
-function split(node: string): [string, string] {
-  const idx = node.lastIndexOf(':');
-  return [node.slice(0, idx), node.slice(idx + 1)];
-}
+## 公開インタフェース
+
+```ts main
+export { detectCycle } from ':detectCycle';
 ```
