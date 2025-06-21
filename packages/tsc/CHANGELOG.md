@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-tsc
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @sterashima78/ts-md-ls-core@0.2.1
+
 ## 0.1.0
 
 ### Minor Changes

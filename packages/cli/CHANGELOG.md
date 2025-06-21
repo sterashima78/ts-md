@@ -1,5 +1,14 @@
 # @sterashima78/ts-md-cli
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`e0c908c`](https://github.com/sterashima78/ts-md/commit/e0c908c120e78cde35c44a925c57ce25ff6dee65)]:
+  - @sterashima78/ts-md-core@0.2.1
+  - @sterashima78/ts-md-loader@0.2.1
+  - @sterashima78/ts-md-ls-core@0.2.1
+
 ## 0.3.1
 
 ### Patch Changes
