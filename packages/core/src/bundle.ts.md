@@ -2,14 +2,62 @@
 
 複数のチャンクを結合して一つの TypeScript ファイルを生成するモジュールです。
 
+## createProjectFiles: ソースファイルの生成
+
+チャンク情報から `ts-morph` プロジェクトとファイル群を作成します。
+
+```ts createProjectFiles
+import { Project } from 'ts-morph';
+import type { ChunkInfo } from './parser.ts.md';
+
+export function createProjectFiles(infos: Record<string, ChunkInfo>) {
+  const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: { allowJs: true },
+  });
+  const files: Record<string, import('ts-morph').SourceFile> = {};
+  for (const [name, info] of Object.entries(infos)) {
+    files[name] = project.createSourceFile(`${name}.ts`, info.code, {
+      overwrite: true,
+    });
+  }
+  return { project, files };
+}
+```
+
+## generateOutput: コードの結合
+
+最終的な出力文字列を組み立てます。
+
+```ts generateOutput
+export function generateOutput(
+  files: Record<string, import('ts-morph').SourceFile>,
+  ordered: [string, unknown][],
+  entry: string,
+) {
+  let output = '';
+  for (const [name] of ordered) {
+    if (name.endsWith('.test')) continue;
+    if (name === entry) continue;
+    output += `${files[name].getFullText()}\n`;
+  }
+  if (files[entry]) {
+    output += files[entry].getFullText();
+  }
+  return output;
+}
+```
+
 ## bundleMarkdown: チャンクの結合
 
 Markdown 内のチャンク群を解析し、宣言の衝突を避けながら単一ファイルへまとめます。
 
 ```ts bundleMarkdown
-import { Project, SyntaxKind } from 'ts-morph';
+import { SyntaxKind } from 'ts-morph';
 import { parseChunkInfos } from './parser.ts.md';
 import { escapeChunk } from './utils.ts.md';
+import { createProjectFiles } from ':createProjectFiles';
+import { generateOutput } from ':generateOutput';
 import { prefixDeclarations } from ':prefixDeclarations';
 import { transformImportsExports } from ':transformImportsExports';
 import { removeExports } from ':removeExports';
@@ -22,16 +70,7 @@ export function bundleMarkdown(
   const infos = parseChunkInfos(markdown, uri);
   const orderedAll = Object.entries(infos).sort((a, b) => a[1].start - b[1].start);
   const ordered = orderedAll.filter(([name]) => !name.endsWith('.test'));
-  const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: { allowJs: true },
-  });
-  const files: Record<string, import('ts-morph').SourceFile> = {};
-  for (const [name, info] of orderedAll) {
-    files[name] = project.createSourceFile(`${name}.ts`, info.code, {
-      overwrite: true,
-    });
-  }
+  const { files } = createProjectFiles(infos);
 
   for (const [name, file] of Object.entries(files)) {
     if (name.endsWith('.test')) continue;
@@ -45,16 +84,7 @@ export function bundleMarkdown(
     if (name !== entry) removeExports(file);
   }
 
-  let output = '';
-  for (const [name] of orderedAll) {
-    if (name.endsWith('.test')) continue;
-    if (name === entry) continue;
-    output += `${files[name].getFullText()}\n`;
-  }
-  if (files[entry]) {
-    output += files[entry].getFullText();
-  }
-  return output;
+  return generateOutput(files, orderedAll, entry);
 }
 ```
 

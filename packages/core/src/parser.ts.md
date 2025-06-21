@@ -18,23 +18,33 @@ export interface ChunkInfo {
 }
 ```
 
-## parseChunks: コードチャンクの抽出
+## buildAst: AST の構築
 
-`remark-parse` で AST を構築し、`ts`/`tsx` コードブロックを `ChunkDict` にまとめます。
+Markdown 文字列から `mdast` の AST を生成します。
 
-```ts parseChunks
-import type { Code, Html } from 'mdast';
+```ts buildAst
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
+import type { Root } from 'mdast';
+
+export function buildAst(markdown: string): Root {
+  return unified().use(remarkParse).parse(markdown) as Root;
+}
+```
+
+## extractChunks: チャンク抽出処理
+
+生成した AST を走査し、`ts`/`tsx` コードブロックを `ChunkDict` に蓄積します。
+
+```ts extractChunks
+import type { Code, Html, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { extIsTs } from './utils.ts.md';
 import type { ChunkDict } from ':types';
 
-export function parseChunks(markdown: string, uri: string): ChunkDict {
-  const tree = unified().use(remarkParse).parse(markdown);
+export function extractChunks(tree: Root, markdown: string): ChunkDict {
   const dict: ChunkDict = {};
   let pendingFile: string | null = null;
-
   visit(tree, (node) => {
     if (node.type === 'html') {
       const m = /<!--\s*file:\s*([^>]+)-->/.exec((node as Html).value ?? '');
@@ -55,28 +65,40 @@ export function parseChunks(markdown: string, uri: string): ChunkDict {
       pendingFile = null;
     }
   });
-
   return dict;
 }
 ```
 
-## parseChunkInfos: 位置情報付き抽出
+## parseChunks: コードチャンクの抽出
 
-コードブロックの開始位置と終了位置を含めて取得するバリエーションです。
+`remark-parse` で AST を構築し、`ts`/`tsx` コードブロックを `ChunkDict` にまとめます。
 
-```ts parseChunkInfos
+```ts parseChunks
+import type { Root } from 'mdast';
+import type { ChunkDict } from ':types';
+import { buildAst } from ':buildAst';
+import { extractChunks } from ':extractChunks';
+
+export function parseChunks(markdown: string, uri: string): ChunkDict {
+  const tree: Root = buildAst(markdown);
+  return extractChunks(tree, markdown);
+}
+```
+
+## extractChunkInfos: 位置情報付き抽出処理
+
+AST を走査して各チャンクの開始位置と終了位置を記録します。
+
+```ts extractChunkInfos
 import type { Code, Html, Root } from 'mdast';
-import remarkParse from 'remark-parse';
-import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 import { extIsTs } from './utils.ts.md';
 import type { ChunkInfo } from ':types';
 
-export function parseChunkInfos(
+export function extractChunkInfos(
+  tree: Root,
   markdown: string,
-  uri: string,
 ): Record<string, ChunkInfo> {
-  const tree = unified().use(remarkParse).parse(markdown) as Root;
   const dict: Record<string, ChunkInfo> = {};
   let pendingFile: string | null = null;
   visit(tree, (node) => {
@@ -111,6 +133,25 @@ export function parseChunkInfos(
     }
   });
   return dict;
+}
+```
+
+## parseChunkInfos: 位置情報付き抽出
+
+コードブロックの開始位置と終了位置を含めて取得するバリエーションです。
+
+```ts parseChunkInfos
+import type { Root } from 'mdast';
+import type { ChunkInfo } from ':types';
+import { buildAst } from ':buildAst';
+import { extractChunkInfos } from ':extractChunkInfos';
+
+export function parseChunkInfos(
+  markdown: string,
+  uri: string,
+): Record<string, ChunkInfo> {
+  const tree: Root = buildAst(markdown);
+  return extractChunkInfos(tree, markdown);
 }
 ```
 
