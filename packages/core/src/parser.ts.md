@@ -1,3 +1,6 @@
+# Parser
+
+```ts main
 import type { Code, Html, Root } from 'mdast';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
@@ -83,3 +86,5 @@ export function parseChunkInfos(
   });
   return dict;
 }
+
+```

@@ -4,10 +4,10 @@ Core utilities for `.ts.md` documents. It parses Markdown, resolves chunk
 imports and tangles code blocks into real files.
 
 ## Modules
-- `parser.ts` – extract named code chunks from Markdown
+- `parser.ts.md` – extract named code chunks from Markdown
 - `resolver.ts.md` – resolve `file.ts.md:chunk` and `:chunk` imports
-- `graph.ts` – detect import cycles between chunks
-- `tangle.ts` – write chunks to disk
-- `utils.ts` – helper functions
+- `graph.ts.md` – detect import cycles between chunks
+- `tangle.ts.md` – write chunks to disk
+- `utils.ts.md` – helper functions
 
 Tests live under `test/`.

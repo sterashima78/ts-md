@@ -1,5 +1,5 @@
-export { parseChunks, parseChunkInfos } from './parser';
-export type { ChunkInfo } from './parser';
+export { parseChunks, parseChunkInfos } from './parser.ts.md';
+export type { ChunkInfo } from './parser.ts.md';
 export { resolveImport } from './resolver.ts.md';
 export { detectCycle } from './graph.ts.md';
 export { tangle } from './tangle.ts.md';

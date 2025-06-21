@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseChunkInfos, parseChunks } from '../src/parser';
+import { parseChunkInfos, parseChunks } from '../src/parser.ts.md';
 
 const md = [
   '# Title',
