@@ -1,9 +1,18 @@
 # Bundle
 
-```ts main
+複数のチャンクを結合して一つの TypeScript ファイルを生成するモジュールです。
+
+## bundleMarkdown: チャンクの結合
+
+Markdown 内のチャンク群を解析し、宣言の衝突を避けながら単一ファイルへまとめます。
+
+```ts bundleMarkdown
 import { Project, SyntaxKind } from 'ts-morph';
 import { parseChunkInfos } from './parser.ts.md';
 import { escapeChunk } from './utils.ts.md';
+import { prefixDeclarations } from ':prefixDeclarations';
+import { transformImportsExports } from ':transformImportsExports';
+import { removeExports } from ':removeExports';
 
 export function bundleMarkdown(
   markdown: string,
@@ -43,8 +52,16 @@ export function bundleMarkdown(
   }
   return output;
 }
+```
 
-function prefixDeclarations(
+## prefixDeclarations: 宣言の衝突回避
+
+ファイル間で名前が重複しないよう各宣言にプレフィックスを付与します。
+
+```ts prefixDeclarations
+import { SyntaxKind } from 'ts-morph';
+
+export function prefixDeclarations(
   file: import('ts-morph').SourceFile,
   prefix: string,
 ) {
@@ -141,8 +158,17 @@ function prefixDeclarations(
     }
   }
 }
+```
 
-function transformImportsExports(file: import('ts-morph').SourceFile) {
+## transformImportsExports: 依存チャンクの解決
+
+チャンク間の import/export をプレフィックス付きで書き換えます。
+
+```ts transformImportsExports
+import { SyntaxKind } from 'ts-morph';
+import { escapeChunk } from './utils.ts.md';
+
+export function transformImportsExports(file: import('ts-morph').SourceFile) {
   for (const imp of file.getImportDeclarations()) {
     const mod = imp.getModuleSpecifierValue();
     if (mod.startsWith(':') || mod.startsWith('#')) {
@@ -174,8 +200,14 @@ function transformImportsExports(file: import('ts-morph').SourceFile) {
     }
   }
 }
+```
 
-function removeExports(file: import('ts-morph').SourceFile) {
+## removeExports: 出力対象外チャンクのクリーンアップ
+
+余分な export 文を削除します。
+
+```ts removeExports
+export function removeExports(file: import('ts-morph').SourceFile) {
   for (const exp of file.getExportDeclarations()) {
     exp.remove();
   }
@@ -183,4 +215,10 @@ function removeExports(file: import('ts-morph').SourceFile) {
     ass.remove();
   }
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { bundleMarkdown } from ':bundleMarkdown';
 ```

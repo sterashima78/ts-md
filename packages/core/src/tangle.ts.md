@@ -1,6 +1,12 @@
 # Tangle
 
-```ts main
+Markdown から抽出したチャンクを実際のファイルへ書き出すユーティリティです。
+
+## tangle: チャンクの書き出し
+
+指定ディレクトリ内にチャンクごとのファイルを生成します。返り値は書き出したファイルのパス一覧です。
+
+```ts tangle
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { ChunkDict } from './parser.ts.md';
@@ -27,4 +33,10 @@ export async function tangle(
 
   return written;
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { tangle } from ':tangle';
 ```
