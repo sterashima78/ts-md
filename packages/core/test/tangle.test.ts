@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { tangle } from '../src/tangle';
+import { tangle } from '../src/tangle.ts.md';
 
 describe('tangle', () => {
   it('writes files', async () => {

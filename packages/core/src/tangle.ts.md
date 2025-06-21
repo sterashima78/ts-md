@@ -1,3 +1,6 @@
+# Tangle
+
+```ts main
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { ChunkDict } from './parser';
@@ -24,3 +27,4 @@ export async function tangle(
 
   return written;
 }
+```
