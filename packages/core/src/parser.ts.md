@@ -136,18 +136,18 @@ import { parseChunkInfos } from ':parseChunkInfos';
 const md = [
   '# Title',
   '',
-  '```ts foo',
+  ['`', '`', '`'].join('') + 'ts foo',
   'console.log(1)',
-  '```',
+  ['`', '`', '`'].join(''),
   '',
   '<!-- file: path/to/bar.ts -->',
-  '```ts bar',
+  ['`', '`', '`'].join('') + 'ts bar',
   'console.log(2)',
-  '```',
+  ['`', '`', '`'].join(''),
   '',
-  '```ts foo',
+  ['`', '`', '`'].join('') + 'ts foo',
   'console.log(3)',
-  '```',
+  ['`', '`', '`'].join(''),
 ].join('\n');
 
 describe('parseChunks', () => {

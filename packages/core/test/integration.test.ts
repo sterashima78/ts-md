@@ -6,9 +6,18 @@ import { parseChunks } from '../src/parser.ts.md';
 import { resolveImport } from '../src/resolver.ts.md';
 import { tangle } from '../src/tangle.ts.md';
 
-const md = ['```ts main', "import './dep.ts.md'", '```'].join('\n');
+const tripleBacktick = '`' + '`' + '`';
+const md = [
+  `${tripleBacktick}ts main`,
+  "import './dep.ts.md'",
+  tripleBacktick,
+].join('\n');
 
-const depMd = ['```ts main', 'export const msg = 1', '```'].join('\n');
+const depMd = [
+  `${tripleBacktick}ts main`,
+  'export const msg = 1',
+  tripleBacktick,
+].join('\n');
 
 describe('integration', () => {
   it('roundtrip', async () => {
