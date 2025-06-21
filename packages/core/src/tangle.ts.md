@@ -3,7 +3,7 @@
 ```ts main
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { ChunkDict } from './parser';
+import type { ChunkDict } from './parser.ts.md';
 import { escapeChunk } from './utils.ts.md';
 
 export async function tangle(

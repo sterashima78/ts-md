@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseChunks } from '../src/parser';
+import { parseChunks } from '../src/parser.ts.md';
 import { resolveImport } from '../src/resolver.ts.md';
 import { tangle } from '../src/tangle.ts.md';
 

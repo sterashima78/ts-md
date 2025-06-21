@@ -1,7 +1,7 @@
 # Graph
 
 ```ts main
-import type { ChunkDict } from './parser';
+import type { ChunkDict } from './parser.ts.md';
 import { resolveImport } from './resolver.ts.md';
 
 export function detectCycle(
