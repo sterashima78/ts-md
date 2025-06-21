@@ -135,6 +135,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@sterashima78/ts-md-tsc':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@sterashima78/ts-md-unplugin':
         specifier: 0.3.0
         version: 0.3.0

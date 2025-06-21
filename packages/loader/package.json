@@ -6,14 +6,16 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit",
+    "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",
+    "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "0.3.0"
+    "@sterashima78/ts-md-unplugin": "0.3.0",
+    "@sterashima78/ts-md-tsc": "^0.1.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

@@ -1,16 +1,19 @@
+# Loader
+
+```ts main
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import ts from 'typescript';
 
-type Resolve = (
+export type Resolve = (
   specifier: string,
   context: { parentURL?: string | undefined },
   defaultResolve: Resolve,
 ) => Promise<{ url: string }>;
 
-type Load = (
+export type Load = (
   url: string,
   context: { format?: string | undefined },
   defaultLoad: Load,
@@ -111,3 +114,4 @@ export const load: Load = async (url, context, defaultLoad) => {
 
   return defaultLoad(url, context, defaultLoad);
 };
+```
