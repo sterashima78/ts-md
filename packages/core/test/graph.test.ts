@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { detectCycle } from '../src/graph.ts.md';
-import { resolveImport } from '../src/resolver';
+import { resolveImport } from '../src/resolver.ts.md';
 
 describe('detectCycle', () => {
   it('detects no cycle', () => {

@@ -1,3 +1,6 @@
+# Resolver
+
+```ts main
 import path from 'node:path';
 
 export function resolveImport(
@@ -30,3 +33,4 @@ export function resolveImport(
   }
   return { absPath, chunk };
 }
+```

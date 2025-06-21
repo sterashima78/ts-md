@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseChunks } from '../src/parser';
-import { resolveImport } from '../src/resolver';
+import { resolveImport } from '../src/resolver.ts.md';
 import { tangle } from '../src/tangle.ts.md';
 
 const md = ['```ts main', "import './dep.ts.md'", '```'].join('\n');

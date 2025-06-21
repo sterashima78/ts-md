@@ -2,7 +2,7 @@
 
 ```ts main
 import type { ChunkDict } from './parser';
-import { resolveImport } from './resolver';
+import { resolveImport } from './resolver.ts.md';
 
 export function detectCycle(
   entry: string,
