@@ -134,6 +134,10 @@ importers:
       '@sterashima78/ts-md-core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      '@sterashima78/ts-md-unplugin':
+        specifier: 0.3.0
+        version: 0.3.0
 
   packages/ls-core:
     dependencies:
