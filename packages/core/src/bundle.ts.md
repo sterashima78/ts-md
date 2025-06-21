@@ -20,7 +20,9 @@ export function bundleMarkdown(
   entry = 'main',
 ): string {
   const infos = parseChunkInfos(markdown, uri);
-  const ordered = Object.entries(infos).sort((a, b) => a[1].start - b[1].start);
+  const ordered = Object.entries(infos)
+    .filter(([name]) => !name.endsWith('.test'))
+    .sort((a, b) => a[1].start - b[1].start);
   const project = new Project({
     useInMemoryFileSystem: true,
     compilerOptions: { allowJs: true },
@@ -244,6 +246,10 @@ const md = [
   '```ts foo',
   "export const msg = 'hi'",
   '```',
+  '',
+  '```ts ignore.test',
+  'export const shouldSkip = true',
+  '```',
 ].join('\n');
 
 describe('bundleMarkdown', () => {
@@ -252,6 +258,9 @@ describe('bundleMarkdown', () => {
     expect(code).toContain('const foo_msg');
     expect(code).toContain('console.log(foo_msg)');
     expect(code).not.toContain('export { foo_msg as msg }');
+  });
+  it('omits *.test blocks', () => {
+    expect(code).not.toContain('shouldSkip');
   });
 });
 ```
