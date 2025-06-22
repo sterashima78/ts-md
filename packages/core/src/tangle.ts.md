@@ -92,6 +92,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { parseChunks } from './parser.ts.md';
 import { tangle } from ':tangle';
 
 describe('tangle', () => {
@@ -102,6 +103,21 @@ describe('tangle', () => {
     const file = out[0];
     const content = await fs.readFile(file, 'utf8');
     expect(content.trim()).toBe('export const a = 1');
+    await fs.rm(tmp, { recursive: true, force: true });
+  });
+
+  it('writes fixture chunk', async () => {
+    const dir = path.join(process.cwd(), 'test', 'fixtures');
+    const file = path.join(dir, 'dep.ts.md');
+    const md = await fs.readFile(file, 'utf8');
+    const dict = parseChunks(md, file);
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'tangle-fixture-'));
+    await tangle(dict, file, tmp);
+    const content = await fs.readFile(
+      path.join(tmp, 'dep.ts', 'main.ts'),
+      'utf8',
+    );
+    expect(content.trim()).toBe('export const msg = 1');
     await fs.rm(tmp, { recursive: true, force: true });
   });
 });

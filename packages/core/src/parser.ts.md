@@ -171,6 +171,8 @@ if (import.meta.vitest) {
 
 ```ts parser.test
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { parseChunks } from ':parseChunks';
 import { parseChunkInfos } from ':parseChunkInfos';
 
@@ -222,6 +224,16 @@ describe('parseChunkInfos', () => {
     expect(dict.foo.start).toBeLessThan(dict.foo.end);
     expect(dict.foo.code).toContain('console.log(3)');
     expect(dict['path/to/bar.ts'].code).toContain('console.log(2)');
+  });
+});
+
+describe('parseChunks with fixture', () => {
+  it('parses doc fixture', async () => {
+    const dir = path.join(process.cwd(), 'test', 'fixtures');
+    const file = path.join(dir, 'doc.ts.md');
+    const md = await fs.readFile(file, 'utf8');
+    const dict = parseChunks(md, file);
+    expect(dict.main).toContain("import './dep.ts.md'");
   });
 });
 ```
