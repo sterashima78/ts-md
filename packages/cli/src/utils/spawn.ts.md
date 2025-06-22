@@ -1,6 +1,6 @@
 # Node プロセス実行
 
-```ts main
+```ts spawnNode
 import { spawn } from 'node:child_process';
 
 export function spawnNode(
@@ -15,4 +15,28 @@ export function spawnNode(
     p.on('close', (code) => res(code ?? 0));
   });
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { spawnNode } from ':spawnNode';
+
+if (import.meta.vitest) {
+  await import(':spawnNode.test');
+}
+```
+
+## Tests
+
+```ts spawnNode.test
+import { describe, expect, it } from 'vitest';
+import { spawnNode } from ':spawnNode';
+
+describe('spawnNode', () => {
+  it('returns exit code', async () => {
+    const code = await spawnNode(['-e', 'console.log("ok")']);
+    expect(code).toBe(0);
+  });
+});
 ```
