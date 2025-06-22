@@ -64,6 +64,7 @@ if (import.meta.vitest) {
 
 ```ts resolveImport.test
 import { describe, expect, it } from 'vitest';
+import path from 'node:path';
 import { resolveImport } from ':resolveImport';
 
 describe('resolveImport', () => {
@@ -82,6 +83,15 @@ describe('resolveImport', () => {
   it('resolves shorthand same-file import', () => {
     const res = resolveImport(':qux', '/a/b/doc.ts.md');
     expect(res).toEqual({ absPath: '/a/b/doc.ts.md', chunk: 'qux' });
+  });
+});
+
+describe('resolveImport with fixture', () => {
+  it('resolves fixture import', () => {
+    const dir = path.join(process.cwd(), 'test', 'fixtures');
+    const importer = path.join(dir, 'doc.ts.md');
+    const res = resolveImport('./dep.ts.md', importer);
+    expect(res).toEqual({ absPath: path.join(dir, 'dep.ts.md'), chunk: 'main' });
   });
 });
 ```
