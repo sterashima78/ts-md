@@ -1,10 +1,13 @@
+# Language Service Plugin
+
+```ts main
 import path from 'node:path';
 import { bundleMarkdown } from '@sterashima78/ts-md-core';
 import { type LanguagePlugin, forEachEmbeddedCode } from '@volar/language-core';
 import type { TypeScriptExtraServiceScript } from '@volar/typescript';
 import ts from 'typescript';
-import { getChunkDict } from './parsers.js';
-import { TsMdVirtualFile } from './virtual-file.js';
+import { getChunkDict } from './parsers.ts.md';
+import { TsMdVirtualFile } from './virtual-file.ts.md';
 
 export const tsMdLanguagePlugin = {
   getLanguageId(fileName: string) {
@@ -112,3 +115,4 @@ export const tsMdLanguagePlugin = {
 } as LanguagePlugin<string, TsMdVirtualFile> & {
   resolveFileName(specifier: string, fromFile: string): string | undefined;
 };
+```

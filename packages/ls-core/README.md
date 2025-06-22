@@ -10,8 +10,8 @@ language server can consume.
 CLI などから簡単に `.ts.md` ファイルの診断を取得できます。
 
 ## Structure
-- `src/plugin.ts` – Volar plugin definition
-- `src/parsers.ts` – parse Markdown into chunk dictionaries
-- `src/virtual-file.ts` – virtual file implementation
-- `src/service.ts` – ランタイムで利用する言語サービスヘルパー
+- `src/plugin.ts.md` – Volar plugin definition
+- `src/parsers.ts.md` – parse Markdown into chunk dictionaries
+- `src/virtual-file.ts.md` – virtual file implementation
+- `src/service.ts.md` – ランタイムで利用する言語サービスヘルパー
 - `test/` – language service tests

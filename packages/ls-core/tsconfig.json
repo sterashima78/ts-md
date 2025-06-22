@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.ts.md"],
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
