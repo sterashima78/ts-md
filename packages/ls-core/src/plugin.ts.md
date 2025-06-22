@@ -134,49 +134,16 @@ import {
   createLanguageService,
 } from '@volar/language-service';
 import ts from 'typescript';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { URI } from 'vscode-uri';
 import { tsMdLanguagePlugin as createTsMdPlugin } from ':main';
 import type { TsMdVirtualFile } from './virtual-file.ts.md';
 
 describe('ts-md-ls-core diagnostics', () => {
-  const dir = path.join(__dirname, 'fixtures');
+  const dir = path.join(process.cwd(), 'test', 'fixtures');
   const aPath = path.join(dir, 'a.ts.md');
   const mainPath = path.join(dir, 'main.ts.md');
 
-  beforeAll(() => {
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(
-      aPath,
-      [
-        '# A',
-        '',
-        '```ts foo',
-        "export const msg: number = 'hi'",
-        '```',
-        '',
-        '```ts main',
-        "export { msg } from '#foo'",
-        '```',
-      ].join('\n'),
-    );
-    fs.writeFileSync(
-      mainPath,
-      [
-        '# Main',
-        '',
-        '```ts main',
-        "import './a.ts.md'",
-        "import { msg } from './a.ts.md'",
-        'console.log(msg)',
-        '```',
-      ].join('\n'),
-    );
-  });
-
-  afterAll(() => {
-    fs.rmSync(dir, { recursive: true, force: true });
-  });
 
   it('reports diagnostics across docs', async () => {
     const scripts = new Map<URI, SourceScript<URI>>();

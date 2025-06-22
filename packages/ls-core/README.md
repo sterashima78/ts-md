@@ -15,3 +15,4 @@ CLI などから簡単に `.ts.md` ファイルの診断を取得できます。
 - `src/virtual-file.ts.md` – virtual file implementation
 - `src/service.ts.md` – ランタイムで利用する言語サービスヘルパー
 - `src/plugin.ts.md` 内にテストコードを含む
+- `test/fixtures/` – テストで使用する Markdown
