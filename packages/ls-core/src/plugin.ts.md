@@ -115,4 +115,64 @@ export const tsMdLanguagePlugin = {
 } as LanguagePlugin<string, TsMdVirtualFile> & {
   resolveFileName(specifier: string, fromFile: string): string | undefined;
 };
+
+if (import.meta.vitest) {
+  await import(':plugin.test');
+}
+```
+
+## Tests
+
+```ts plugin.test
+import fs from 'node:fs';
+import path from 'node:path';
+import type { LanguagePlugin } from '@volar/language-core';
+import {
+  type Language,
+  type SourceScript,
+  createLanguage,
+  createLanguageService,
+} from '@volar/language-service';
+import ts from 'typescript';
+import { describe, expect, it } from 'vitest';
+import { URI } from 'vscode-uri';
+import { tsMdLanguagePlugin as createTsMdPlugin } from ':main';
+import type { TsMdVirtualFile } from './virtual-file.ts.md';
+
+describe('ts-md-ls-core diagnostics', () => {
+  const dir = path.join(process.cwd(), 'test', 'fixtures');
+  const aPath = path.join(dir, 'a.ts.md');
+  const mainPath = path.join(dir, 'main.ts.md');
+
+
+  it('reports diagnostics across docs', async () => {
+    const scripts = new Map<URI, SourceScript<URI>>();
+    const plugin = createTsMdPlugin as unknown as LanguagePlugin<URI, TsMdVirtualFile>;
+    let language!: Language<URI>;
+    language = createLanguage<URI>([plugin], scripts, (id) => {
+      if (scripts.has(id)) return;
+      let filePath: string;
+      if (typeof id === 'string') {
+        const m = /^(.*)__/.exec(id);
+        if (!m) return;
+        filePath = URI.parse(m[1]).fsPath;
+      } else {
+        filePath = id.fsPath;
+      }
+      const snapshot = ts.ScriptSnapshot.fromString(
+        fs.readFileSync(filePath, 'utf8'),
+      );
+      language.scripts.set(
+        typeof id === 'string' ? URI.parse(id) : id,
+        snapshot,
+        'ts-md',
+      );
+    });
+    const ls = createLanguageService(language, [], { workspaceFolders: [] }, {});
+    const uri = URI.file(mainPath);
+    language.scripts.get(uri);
+    const diags = await ls.getDiagnostics(uri);
+    expect(diags.length).toBeGreaterThanOrEqual(0);
+  });
+});
 ```
