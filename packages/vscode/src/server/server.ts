@@ -1,4 +1,7 @@
-import { collectDiagnostics } from '@sterashima78/ts-md-ls-core';
+import {
+  type TsMdDiagnostic,
+  collectDiagnostics,
+} from '@sterashima78/ts-md-ls-core';
 import { provider as fileSystemProvider } from '@volar/language-server/lib/fileSystemProviders/node';
 import { createSimpleProject } from '@volar/language-server/lib/project/simpleProject';
 import { createServerBase } from '@volar/language-server/lib/server';
@@ -35,7 +38,7 @@ documents.onDidChangeContent((e) => void sendDiagnostics(e.document));
 async function sendDiagnostics(doc: SnapshotDocument) {
   const file = URI.parse(doc.uri).fsPath;
   const result = await collectDiagnostics([file]);
-  const diagnostics = (result[file] ?? []).map((d) => ({
+  const diagnostics = (result[file] ?? []).map((d: TsMdDiagnostic) => ({
     range: d.range,
     message: d.message,
     severity: DiagnosticSeverity.Error,

@@ -1,6 +1,9 @@
+# Virtual File
+
+```ts main
 import type { CodeMapping, Mapping, VirtualCode } from '@volar/language-core';
 import type ts from 'typescript';
-import { getChunkInfoDict } from './parsers.js';
+import { getChunkInfoDict } from './parsers.ts.md';
 
 export class TsMdVirtualFile implements VirtualCode {
   id!: string;
@@ -78,3 +81,4 @@ export class TsMdVirtualFile implements VirtualCode {
     }
   }
 }
+```
