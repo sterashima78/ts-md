@@ -1,7 +1,10 @@
+# tangle コマンド
+
+```ts main
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseChunks } from '@sterashima78/ts-md-core';
-import { expandGlobs } from '../utils/globs';
+import { expandGlobs } from '../utils/globs.ts.md';
 
 export async function runTangle(inputGlobs: string[], outDir = 'dist') {
   const files = await expandGlobs(inputGlobs);
@@ -21,3 +24,4 @@ export async function runTangle(inputGlobs: string[], outDir = 'dist') {
     }
   }
 }
+```

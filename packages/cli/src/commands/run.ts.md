@@ -1,6 +1,9 @@
+# run コマンド
+
+```ts main
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { spawnNode } from '../utils/spawn';
+import { spawnNode } from '../utils/spawn.ts.md';
 
 export async function runTsMd(entryFile: string, nodeArgs: string[]) {
   const require = createRequire(import.meta.url);
@@ -12,3 +15,4 @@ export async function runTsMd(entryFile: string, nodeArgs: string[]) {
   const code = await spawnNode(args, { cwd: path.dirname(abs) });
   process.exit(code);
 }
+```
