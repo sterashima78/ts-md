@@ -1,8 +1,11 @@
+# CLI Entrypoint
+
+```ts main
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { runCheck } from './commands/check';
-import { runTsMd } from './commands/run';
-import { runTangle } from './commands/tangle';
+import { runCheck } from './commands/check.ts.md';
+import { runTsMd } from './commands/run.ts.md';
+import { runTangle } from './commands/tangle.ts.md';
 
 const program = new Command('tsmd');
 
@@ -31,3 +34,4 @@ program
   });
 
 program.parse();
+```

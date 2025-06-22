@@ -1,3 +1,6 @@
+# check コマンド
+
+```ts main
 import {
   type TsMdVirtualFile,
   createTsMdPlugin,
@@ -6,7 +9,7 @@ import { createTypeScriptInferredChecker } from '@volar/kit';
 import type { Diagnostic, LanguagePlugin } from '@volar/language-service';
 import pc from 'picocolors';
 import type { URI } from 'vscode-uri';
-import { expandGlobs } from '../utils/globs';
+import { expandGlobs } from '../utils/globs.ts.md';
 
 export async function runCheck(globs: string[] = []) {
   const files = await expandGlobs(globs);
@@ -29,3 +32,4 @@ export async function runCheck(globs: string[] = []) {
 
   if (errorCount) process.exit(1);
 }
+```

@@ -1,7 +1,8 @@
+import tsMd from '@sterashima78/ts-md-unplugin/esbuild';
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts.md'],
   target: 'node18',
   format: ['esm'],
   shims: false,
@@ -20,4 +21,5 @@ export default defineConfig({
     'vscode-uri',
     'tsx/esm',
   ],
+  esbuildPlugins: [tsMd],
 });

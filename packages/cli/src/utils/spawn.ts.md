@@ -1,3 +1,6 @@
+# Node プロセス実行
+
+```ts main
 import { spawn } from 'node:child_process';
 
 export function spawnNode(
@@ -12,3 +15,4 @@ export function spawnNode(
     p.on('close', (code) => res(code ?? 0));
   });
 }
+```

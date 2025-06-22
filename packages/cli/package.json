@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "tsup": "^8",
-    "vitest": "^1"
+    "vitest": "^1",
+    "@sterashima78/ts-md-unplugin": "0.3.1"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
