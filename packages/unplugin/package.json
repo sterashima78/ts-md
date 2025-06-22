@@ -13,8 +13,9 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts src/vite.ts src/rollup.ts src/webpack.ts src/esbuild.ts --format esm --dts",
-    "typecheck": "tsc --noEmit",
+    "build": "tsup",
+    "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",
+    "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
@@ -22,6 +23,10 @@
     "@rollup/pluginutils": "^5.1.4",
     "rollup": "^4.41.1",
     "unplugin": "^2.3.5"
+  },
+  "devDependencies": {
+    "@sterashima78/ts-md-tsc": "0.1.0",
+    "ts-md-unplugin-build": "npm:@sterashima78/ts-md-unplugin@0.3.1"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

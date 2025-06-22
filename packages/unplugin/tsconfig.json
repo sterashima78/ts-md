@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "compilerOptions": {
+    "allowArbitraryExtensions": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.ts.md"]
 }

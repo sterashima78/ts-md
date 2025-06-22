@@ -252,6 +252,13 @@ importers:
       unplugin:
         specifier: ^2.3.5
         version: 2.3.5
+    devDependencies:
+      '@sterashima78/ts-md-tsc':
+        specifier: 0.1.0
+        version: 0.1.0
+      ts-md-unplugin-build:
+        specifier: npm:@sterashima78/ts-md-unplugin@0.3.1
+        version: '@sterashima78/ts-md-unplugin@0.3.1'
 
   packages/vscode:
     dependencies:

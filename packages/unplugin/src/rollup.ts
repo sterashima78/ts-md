@@ -1,2 +1,2 @@
-import { unplugin } from './index';
+import { unplugin } from './index.ts.md';
 export default unplugin.rollup();

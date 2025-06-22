@@ -1,3 +1,8 @@
+# Unplugin
+
+`.ts.md` ファイルを処理するための共通ロジックを提供します。
+
+```ts main
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createFilter } from '@rollup/pluginutils';
@@ -63,3 +68,4 @@ export const unplugin = createUnplugin((options: Options | undefined) => {
 });
 
 export default unplugin;
+```

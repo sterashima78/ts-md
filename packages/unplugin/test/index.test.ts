@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { Plugin } from 'rollup';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-let unpluginFactory: typeof import('../src').unplugin;
+let unpluginFactory: typeof import('../src/index.ts.md').unplugin;
 
 describe('ts-md-unplugin', () => {
   const dir = path.join(__dirname, 'fixtures');
@@ -18,7 +18,7 @@ describe('ts-md-unplugin', () => {
     );
     fs.writeFileSync(entry, "import './doc.ts.md';");
 
-    unpluginFactory = (await import('../src')).unplugin;
+    unpluginFactory = (await import('../src/index.ts.md')).unplugin;
   });
 
   afterAll(() => {
