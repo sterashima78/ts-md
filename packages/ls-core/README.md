@@ -14,4 +14,4 @@ CLI などから簡単に `.ts.md` ファイルの診断を取得できます。
 - `src/parsers.ts.md` – parse Markdown into chunk dictionaries
 - `src/virtual-file.ts.md` – virtual file implementation
 - `src/service.ts.md` – ランタイムで利用する言語サービスヘルパー
-- `test/` – language service tests
+- `src/plugin.ts.md` 内にテストコードを含む
