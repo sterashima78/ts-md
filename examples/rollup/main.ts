@@ -1,1 +1,1 @@
-import '#../../docs/app.ts.md';
+import '#../../packages/sandbox/src/app.ts.md';
