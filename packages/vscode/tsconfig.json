@@ -7,9 +7,7 @@
     "types": ["node", "vscode"],
     "baseUrl": ".",
     "rootDir": "../..",
-    "paths": {
-      "@sterashima78/ts-md-ls-core": ["../ls-core/src"]
-    }
+    "allowArbitraryExtensions": true
   },
   "include": ["src", "../ls-core/src"]
 }

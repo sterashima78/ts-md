@@ -1,3 +1,6 @@
+# Parsers
+
+```ts main
 import { parseChunkInfos, parseChunks } from '@sterashima78/ts-md-core';
 import type ts from 'typescript';
 
@@ -18,3 +21,4 @@ export function getChunkInfoDict(snapshot: ts.IScriptSnapshot, uri: string) {
   const text = snapshot.getText(0, snapshot.getLength());
   return parseChunkInfos(text, uri);
 }
+```

@@ -1,3 +1,6 @@
+# Service
+
+```ts main
 import fs from 'node:fs';
 import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
 import type { LanguagePlugin } from '@volar/language-core';
@@ -162,3 +165,4 @@ export async function collectDiagnostics(
 
   return result;
 }
+```
