@@ -1,0 +1,16 @@
+{
+  "name": "@sterashima78/ts-md-docs",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "5.10.0",
+    "@astrojs/starlight": "0.34.4",
+    "sharp": "^0.32.5",
+    "fast-glob": "^3.3.3"
+  }
+}
