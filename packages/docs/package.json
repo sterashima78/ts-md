@@ -10,7 +10,7 @@
   "dependencies": {
     "astro": "5.10.0",
     "@astrojs/starlight": "0.34.4",
-    "sharp": "^0.32.5",
+    "sharp": "^0.34.0",
     "fast-glob": "^3.3.3"
   }
 }
