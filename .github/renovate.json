@@ -1,0 +1,16 @@
+{
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "@sterashima78/ts-md-unplugin",
+        "@sterashima78/ts-md-tsc"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    }
+  ]
+}
