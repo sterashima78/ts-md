@@ -1,0 +1,29 @@
+name: deploy-docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Build docs
+        run: pnpm --filter @sterashima78/ts-md-docs build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: packages/docs/dist
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2

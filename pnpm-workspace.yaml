@@ -5,3 +5,4 @@ ignoredBuiltDependencies:
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - esbuild
+  - sharp
