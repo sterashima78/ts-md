@@ -7,7 +7,9 @@
   "exports": {
     ".": "./dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",

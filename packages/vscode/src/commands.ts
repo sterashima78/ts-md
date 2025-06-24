@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import type { LanguageClient } from '@volar/vscode/node';
 import * as vscode from 'vscode';
+
 const exec = promisify(execFile);
 
 export function registerCommands(
