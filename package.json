@@ -13,7 +13,7 @@
     "release": "pnpm changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.0",
+    "@biomejs/biome": "^2.0.0",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.4",
     "@types/node": "^22.15.29",
