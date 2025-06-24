@@ -7,7 +7,7 @@ import fg from 'fast-glob';
 export function packagesLoader(): Loader {
   const root = new URL('../../..', import.meta.url);
   const pattern =
-    'packages/{cli,core,loader,ls-core,sandbox,unplugin}/{README.md,src/**/*.ts.md}';
+    'packages/{cli,core,loader,ls-core,unplugin}/{README.md,src/**/*.ts.md}';
 
   return {
     name: 'packages-loader',
