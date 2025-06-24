@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it } from 'vitest';
+
 // cross-file chunk imports are not supported
 
 describe('app.ts.md', () => {
