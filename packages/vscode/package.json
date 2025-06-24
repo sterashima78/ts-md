@@ -26,7 +26,7 @@
     "@vscode/test-electron": "^2.4.2",
     "typescript": "^5.5.0",
     "vitest": "^1.5.1",
-    "vsce": "^2.15.0",
+    "@vscode/vsce": "^2.15.0",
     "@sterashima78/ts-md-tsc": "0.1.0"
   },
   "activationEvents": ["onLanguage:ts-md"],
