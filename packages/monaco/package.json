@@ -23,7 +23,7 @@
     "vitest": "^3.0.0",
     "@testing-library/react": "^16.0.0",
     "tsup": "^8.5.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^26.0.0",
     "@sterashima78/ts-md-tsc": "0.1.0"
   },
   "publishConfig": {
