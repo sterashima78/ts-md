@@ -6,23 +6,31 @@ import fg from 'fast-glob';
 
 export function packagesLoader(): Loader {
   const root = new URL('../../..', import.meta.url);
-  const pattern =
-    'packages/{cli,core,loader,ls-core,sandbox,unplugin}/src/**/*.ts.md';
+  const tsPattern =
+    'packages/{cli,core,loader,ls-core,sandbox,unplugin,monaco,tsc,vscode}/src/**/*.ts.md';
+  const readmePattern =
+    'packages/{cli,core,loader,ls-core,sandbox,unplugin,monaco,tsc,vscode}/README.md';
 
   return {
     name: 'packages-loader',
     async load(ctx) {
       const cwd = fileURLToPath(root);
-      const files = await fg(pattern, { cwd });
+      const files = await fg([tsPattern, readmePattern], { cwd });
       for (const entry of files) {
         const absPath = join(cwd, entry);
         const body = await fs.readFile(absPath, 'utf8');
         const heading = body.match(/^#\s+(.*)/m);
         const title = heading ? heading[1].trim() : undefined;
-        const match = entry.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
-        const id = match
-          ? `packages/${match[1]}/${match[2]}`
-          : entry.replace(/\.ts\.md$/, '');
+        let id: string;
+        if (entry.endsWith('README.md')) {
+          const match = entry.match(/^packages\/([^/]+)\/README.md$/);
+          id = match ? `packages/${match[1]}/README` : entry.replace(/\.md$/, '');
+        } else {
+          const match = entry.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
+          id = match
+            ? `packages/${match[1]}/${match[2]}`
+            : entry.replace(/\.ts\.md$/, '');
+        }
         const data = await ctx.parseData({
           id,
           data: { title },
