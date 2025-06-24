@@ -16,8 +16,8 @@
       "enabled": false
     },
     {
-      "matchPackagePatterns": ["^@volar/"],
-      "groupName": "volar"
+      "groupName": "volar",
+      "matchPackageNames": ["/^@volar//"]
     },
     {
       "matchManagers": ["github-actions"],
