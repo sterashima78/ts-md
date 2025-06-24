@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "hostRules": [
     {
       "hostType": "npm",
@@ -19,14 +17,10 @@
     },
     {
       "groupName": "volar",
-      "matchPackageNames": [
-        "/^@volar//"
-      ]
+      "matchPackageNames": ["/^@volar//"]
     },
     {
-      "matchManagers": [
-        "github-actions"
-      ],
+      "matchManagers": ["github-actions"],
       "pinDigests": true
     }
   ]
