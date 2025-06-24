@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
@@ -17,6 +20,7 @@ jobs:
       packages: read
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v4
       - uses: pnpm/action-setup@v2
         with:
           version: 9
@@ -29,4 +33,5 @@ jobs:
         with:
           path: packages/docs/dist
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v2
