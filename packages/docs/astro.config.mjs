@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
+  base: '/ts-md/',
   integrations: [
     starlight({
       title: 'TS-MD Docs',
