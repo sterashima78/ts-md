@@ -1,16 +1,23 @@
 ---
-title: TS-MDへようこそ
-description: TS-MD プロジェクトのドキュメントサイトです。
+title: TS-MD ドキュメント
 template: splash
-hero:
-  tagline: TS-MD ドキュメントへようこそ
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## 使い方
-
 <CardGrid stagger>
-  <Card title="パッケージ一覧" icon="package">左のサイドバーから各パッケージのドキュメントを参照してください。</Card>
+  <Card title="パッケージ README" icon="package">
+    <ul>
+      <li><a href="/packages/cli/README">@sterashima78/ts-md-cli</a></li>
+      <li><a href="/packages/core/README">@sterashima78/ts-md-core</a></li>
+      <li><a href="/packages/loader/README">@sterashima78/ts-md-loader</a></li>
+      <li><a href="/packages/ls-core/README">@sterashima78/ts-md-ls-core</a></li>
+      <li><a href="/packages/monaco/README">@sterashima78/ts-md-monaco</a></li>
+      <li><a href="/packages/sandbox/README">@sterashima78/ts-md-sandbox</a></li>
+      <li><a href="/packages/tsc/README">@sterashima78/ts-md-tsc</a></li>
+      <li><a href="/packages/unplugin/README">@sterashima78/ts-md-unplugin</a></li>
+      <li><a href="/packages/vscode/README">@sterashima78/ts-md-vscode</a></li>
+    </ul>
+  </Card>
   <Card title="リポジトリ" icon="github"><a href="https://github.com/sterashima78/ts-md">GitHub</a></Card>
 </CardGrid>
