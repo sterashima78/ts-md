@@ -1,5 +1,12 @@
 {
   "extends": ["config:base"],
+  "hostRules": [
+    {
+      "hostType": "npm",
+      "matchHost": "npm.pkg.github.com",
+      "token": "{{ secrets.GH_PKG_TOKEN }}"
+    }
+  ],
   "packageRules": [
     {
       "matchPackageNames": [
