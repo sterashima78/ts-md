@@ -15,11 +15,11 @@
     "@sterashima78/ts-md-ls-core": "workspace:*",
     "@volar/monaco": "^2.4.11",
     "monaco-editor": "^0.52.0",
-    "react": "^18.3.0",
+    "react": "^19.0.0",
     "@monaco-editor/react": "^4.7.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.27",
+    "@types/react": "^19.0.0",
     "typescript": "^5.5.0",
     "vite": "^7.0.0",
     "vitest": "^3.0.0",
