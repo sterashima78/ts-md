@@ -27,7 +27,11 @@ async function main() {
   await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
   try {
-    await run('pnpm', ['exec', 'vsce', 'package'], join(__dirname, '..'));
+    await run(
+      'pnpm',
+      ['exec', '@vscode/vsce', 'package'],
+      join(__dirname, '..'),
+    );
   } finally {
     pkg.name = originalName;
     await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
