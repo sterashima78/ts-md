@@ -7,7 +7,7 @@ import fg from 'fast-glob';
 export function packagesLoader(): Loader {
   const root = new URL('../../..', import.meta.url);
   const pattern =
-    'packages/{cli,core,loader,ls-core,sandbox,unplugin}/src/**/*.ts.md';
+    'packages/{cli,core,loader,ls-core,sandbox,unplugin}/{README.md,src/**/*.ts.md}';
 
   return {
     name: 'packages-loader',
@@ -20,9 +20,12 @@ export function packagesLoader(): Loader {
         const heading = body.match(/^#\s+(.*)/m);
         const title = heading ? heading[1].trim() : undefined;
         const match = entry.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
+        const readmeMatch = entry.match(/^packages\/([^/]+)\/README\.md$/);
         const id = match
           ? `packages/${match[1]}/${match[2]}`
-          : entry.replace(/\.ts\.md$/, '');
+          : readmeMatch
+            ? `packages/${readmeMatch[1]}/README`
+            : entry.replace(/\.ts\.md$/, '').replace(/\.md$/, '');
         const data = await ctx.parseData({
           id,
           data: { title },
