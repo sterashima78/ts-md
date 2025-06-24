@@ -16,6 +16,10 @@
       "enabled": false
     },
     {
+      "matchPackagePatterns": ["^@volar/"],
+      "groupName": "volar"
+    },
+    {
       "matchManagers": ["github-actions"],
       "pinDigests": true
     }
