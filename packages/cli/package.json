@@ -17,7 +17,7 @@
     "@sterashima78/ts-md-core": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "commander": "^11",
+    "commander": "^14.0.0",
     "fast-glob": "^3.3.3",
     "picocolors": "^1.0.0",
     "@volar/kit": "^2.4.14",
