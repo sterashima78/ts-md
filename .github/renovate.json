@@ -1,5 +1,7 @@
 {
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "hostRules": [
     {
       "hostType": "npm",
@@ -16,7 +18,9 @@
       "enabled": false
     },
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "pinDigests": true
     }
   ]
