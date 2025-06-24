@@ -1,17 +1,17 @@
 import {
-  type TsMdDiagnostic,
   collectDiagnostics,
+  type TsMdDiagnostic,
 } from '@sterashima78/ts-md-ls-core';
 import { provider as fileSystemProvider } from '@volar/language-server/lib/fileSystemProviders/node';
 import { createSimpleProject } from '@volar/language-server/lib/project/simpleProject';
 import { createServerBase } from '@volar/language-server/lib/server';
 import type { SnapshotDocument } from '@volar/language-server/lib/utils/snapshotDocument';
 import {
+  createConnection,
   DiagnosticSeverity,
   type ExperimentalFeatures,
   type ServerCapabilities,
   TextDocumentSyncKind,
-  createConnection,
 } from '@volar/language-server/node';
 import { URI } from 'vscode-uri';
 

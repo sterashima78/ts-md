@@ -11,7 +11,9 @@
     "./webpack": "./dist/webpack.js",
     "./esbuild": "./dist/esbuild.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",

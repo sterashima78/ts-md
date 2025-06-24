@@ -6,7 +6,9 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup && tsx scripts/postbuild.ts",
     "package": "tsx scripts/package.ts",
@@ -29,14 +31,23 @@
     "vsce": "^2.15.0",
     "@sterashima78/ts-md-tsc": "0.1.0"
   },
-  "activationEvents": ["onLanguage:ts-md"],
+  "activationEvents": [
+    "onLanguage:ts-md"
+  ],
   "contributes": {
     "languages": [
       {
         "id": "ts-md",
-        "aliases": ["TypeScript Markdown", "ts-md"],
-        "extensions": [".ts.md"],
-        "filenamePatterns": ["*.ts.md"],
+        "aliases": [
+          "TypeScript Markdown",
+          "ts-md"
+        ],
+        "extensions": [
+          ".ts.md"
+        ],
+        "filenamePatterns": [
+          "*.ts.md"
+        ],
         "configuration": "./dist/language-configuration.json"
       }
     ],

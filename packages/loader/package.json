@@ -4,7 +4,9 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",
