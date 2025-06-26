@@ -3,3 +3,5 @@ dist
 *.log
 .turbo
 .vscode-test
+.astro
+packages/unplugin/test/fixtures
