@@ -1,6 +1,8 @@
 # tangle コマンド
 
-```ts main
+ドキュメントからコードチャンクを抽出して実ファイルへ展開する処理です。
+
+```ts runTangle
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseChunks } from '@sterashima78/ts-md-core';
@@ -24,4 +26,10 @@ export async function runTangle(inputGlobs: string[], outDir = 'dist') {
     }
   }
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { runTangle } from ':runTangle';
 ```
