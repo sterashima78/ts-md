@@ -18,8 +18,15 @@ export function packagesLoader(): Loader {
         const absPath = join(cwd, entry);
         let body = await fs.readFile(absPath, 'utf8');
         body = rewriteLinks(body, entry);
-        const heading = body.match(/^#\s+(.*)/m);
-        const title = heading ? heading[1].trim() : undefined;
+        let title: string | undefined;
+        const heading = body.match(/^#\s+(.+?)(?:\r?\n|$)/);
+        if (heading) {
+          title = heading[1].trim();
+          body = body.slice(heading[0].length).replace(/^\n+/, '');
+        } else {
+          const m = body.match(/^#\s+(.*)/m);
+          title = m ? m[1].trim() : undefined;
+        }
         const match = entry.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
         const readmeMatch = entry.match(/^packages\/([^/]+)\/README\.md$/);
         const id = match
