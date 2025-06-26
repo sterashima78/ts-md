@@ -1,6 +1,8 @@
 # check コマンド
 
-```ts main
+`.ts.md` ファイルを型検査する `runCheck` 関数を公開します。
+
+```ts runCheck
 import {
   type TsMdVirtualFile,
   createTsMdPlugin,
@@ -32,4 +34,10 @@ export async function runCheck(globs: string[] = []) {
 
   if (errorCount) process.exit(1);
 }
+```
+
+## 公開インタフェース
+
+```ts main
+export { runCheck } from ':runCheck';
 ```
