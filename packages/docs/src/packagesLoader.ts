@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, normalize, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Loader } from 'astro/loaders';
 import fg from 'fast-glob';
@@ -16,7 +16,8 @@ export function packagesLoader(): Loader {
       const files = await fg(pattern, { cwd });
       for (const entry of files) {
         const absPath = join(cwd, entry);
-        const body = await fs.readFile(absPath, 'utf8');
+        let body = await fs.readFile(absPath, 'utf8');
+        body = rewriteLinks(body, entry);
         const heading = body.match(/^#\s+(.*)/m);
         const title = heading ? heading[1].trim() : undefined;
         const match = entry.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
@@ -45,4 +46,14 @@ export function packagesLoader(): Loader {
       }
     },
   };
+}
+
+function rewriteLinks(md: string, entry: string): string {
+  return md.replace(/\(([^)]+\.ts\.md)\)/g, (full, link) => {
+    const abs = normalize(posix.join(dirname(entry), link));
+    const m = abs.match(/^packages\/([^/]+)\/src\/(.*)\.ts\.md$/);
+    if (!m) return full;
+    const slug = `/ts-md/packages/${m[1]}/${m[2]}/`;
+    return `(${slug})`;
+  });
 }
