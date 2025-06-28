@@ -8,6 +8,8 @@ export default defineConfig({
   clean: true,
   target: 'node18',
   outExtension: () => ({ js: '.js' }),
-  bundle: false,
+  bundle: true,
+  splitting: false,
+  external: ['typescript'],
   esbuildPlugins: [tsMd],
 });

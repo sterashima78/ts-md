@@ -1,12 +1,12 @@
 # Loader
 
-```ts main
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parseChunks, resolveImport } from '@sterashima78/ts-md-core';
-import ts from 'typescript';
+`.ts.md` を Node.js で読み込むための ESM ローダーです。
 
+## 型定義
+
+共通で利用する型を定義します。
+
+```ts types
 export type Resolve = (
   specifier: string,
   context: { parentURL?: string | undefined },
@@ -18,6 +18,24 @@ export type Load = (
   context: { format?: string | undefined },
   defaultLoad: Load,
 ) => Promise<{ format: string; source: string }>;
+
+const VIRTUAL_PREFIX = 'ts-md:';
+```
+
+## `resolve` 関数
+
+モジュールのパス解決を担当します。`.ts.md` の場合はチャンク名を含む仮想 URL を返します。
+
+```ts resolve
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { resolveImport } from '@sterashima78/ts-md-core';
+
+export type Resolve = (
+  specifier: string,
+  context: { parentURL?: string | undefined },
+  defaultResolve: Resolve,
+) => Promise<{ url: string }>;
 
 const VIRTUAL_PREFIX = 'ts-md:';
 
@@ -68,6 +86,26 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
 
   return defaultResolve(specifier, context, defaultResolve);
 };
+```
+
+## `load` 関数
+
+仮想 URL からコードを読み込み、TypeScript をトランスパイルします。
+
+```ts load
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parseChunks } from '@sterashima78/ts-md-core';
+import ts from 'typescript';
+
+export type Load = (
+  url: string,
+  context: { format?: string | undefined },
+  defaultLoad: Load,
+) => Promise<{ format: string; source: string }>;
+
+const VIRTUAL_PREFIX = 'ts-md:';
 
 export const load: Load = async (url, context, defaultLoad) => {
   if (url.startsWith(VIRTUAL_PREFIX)) {
@@ -114,6 +152,13 @@ export const load: Load = async (url, context, defaultLoad) => {
 
   return defaultLoad(url, context, defaultLoad);
 };
+```
+
+## 公開インタフェース
+
+```ts main
+export { resolve } from ':resolve';
+export { load } from ':load';
 
 if (import.meta.vitest) {
   await import(':loader.test');
