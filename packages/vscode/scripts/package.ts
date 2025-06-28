@@ -1,21 +1,7 @@
-import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-function run(command: string, args: string[], cwd: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd, stdio: 'inherit' });
-    child.on('error', reject);
-    child.on('close', (code) => {
-      if (code === 0) resolve();
-      else
-        reject(
-          new Error(`${command} ${args.join(' ')} exited with code ${code}`),
-        );
-    });
-  });
-}
+import { packageCommand } from '@vscode/vsce/out/package';
 
 async function main() {
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -27,11 +13,7 @@ async function main() {
   await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
   try {
-    await run(
-      'pnpm',
-      ['exec', '@vscode/vsce', 'package'],
-      join(__dirname, '..'),
-    );
+    await packageCommand({ cwd: join(__dirname, '..'), dependencies: false });
   } finally {
     pkg.name = originalName;
     await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
