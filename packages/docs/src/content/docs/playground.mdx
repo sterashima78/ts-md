@@ -1,0 +1,17 @@
+---
+title: プレイグラウンド
+---
+
+import React from 'react';
+
+const code = String.raw`\`\`\`ts add
+export const add = (a: number, b: number) => a + b
+\`\`\``;
+
+export default function Playground() {
+  const [Editor, setEditor] = React.useState(null);
+  React.useEffect(() => {
+    import(/* @vite-ignore */ '../../../../monaco/dist/index.mjs').then(m => setEditor(() => m.TsMdEditor));
+  }, []);
+  return Editor ? <Editor value={code} height="400px" /> : null;
+}
