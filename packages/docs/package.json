@@ -11,6 +11,13 @@
     "astro": "5.10.1",
     "@astrojs/starlight": "0.34.4",
     "sharp": "^0.34.0",
-    "fast-glob": "^3.3.3"
+    "fast-glob": "^3.3.3",
+    "@astrojs/react": "^4.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "@sterashima78/ts-md-monaco": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0"
   }
 }

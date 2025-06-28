@@ -1,7 +1,11 @@
 {
   "name": "@sterashima78/ts-md-monaco",
   "version": "0.0.7",
+  "type": "module",
   "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -13,7 +17,7 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/monaco": "^2.4.11",
+    "@volar/monaco": "2.4.11",
     "monaco-editor": "^0.52.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

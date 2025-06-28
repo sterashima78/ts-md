@@ -1,6 +1,5 @@
 import useMonaco from '@monaco-editor/react';
-import * as React from 'react';
-import { createTsMdWorker } from '../browser/createWorker';
+import type * as React from 'react';
 
 export interface TsMdEditorProps {
   value: string;
@@ -16,11 +15,6 @@ export const TsMdEditor: React.FC<TsMdEditorProps> = ({
   const MonacoEditor = (
     useMonaco as unknown as () => React.ComponentType<Record<string, unknown>>
   )(); // dynamic import
-
-  React.useEffect(() => {
-    if (!MonacoEditor) return;
-    createTsMdWorker(MonacoEditor as unknown as typeof import('monaco-editor'));
-  }, [MonacoEditor]);
 
   if (!MonacoEditor) return null;
 
