@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-monaco
 
+## 0.0.8
+
+### Patch Changes
+
+- [#181](https://github.com/sterashima78/ts-md/pull/181) [`3090997`](https://github.com/sterashima78/ts-md/commit/30909971ebf8e909aff680d914600ecc46fd2918) Thanks [@renovate](https://github.com/apps/renovate)! - react-dom を依存に追加し、テストが失敗する問題を修正しました。
+
 ## 0.0.7
 
 ### Patch Changes
