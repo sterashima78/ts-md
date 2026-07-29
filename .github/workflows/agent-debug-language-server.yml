@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/fix-vscode-intellisense
+  pull_request:
 
 permissions:
   contents: read
