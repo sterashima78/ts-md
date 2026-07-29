@@ -18,8 +18,9 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/language-server": "^2.4.14",
-    "@volar/vscode": "^2.4.14",
+    "@volar/language-server": "2.4.14",
+    "@volar/language-service": "2.4.14",
+    "@volar/vscode": "2.4.14",
     "tsx": "^4.8.1",
     "typescript": "^5.5.0",
     "volar-service-typescript": "0.0.71",
