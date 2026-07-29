@@ -1,9 +1,23 @@
 # Virtual File
 
 ```ts main
-import type { CodeMapping, Mapping, VirtualCode } from '@volar/language-core';
+import type {
+  CodeInformation,
+  CodeMapping,
+  Mapping,
+  VirtualCode,
+} from '@volar/language-core';
 import type ts from 'typescript';
 import { getChunkInfoDict } from './parsers.ts.md';
+
+const typescriptFeatures = {
+  completion: true,
+  format: true,
+  navigation: true,
+  semantic: true,
+  structure: true,
+  verification: true,
+} satisfies CodeInformation;
 
 export class TsMdVirtualFile implements VirtualCode {
   id!: string;
@@ -38,14 +52,7 @@ export class TsMdVirtualFile implements VirtualCode {
         sourceOffsets: [0],
         generatedOffsets: [0],
         lengths: [this.snapshot.getLength()],
-        data: {
-          completion: true,
-          format: true,
-          navigation: true,
-          semantic: true,
-          structure: true,
-          verification: true,
-        },
+        data: typescriptFeatures,
       },
     ];
 
@@ -54,29 +61,21 @@ export class TsMdVirtualFile implements VirtualCode {
       this.dict[name] = code;
       this.embeddedCodes.push({
         id: `${this.uri}__${name}.ts`,
-        languageId: 'ts',
-        mappings: [],
-        linkedCodeMappings: [
+        languageId: 'typescript',
+        mappings: [
           {
-            sourceOffsets: [0],
-            generatedOffsets: [start],
+            sourceOffsets: [start],
+            generatedOffsets: [0],
             lengths: [code.length],
-            generatedLengths: [code.length],
-            data: {},
+            data: typescriptFeatures,
           },
         ],
+        linkedCodeMappings: [],
         snapshot: {
           getText: (s, e) => code.slice(s, e),
           getLength: () => code.length,
           getChangeRange: () => undefined,
         },
-      });
-      this.linkedCodeMappings.push({
-        sourceOffsets: [start],
-        generatedOffsets: [0],
-        lengths: [code.length],
-        generatedLengths: [code.length],
-        data: {},
       });
     }
   }
