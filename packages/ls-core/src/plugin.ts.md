@@ -159,7 +159,7 @@ export const tsMdLanguagePlugin = createPlugin(true);
 export const tsMdEditorLanguagePlugin = createPlugin(false);
 
 if (import.meta.vitest) {
-  await import(':plugin.test');
+  void import(':plugin.test');
 }
 ```
 
