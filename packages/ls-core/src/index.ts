@@ -1,7 +1,7 @@
 export {
+  resolveTsMdFileName,
   tsMdEditorLanguagePlugin as createTsMdEditorPlugin,
   tsMdLanguagePlugin as createTsMdPlugin,
-  resolveTsMdFileName,
 } from './plugin.ts.md';
 export {
   collectDiagnostics,
