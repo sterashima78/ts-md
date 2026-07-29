@@ -1,4 +1,8 @@
-export { tsMdLanguagePlugin as createTsMdPlugin } from './plugin.ts.md';
+export {
+  tsMdEditorLanguagePlugin as createTsMdEditorPlugin,
+  tsMdLanguagePlugin as createTsMdPlugin,
+  resolveTsMdFileName,
+} from './plugin.ts.md';
 export {
   collectDiagnostics,
   createTsMdLanguageService,
