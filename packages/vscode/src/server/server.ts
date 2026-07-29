@@ -50,7 +50,9 @@ function installTsMdModuleResolver(project: ProjectContext) {
   if (!host) return;
 
   const fallbackLiterals = host.resolveModuleNameLiterals?.bind(host);
-  host.resolveModuleNameLiterals = (...args) => {
+  const resolveModuleNameLiterals: NonNullable<
+    ts.LanguageServiceHost['resolveModuleNameLiterals']
+  > = (...args) => {
     const [moduleLiterals, containingFile] = args;
     const fallbackResults = fallbackLiterals?.(...args);
     return moduleLiterals.map((literal, index) => {
@@ -60,9 +62,12 @@ function installTsMdModuleResolver(project: ProjectContext) {
         : (fallbackResults?.[index] ?? { resolvedModule: undefined });
     });
   };
+  host.resolveModuleNameLiterals = resolveModuleNameLiterals;
 
   const fallbackNames = host.resolveModuleNames?.bind(host);
-  host.resolveModuleNames = (...args) => {
+  const resolveModuleNames: NonNullable<
+    ts.LanguageServiceHost['resolveModuleNames']
+  > = (...args) => {
     const [moduleNames, containingFile] = args;
     const fallbackResults = fallbackNames?.(...args);
     return moduleNames.map(
@@ -71,6 +76,7 @@ function installTsMdModuleResolver(project: ProjectContext) {
         fallbackResults?.[index],
     );
   };
+  host.resolveModuleNames = resolveModuleNames;
 }
 
 function resolveTsMdModule(
