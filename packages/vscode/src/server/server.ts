@@ -67,7 +67,8 @@ function installTsMdModuleResolver(project: ProjectContext) {
     const fallbackResults = fallbackNames?.(...args);
     return moduleNames.map(
       (moduleName, index) =>
-        resolveTsMdModule(moduleName, containingFile) ?? fallbackResults?.[index],
+        resolveTsMdModule(moduleName, containingFile) ??
+        fallbackResults?.[index],
     );
   };
 }
