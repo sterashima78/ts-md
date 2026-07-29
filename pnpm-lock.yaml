@@ -287,10 +287,13 @@ importers:
         specifier: workspace:*
         version: link:../ls-core
       '@volar/language-server':
-        specifier: ^2.4.14
+        specifier: 2.4.14
+        version: 2.4.14
+      '@volar/language-service':
+        specifier: 2.4.14
         version: 2.4.14
       '@volar/vscode':
-        specifier: ^2.4.14
+        specifier: 2.4.14
         version: 2.4.14
       tsx:
         specifier: ^4.8.1
@@ -300,7 +303,7 @@ importers:
         version: 5.8.3
       volar-service-typescript:
         specifier: 0.0.71
-        version: 0.0.71(@volar/language-service@2.4.15)
+        version: 0.0.71(@volar/language-service@2.4.14)
       vscode-uri:
         specifier: ^3.0.8
         version: 3.1.0
@@ -5746,7 +5749,7 @@ snapshots:
     dependencies:
       '@sterashima78/ts-md-core': 0.2.0
       '@volar/language-core': 2.4.14
-      '@volar/language-service': 2.4.15
+      '@volar/language-service': 2.4.14
       '@volar/typescript': 2.4.14
       vscode-uri: 3.1.0
     transitivePeerDependencies:
@@ -9896,7 +9899,7 @@ snapshots:
       - tsx
       - yaml
 
-  volar-service-typescript@0.0.71(@volar/language-service@2.4.15):
+  volar-service-typescript@0.0.71(@volar/language-service@2.4.14):
     dependencies:
       path-browserify: 1.0.1
       semver: 7.7.2
@@ -9905,7 +9908,7 @@ snapshots:
       vscode-nls: 5.2.0
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.15
+      '@volar/language-service': 2.4.14
 
   vscode-jsonrpc@8.2.0: {}
 
