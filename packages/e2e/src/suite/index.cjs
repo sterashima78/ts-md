@@ -48,12 +48,17 @@ exports.run = async () => {
   console.log('languageId', badDocument.languageId);
 
   const diagnostics = await waitForDiagnostics(badDocument.uri);
-  if (!diagnostics.some((diagnostic) => /Argument of type/.test(diagnostic.message))) {
+  if (
+    !diagnostics.some((diagnostic) =>
+      /Argument of type/.test(diagnostic.message),
+    )
+  ) {
     throw new Error('expected TypeScript diagnostics');
   }
 
   const completionUri = vscode.Uri.joinPath(workspace.uri, 'completion.ts.md');
-  const completionDocument = await vscode.workspace.openTextDocument(completionUri);
+  const completionDocument =
+    await vscode.workspace.openTextDocument(completionUri);
   await vscode.window.showTextDocument(completionDocument);
 
   const completion = await waitForCompletion(
