@@ -2,6 +2,8 @@
 
 `.ts.md` document 内の module と、各ツールが扱う仮想 TypeScript ファイル名の対応を一元管理します。
 
+仮想ファイルは元の document と同じディレクトリに配置される名前を使います。これにより、module 内の通常の相対 import も document を基準に解決されます。
+
 ```ts types
 export interface TsMdModuleId {
   documentPath: string;
@@ -10,27 +12,26 @@ export interface TsMdModuleId {
 ```
 
 ```ts constants
-export const TS_MD_VIRTUAL_DIRECTORY_SUFFIX = '.__tsmd__';
+export const TS_MD_VIRTUAL_MODULE_MARKER = '.__tsmd__.';
 ```
 
 ```ts createVirtualModuleFileName
 import path from 'node:path';
-import { TS_MD_VIRTUAL_DIRECTORY_SUFFIX } from ':constants';
+import { TS_MD_VIRTUAL_MODULE_MARKER } from ':constants';
 import type { TsMdModuleId } from ':types';
 
 export function createVirtualModuleFileName({
   documentPath,
   moduleName,
 }: TsMdModuleId): string {
-  const directory = `${path.resolve(documentPath)}${TS_MD_VIRTUAL_DIRECTORY_SUFFIX}`;
-  return path.join(directory, `${encodeURIComponent(moduleName)}.ts`);
+  return `${path.resolve(documentPath)}${TS_MD_VIRTUAL_MODULE_MARKER}${encodeURIComponent(moduleName)}.ts`;
 }
 ```
 
 ```ts parseVirtualModuleFileName
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { TS_MD_VIRTUAL_DIRECTORY_SUFFIX } from ':constants';
+import { TS_MD_VIRTUAL_MODULE_MARKER } from ':constants';
 import type { TsMdModuleId } from ':types';
 
 export function parseVirtualModuleFileName(
@@ -47,15 +48,14 @@ export function parseVirtualModuleFileName(
   fileName = fileName.replace(/[?#].*$/, '');
 
   const normalized = path.normalize(fileName);
-  const marker = `${TS_MD_VIRTUAL_DIRECTORY_SUFFIX}${path.sep}`;
-  const markerIndex = normalized.lastIndexOf(marker);
+  const markerIndex = normalized.lastIndexOf(TS_MD_VIRTUAL_MODULE_MARKER);
   if (markerIndex === -1 || !normalized.endsWith('.ts')) return;
 
   const documentPath = normalized.slice(0, markerIndex);
   if (!documentPath.endsWith('.ts.md')) return;
 
   const encodedModuleName = normalized.slice(
-    markerIndex + marker.length,
+    markerIndex + TS_MD_VIRTUAL_MODULE_MARKER.length,
     -'.ts'.length,
   );
   if (!encodedModuleName || encodedModuleName.includes(path.sep)) return;
@@ -74,7 +74,7 @@ export function parseVirtualModuleFileName(
 ```ts main
 export { createVirtualModuleFileName } from ':createVirtualModuleFileName';
 export { parseVirtualModuleFileName } from ':parseVirtualModuleFileName';
-export { TS_MD_VIRTUAL_DIRECTORY_SUFFIX } from ':constants';
+export { TS_MD_VIRTUAL_MODULE_MARKER } from ':constants';
 export type { TsMdModuleId } from ':types';
 
 if (import.meta.vitest) {
@@ -95,6 +95,7 @@ describe('virtual module file names', () => {
       moduleName: 'foo__bar',
     };
     const fileName = createVirtualModuleFileName(id);
+    expect(path.dirname(fileName)).toBe(path.dirname(id.documentPath));
     expect(parseVirtualModuleFileName(fileName)).toEqual(id);
   });
 });
