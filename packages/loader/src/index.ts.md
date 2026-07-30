@@ -47,6 +47,16 @@ function getParentDocument(parentURL: string | undefined): string | undefined {
 }
 
 export const resolve: Resolve = async (specifier, context, defaultResolve) => {
+  if (parseVirtualModuleFileName(specifier)) {
+    return {
+      url: specifier.startsWith('file:')
+        ? specifier
+        : pathToFileURL(specifier).href,
+      format: 'module',
+      shortCircuit: true,
+    };
+  }
+
   const parentDocument = getParentDocument(context.parentURL);
   if (parentDocument) {
     const resolved = resolveImport(specifier, parentDocument);
@@ -147,6 +157,7 @@ if (import.meta.vitest) {
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createVirtualModuleFileName } from '@sterashima78/ts-md-core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('ts-md-loader', () => {
@@ -179,12 +190,23 @@ describe('ts-md-loader', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  it('runs modules from a markdown document', () => {
+  it('runs the main module from a markdown document', () => {
     const output = execSync(
       `node --loader ${builtLoader} ${markdownFile}`,
       { encoding: 'utf8' },
     );
     expect(output.trim()).toBe('loader works');
+  });
+
+  it('runs a named virtual module as an entry', () => {
+    const entry = createVirtualModuleFileName({
+      documentPath: markdownFile,
+      moduleName: 'foo',
+    });
+    const output = execSync(`node --loader ${builtLoader} ${entry}`, {
+      encoding: 'utf8',
+    });
+    expect(output.trim()).toBe('');
   });
 });
 ```
