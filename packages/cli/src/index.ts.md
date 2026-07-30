@@ -23,13 +23,13 @@ export function createCli() {
     );
 
   program
-    .command('run <file>')
+    .command('run <entry>')
     .allowUnknownOption()
-    .description('Execute the main module of a .ts.md document')
-    .action((file: string, _options: unknown, command: Command) => {
+    .description('Execute a .ts.md main or named module')
+    .action((entry: string, _options: unknown, command: Command) => {
       const rest =
         command.parent?.args.slice(command.parent.args.indexOf('run') + 2) ?? [];
-      runTsMd(file, rest);
+      runTsMd(entry, rest);
     });
 
   return program;
