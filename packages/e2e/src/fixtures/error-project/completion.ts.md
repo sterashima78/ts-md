@@ -1,6 +1,10 @@
 # IntelliSense fixture
 
+```ts user__data
+export const user = { name: 'Ada', age: 42 };
+```
+
 ```ts main
-const user = { name: 'Ada', age: 42 };
+import { user } from ':user__data';
 user.
 ```
