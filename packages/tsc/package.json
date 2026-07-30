@@ -17,8 +17,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@volar/typescript": "^2.4.14",
-    "@sterashima78/ts-md-ls-core": "workspace:*"
+    "@sterashima78/ts-md-core": "workspace:*",
+    "typescript": "^5.8.3"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
