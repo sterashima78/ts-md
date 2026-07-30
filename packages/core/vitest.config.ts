@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [tsMd],
   test: {
     globals: true,
-    include: ['test/**/*.test.ts', 'src/graph.ts.md', 'src/tangle.ts.md'],
+    include: ['test/**/*.test.ts'],
   },
 });
