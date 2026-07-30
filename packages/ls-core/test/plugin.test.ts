@@ -6,14 +6,11 @@ import {
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { URI } from 'vscode-uri';
-import {
-  createTsMdPlugin,
-  resolveTsMdFileName,
-} from '../src/index.ts';
+import { createTsMdPlugin, resolveTsMdFileName } from '../src/index.ts';
 import type { TsMdVirtualFile } from '../src/virtual-file.ts.md';
 
 function fence(header: string, code: string) {
-  return ['```' + header, code, '```'].join('\n');
+  return [`\`\`\`${header}`, code, '```'].join('\n');
 }
 
 describe('ts-md language plugin', () => {
@@ -64,8 +61,8 @@ describe('ts-md language plugin', () => {
     );
 
     expect(
-      scripts?.map((script) =>
-        parseVirtualModuleFileName(script.fileName)?.moduleName,
+      scripts?.map(
+        (script) => parseVirtualModuleFileName(script.fileName)?.moduleName,
       ),
     ).toContain('foo__bar');
   });
