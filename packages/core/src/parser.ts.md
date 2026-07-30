@@ -185,8 +185,9 @@ import { parseChunkInfos } from ':parseChunkInfos';
 import { parseChunks } from ':parseChunks';
 import { parseDocument } from ':parseDocument';
 
-const fence = (header: string, code: string) =>
-  ['```' + header, code, '```'].join('\n');
+function fence(header: string, code: string) {
+  return ['```' + header, code, '```'].join('\n');
+}
 
 describe('parseDocument', () => {
   it('treats each code fence as one module', () => {
