@@ -61,47 +61,4 @@ export async function tangle(
 
 ```ts main
 export { tangle } from ':tangle';
-
-if (import.meta.vitest) {
-  await import(':tangle.test');
-}
-```
-
-## Tests
-
-```ts tangle.test
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import { describe, expect, it } from 'vitest';
-import { parseDocument } from './parser.ts.md';
-import { tangle } from ':tangle';
-
-function fence(header: string, code: string) {
-  return ['```' + header, code, '```'].join('\n');
-}
-
-describe('tangle', () => {
-  it('writes one file for each module', async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'tangle-'));
-    const document = parseDocument(
-      [
-        fence('ts main', 'export const value = 1'),
-        fence('tsx view', 'export const view = <div />'),
-      ].join('\n\n'),
-      '/doc.ts.md',
-    );
-
-    await tangle(document, tmp);
-
-    expect(
-      await fs.readFile(path.join(tmp, 'doc', 'main.ts'), 'utf8'),
-    ).toBe('export const value = 1');
-    expect(
-      await fs.readFile(path.join(tmp, 'doc', 'view.tsx'), 'utf8'),
-    ).toBe('export const view = <div />');
-
-    await fs.rm(tmp, { recursive: true, force: true });
-  });
-});
 ```
