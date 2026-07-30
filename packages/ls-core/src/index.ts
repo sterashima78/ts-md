@@ -1,13 +1,13 @@
+export type {
+  TsMdDocument,
+  TsMdModule,
+} from '@sterashima78/ts-md-core';
 export {
   createVirtualModuleFileName,
   parseDocument,
   parseVirtualModuleFileName,
   resolveImport,
   TS_MD_VIRTUAL_MODULE_MARKER,
-} from '@sterashima78/ts-md-core';
-export type {
-  TsMdDocument,
-  TsMdModule,
 } from '@sterashima78/ts-md-core';
 export {
   resolveTsMdFileName,
