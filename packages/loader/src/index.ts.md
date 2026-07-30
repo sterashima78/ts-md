@@ -1,84 +1,83 @@
 # Loader
 
-`.ts.md` を Node.js で読み込むための ESM ローダーです。
+`.ts.md` document 内の各コードフェンスを、独立した Node.js ESM module としてロードします。
 
 ## 型定義
-
-共通で利用する型を定義します。
 
 ```ts types
 export type Resolve = (
   specifier: string,
-  context: { parentURL?: string | undefined },
+  context: { parentURL?: string },
   defaultResolve: Resolve,
-) => Promise<{ url: string }>;
+) => Promise<{
+  url: string;
+  format?: string;
+  shortCircuit?: boolean;
+}>;
 
 export type Load = (
   url: string,
-  context: { format?: string | undefined },
+  context: { format?: string },
   defaultLoad: Load,
-) => Promise<{ format: string; source: string }>;
-
-const VIRTUAL_PREFIX = 'ts-md:';
+) => Promise<{
+  format: string;
+  source: string;
+  shortCircuit?: boolean;
+}>;
 ```
 
-## `resolve` 関数
-
-モジュールのパス解決を担当します。`.ts.md` の場合はチャンク名を含む仮想 URL を返します。
+## resolve
 
 ```ts resolve
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { resolveImport } from '@sterashima78/ts-md-core';
+import {
+  createVirtualModuleFileName,
+  parseVirtualModuleFileName,
+  resolveImport,
+} from '@sterashima78/ts-md-core';
+import type { Resolve } from ':types';
 
-export type Resolve = (
-  specifier: string,
-  context: { parentURL?: string | undefined },
-  defaultResolve: Resolve,
-) => Promise<{ url: string }>;
-
-const VIRTUAL_PREFIX = 'ts-md:';
+function getParentDocument(parentURL: string | undefined): string | undefined {
+  if (!parentURL) return;
+  const virtualModule = parseVirtualModuleFileName(parentURL);
+  if (virtualModule) return virtualModule.documentPath;
+  if (!parentURL.startsWith('file:')) return;
+  return fileURLToPath(parentURL);
+}
 
 export const resolve: Resolve = async (specifier, context, defaultResolve) => {
-  let parentURL: string | undefined;
-  if (context.parentURL) {
-    if (context.parentURL.startsWith(VIRTUAL_PREFIX)) {
-      const body = context.parentURL.slice(VIRTUAL_PREFIX.length);
-      const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(body);
-      parentURL = m ? m[1] : body;
-    } else {
-      parentURL = fileURLToPath(context.parentURL);
+  const parentDocument = getParentDocument(context.parentURL);
+  if (parentDocument) {
+    const resolved = resolveImport(specifier, parentDocument);
+    if (resolved) {
+      return {
+        url: pathToFileURL(
+          createVirtualModuleFileName({
+            documentPath: resolved.absPath,
+            moduleName: resolved.chunk,
+          }),
+        ).href,
+        format: 'module',
+        shortCircuit: true,
+      };
     }
   }
-  const specPath = specifier.startsWith('file:')
+
+  const fileSpecifier = specifier.startsWith('file:')
     ? fileURLToPath(specifier)
     : specifier;
-  if (parentURL) {
-    const info = resolveImport(specifier, parentURL);
-    if (info) {
-      const abs = path.resolve(info.absPath);
-      const url = `${VIRTUAL_PREFIX}${abs}__${info.chunk}.ts`;
-      return { url, format: 'module', shortCircuit: true };
-    }
-  }
-
-  if (specPath.endsWith('.ts.md')) {
-    const abs = parentURL
-      ? path.resolve(path.dirname(parentURL), specPath)
-      : path.resolve(specPath);
+  if (fileSpecifier.endsWith('.ts.md')) {
+    const documentPath = parentDocument
+      ? path.resolve(path.dirname(parentDocument), fileSpecifier)
+      : path.resolve(fileSpecifier);
     return {
-      url: `${VIRTUAL_PREFIX}${abs}__main.ts`,
-      format: 'module',
-      shortCircuit: true,
-    };
-  }
-
-  if (specPath.endsWith('.ts')) {
-    const abs = parentURL
-      ? path.resolve(path.dirname(parentURL), specPath)
-      : path.resolve(specPath);
-    return {
-      url: pathToFileURL(abs).href,
+      url: pathToFileURL(
+        createVirtualModuleFileName({
+          documentPath,
+          moduleName: 'main',
+        }),
+      ).href,
       format: 'module',
       shortCircuit: true,
     };
@@ -88,77 +87,54 @@ export const resolve: Resolve = async (specifier, context, defaultResolve) => {
 };
 ```
 
-## `load` 関数
-
-仮想 URL からコードを読み込み、TypeScript をトランスパイルします。
+## load
 
 ```ts load
 import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { parseChunks } from '@sterashima78/ts-md-core';
+import {
+  parseDocument,
+  parseVirtualModuleFileName,
+} from '@sterashima78/ts-md-core';
 import ts from 'typescript';
-
-export type Load = (
-  url: string,
-  context: { format?: string | undefined },
-  defaultLoad: Load,
-) => Promise<{ format: string; source: string }>;
-
-const VIRTUAL_PREFIX = 'ts-md:';
+import type { Load } from ':types';
 
 export const load: Load = async (url, context, defaultLoad) => {
-  if (url.startsWith(VIRTUAL_PREFIX)) {
-    const body = url.slice(VIRTUAL_PREFIX.length);
-    const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(body);
-    if (!m) return defaultLoad(url, context, defaultLoad);
-    const [, file, name] = m;
-    const md = fs.readFileSync(file, 'utf8');
-    const chunks = parseChunks(md, file);
-    const chunk = chunks[name];
-    if (!chunk) {
-      throw new Error(`chunk '${name}' not found in ${file}`);
-    }
-    const tsResult = ts.transpileModule(chunk, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ESNext,
-        sourceMap: false,
-      },
-    });
-    return {
-      format: 'module',
-      source: tsResult.outputText,
-      shortCircuit: true,
-    };
+  const moduleId = parseVirtualModuleFileName(url);
+  if (!moduleId) return defaultLoad(url, context, defaultLoad);
+
+  const markdown = fs.readFileSync(moduleId.documentPath, 'utf8');
+  const document = parseDocument(markdown, moduleId.documentPath);
+  const module = document.modules.find(
+    (candidate) => candidate.name === moduleId.moduleName,
+  );
+  if (!module) {
+    throw new Error(
+      `module '${moduleId.moduleName}' not found in ${moduleId.documentPath}`,
+    );
   }
 
-  if (url.startsWith('file:') && url.endsWith('.ts')) {
-    const file = fileURLToPath(url);
-    const source = fs.readFileSync(file, 'utf8');
-    const tsResult = ts.transpileModule(source, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ESNext,
-        sourceMap: false,
-      },
-    });
-    return {
-      format: 'module',
-      source: tsResult.outputText,
-      shortCircuit: true,
-    };
-  }
-
-  return defaultLoad(url, context, defaultLoad);
+  const result = ts.transpileModule(module.code, {
+    fileName: `${module.name}.${module.language}`,
+    compilerOptions: {
+      jsx: ts.JsxEmit.ReactJSX,
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ESNext,
+      sourceMap: false,
+    },
+  });
+  return {
+    format: 'module',
+    source: result.outputText,
+    shortCircuit: true,
+  };
 };
 ```
 
 ## 公開インタフェース
 
 ```ts main
-export { resolve } from ':resolve';
 export { load } from ':load';
+export { resolve } from ':resolve';
 
 if (import.meta.vitest) {
   await import(':loader.test');
@@ -175,14 +151,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('ts-md-loader', () => {
   const dir = path.join(process.cwd(), 'test', 'fixtures');
-  const md = path.join(dir, 'doc.ts.md');
-  const loaderSrc = path.join(process.cwd(), 'dist', 'index.js');
+  const markdownFile = path.join(dir, 'doc.ts.md');
+  const loaderSource = path.join(process.cwd(), 'dist', 'index.js');
   const builtLoader = path.join(dir, 'loader.mjs');
 
   beforeAll(() => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
-      md,
+      markdownFile,
       [
         '# Doc',
         '',
@@ -196,20 +172,19 @@ describe('ts-md-loader', () => {
         '```',
       ].join('\n'),
     );
-    const source = fs.readFileSync(loaderSrc, 'utf8');
-    const loaderCode = source;
-    fs.writeFileSync(builtLoader, loaderCode);
+    fs.writeFileSync(builtLoader, fs.readFileSync(loaderSource, 'utf8'));
   });
 
   afterAll(() => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  it('runs markdown file', () => {
-    const out = execSync(`node --loader ${builtLoader} ${md}`, {
-      encoding: 'utf8',
-    });
-    expect(out.trim()).toBe('loader works');
+  it('runs modules from a markdown document', () => {
+    const output = execSync(
+      `node --loader ${builtLoader} ${markdownFile}`,
+      { encoding: 'utf8' },
+    );
+    expect(output.trim()).toBe('loader works');
   });
 });
 ```
