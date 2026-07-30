@@ -1,14 +1,17 @@
 # @sterashima78/ts-md-cli
 
-CLI toolset for working with `.ts.md` files. It wraps the core parser and loader
-so that documents can be type-checked, tangled into real files and executed.
+`.ts.md` document を操作する CLI です。
 
 ## Commands
-- `check` – tsc と同様に `.ts.md` を型チェックします
-- `tangle` – extract chunks to the given directory
-- `run` – execute a document with the Node loader
 
-## Structure
-- `src/commands/` – implementations of each command
-- `src/utils/` – helpers for glob expansion and spawning Node
-- `test/` – Vitest tests
+```bash
+tsmd check [globs...]
+tsmd run <file> [...nodeArgs]
+tsmd tangle [globs...] --outDir dist
+```
+
+- `check`: 指定した `.ts.md` document の全 modules を型検査します
+- `run`: document の `main` module を Node.js で実行します
+- `tangle`: 各コードフェンスを一つの `.ts` / `.tsx` ファイルへ書き出します
+
+コードフェンスは独立 module であり、同名フェンスはエラーです。
