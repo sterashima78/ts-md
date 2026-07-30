@@ -1,5 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  createVirtualModuleFileName,
+  parseVirtualModuleFileName,
+} from '@sterashima78/ts-md-core';
 import type { Plugin } from 'rollup';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -14,10 +18,19 @@ describe('ts-md-unplugin', () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       mdPath,
-      ['# Doc', '', '```ts main', "export const msg = 'hi'", '```'].join('\n'),
+      [
+        '# Doc',
+        '',
+        '```ts dep',
+        "export const msg = 'hi'",
+        '```',
+        '',
+        '```ts main',
+        "export { msg } from ':dep'",
+        '```',
+      ].join('\n'),
     );
     fs.writeFileSync(entry, "import './doc.ts.md';");
-
     unpluginFactory = (await import('../src/index.ts.md')).unplugin;
   });
 
@@ -25,25 +38,35 @@ describe('ts-md-unplugin', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  it('loads chunk code', async () => {
+  it('loads the main module from a document import', async () => {
     const plugin = unpluginFactory.rollup();
-    const p = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
+    const instance = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const resolved = (p as any).resolveId('./doc.ts.md', entry);
-    expect(resolved).toBe(`${mdPath}__main.ts`);
-    const id = resolved as string;
+    const resolved = (instance as any).resolveId('./doc.ts.md', entry);
+    expect(resolved).toBe(
+      createVirtualModuleFileName({
+        documentPath: mdPath,
+        moduleName: 'main',
+      }),
+    );
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const loaded = await (p as any).load(id);
+    const loaded = await (instance as any).load(resolved);
     const code = typeof loaded === 'string' ? loaded : loaded?.code;
-    expect(code?.trim()).toBe("export const msg = 'hi'");
+    expect(code?.trim()).toBe("export { msg } from ':dep'");
   });
 
-  it('re-exports blocks from document', async () => {
+  it('resolves a same-document module import', () => {
     const plugin = unpluginFactory.rollup();
-    const p = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
+    const instance = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
+    const mainId = createVirtualModuleFileName({
+      documentPath: mdPath,
+      moduleName: 'main',
+    });
     // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const loaded = await (p as any).load(mdPath);
-    const code = typeof loaded === 'string' ? loaded : loaded?.code;
-    expect(code?.trim()).toBe(`export * from '${mdPath}__main.ts'`);
+    const resolved = (instance as any).resolveId(':dep', mainId);
+    expect(parseVirtualModuleFileName(resolved)).toEqual({
+      documentPath: mdPath,
+      moduleName: 'dep',
+    });
   });
 });
