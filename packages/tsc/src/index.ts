@@ -9,7 +9,7 @@ import {
   TS_MD_VIRTUAL_MODULE_MARKER,
   type TsMdDocument,
   type TsMdModule,
-} from '@sterashima78/ts-md-core';
+} from '@sterashima78/ts-md-ls-core';
 import ts from 'typescript';
 
 interface VirtualModule {
