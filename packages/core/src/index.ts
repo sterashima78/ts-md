@@ -1,4 +1,4 @@
-export { detectCycle } from './graph.ts.md';
+export { collectModuleSpecifiers, detectCycle } from './graph.ts.md';
 export type { TsMdModuleId } from './module-id.ts.md';
 export {
   createVirtualModuleFileName,
