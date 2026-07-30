@@ -18,18 +18,20 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/vscode": "^2.4.14",
-    "@volar/language-server": "^2.4.14",
-    "vscode-uri": "^3.0.8",
-    "tsx": "^4.8.1"
+    "@volar/language-server": "2.4.14",
+    "@volar/language-service": "2.4.14",
+    "@volar/vscode": "2.4.14",
+    "tsx": "^4.8.1",
+    "typescript": "^5.5.0",
+    "volar-service-typescript": "0.0.71",
+    "vscode-uri": "^3.0.8"
   },
   "devDependencies": {
+    "@sterashima78/ts-md-tsc": "0.1.0",
     "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.4.2",
-    "typescript": "^5.5.0",
-    "vitest": "^3.0.0",
     "@vscode/vsce": "^3.0.0",
-    "@sterashima78/ts-md-tsc": "0.1.0"
+    "vitest": "^3.0.0"
   },
   "activationEvents": [
     "onLanguage:ts-md"
