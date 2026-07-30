@@ -11,10 +11,18 @@ export interface ChunkDict {
   [name: string]: string;
 }
 
+export interface ChunkFragment {
+  code: string;
+  start: number;
+  end: number;
+  generatedStart: number;
+}
+
 export interface ChunkInfo {
   code: string;
   start: number;
   end: number;
+  fragments: ChunkFragment[];
 }
 ```
 
@@ -87,13 +95,13 @@ export function parseChunks(markdown: string, uri: string): ChunkDict {
 
 ## extractChunkInfos: 位置情報付き抽出処理
 
-AST を走査して各チャンクの開始位置と終了位置を記録します。
+AST を走査して各チャンクの開始位置と終了位置を記録します。同名チャンクが複数のコードフェンスに分かれている場合は、各断片の source offset と連結後の generated offset も保持します。
 
 ```ts extractChunkInfos
 import type { Code, Html, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { extIsTs } from './utils.ts.md';
-import type { ChunkInfo } from ':types';
+import type { ChunkFragment, ChunkInfo } from ':types';
 
 export function extractChunkInfos(
   tree: Root,
@@ -122,12 +130,25 @@ export function extractChunkInfos(
       const idx = full.indexOf((node as Code).value);
       const codeStart = idx === -1 ? start : start + idx;
       const code = (node as Code).value;
-      if (dict[key]) {
-        const prev = dict[key];
-        prev.code += `\n${code}`;
-        prev.end = codeStart + code.length;
+      const previous = dict[key];
+      const fragment: ChunkFragment = {
+        code,
+        start: codeStart,
+        end: codeStart + code.length,
+        generatedStart: previous ? previous.code.length + 1 : 0,
+      };
+
+      if (previous) {
+        previous.code += `\n${code}`;
+        previous.end = fragment.end;
+        previous.fragments.push(fragment);
       } else {
-        dict[key] = { code, start: codeStart, end: codeStart + code.length };
+        dict[key] = {
+          code,
+          start: fragment.start,
+          end: fragment.end,
+          fragments: [fragment],
+        };
       }
       pendingFile = null;
     }
@@ -160,7 +181,7 @@ export function parseChunkInfos(
 ```ts main
 export { parseChunks } from ':parseChunks';
 export { parseChunkInfos } from ':parseChunkInfos';
-export type { ChunkDict, ChunkInfo } from ':types';
+export type { ChunkDict, ChunkFragment, ChunkInfo } from ':types';
 
 if (import.meta.vitest) {
   await import(':parser.test');
@@ -224,6 +245,23 @@ describe('parseChunkInfos', () => {
     expect(dict.foo.start).toBeLessThan(dict.foo.end);
     expect(dict.foo.code).toContain('console.log(3)');
     expect(dict['path/to/bar.ts'].code).toContain('console.log(2)');
+  });
+
+  it('preserves mappings for split chunks', () => {
+    expect(dict.foo.fragments).toEqual([
+      {
+        code: 'console.log(1)',
+        start: md.indexOf('console.log(1)'),
+        end: md.indexOf('console.log(1)') + 'console.log(1)'.length,
+        generatedStart: 0,
+      },
+      {
+        code: 'console.log(3)',
+        start: md.indexOf('console.log(3)'),
+        end: md.indexOf('console.log(3)') + 'console.log(3)'.length,
+        generatedStart: 'console.log(1)'.length + 1,
+      },
+    ]);
   });
 });
 
