@@ -57,19 +57,17 @@ export class TsMdVirtualFile implements VirtualCode {
     ];
 
     for (const [name, info] of Object.entries(infoDict)) {
-      const { code, start } = info;
+      const { code, fragments } = info;
       this.dict[name] = code;
       this.embeddedCodes.push({
         id: `${this.uri}__${name}.ts`,
         languageId: 'typescript',
-        mappings: [
-          {
-            sourceOffsets: [start],
-            generatedOffsets: [0],
-            lengths: [code.length],
-            data: typescriptFeatures,
-          },
-        ],
+        mappings: fragments.map((fragment) => ({
+          sourceOffsets: [fragment.start],
+          generatedOffsets: [fragment.generatedStart],
+          lengths: [fragment.code.length],
+          data: typescriptFeatures,
+        })),
         linkedCodeMappings: [],
         snapshot: {
           getText: (s, e) => code.slice(s, e),
