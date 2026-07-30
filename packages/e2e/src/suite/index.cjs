@@ -63,18 +63,18 @@ exports.run = async () => {
 
   const completion = await waitForCompletion(
     completionDocument.uri,
-    new vscode.Position(4, 5),
+    new vscode.Position(8, 5),
   );
   const labels = new Set(completion.items.map((item) => String(item.label)));
   if (!labels.has('name') || !labels.has('age')) {
-    throw new Error('expected TypeScript property completion');
+    throw new Error('expected imported chunk property completion');
   }
 
   const hovers = await waitForHover(
     completionDocument.uri,
-    new vscode.Position(3, 7),
+    new vscode.Position(8, 2),
   );
   if (!hovers.length) {
-    throw new Error('expected TypeScript hover information');
+    throw new Error('expected imported chunk hover information');
   }
 };
