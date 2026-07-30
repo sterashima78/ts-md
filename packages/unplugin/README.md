@@ -1,60 +1,29 @@
 # @sterashima78/ts-md-unplugin
 
-Bundler plugin to handle `.ts.md` files. It exposes wrappers for Vite, Rollup, Webpack and Esbuild.
+Vite、Rollup、Webpack、esbuild で `.ts.md` modules を読み込むための unplugin です。
 
-When a document is loaded, its chunks become virtual modules that can be imported via `#path:chunk` syntax.
+一つの TypeScript コードフェンスを一つの仮想 ES module として扱います。
 
-## Structure
-- `src/index.ts.md` – common plugin logic
-- `src/vite.ts`, `src/rollup.ts`, `src/webpack.ts`, `src/esbuild.ts` – wrappers
-- `test/` – tests using the Rollup plugin
+## Vite
 
-## Examples
-
-### Vite
 ```ts
-import tsMd from '@sterashima78/ts-md-unplugin/vite';
-import { defineConfig } from 'vite';
+import tsMd from '@sterashima78/ts-md-unplugin/vite'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [tsMd],
-});
+})
 ```
 
-### Rollup
-```ts
-import tsMd from '@sterashima78/ts-md-unplugin/rollup';
-
-export default {
-  input: '../../packages/sandbox/src/app.ts.md',
-  plugins: [tsMd],
-};
-```
-
-### Esbuild
-```ts
-import tsMd from '@sterashima78/ts-md-unplugin/esbuild';
-import { build } from 'esbuild';
-
-build({
-  entryPoints: ['../../packages/sandbox/src/app.ts.md'],
-  bundle: true,
-  plugins: [tsMd],
-  outfile: 'out.js',
-});
-```
-
-### Webpack
-```js
-const tsMd = require('@sterashima78/ts-md-unplugin/webpack');
-
-module.exports = {
-  entry: './main.ts',
-  plugins: [tsMd],
-};
-```
+通常の TypeScript から document の `main` module をimportできます。
 
 ```ts
-// main.ts
-import '#../../packages/sandbox/src/app.ts.md';
+import './app.ts.md'
+```
+
+`.ts.md` 内では次の記法を使用します。
+
+```ts
+import { value } from ':values'
+import type { User } from './user.ts.md:types'
 ```
