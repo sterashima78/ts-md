@@ -157,7 +157,9 @@ function rewriteOutputFileName(fileName: string) {
   const markerIndex = fileName.lastIndexOf(TS_MD_VIRTUAL_MODULE_MARKER);
   if (markerIndex === -1) return fileName;
 
-  const suffix = fileName.slice(markerIndex + TS_MD_VIRTUAL_MODULE_MARKER.length);
+  const suffix = fileName.slice(
+    markerIndex + TS_MD_VIRTUAL_MODULE_MARKER.length,
+  );
   const extensionIndex = suffix.indexOf('.');
   if (extensionIndex === -1) return fileName;
 
@@ -317,12 +319,11 @@ export function runTsMdTsc(args: string[]) {
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
     .map((diagnostic) => mapDiagnostic(diagnostic, store));
-  const emitResult = configuration.options.noEmit
-    ? undefined
-    : program.emit();
+  const emitResult = configuration.options.noEmit ? undefined : program.emit();
   const emitDiagnostics =
-    emitResult?.diagnostics.map((diagnostic) => mapDiagnostic(diagnostic, store)) ??
-    [];
+    emitResult?.diagnostics.map((diagnostic) =>
+      mapDiagnostic(diagnostic, store),
+    ) ?? [];
   const allDiagnostics = [...diagnostics, ...emitDiagnostics];
 
   if (allDiagnostics.length) printDiagnostics(allDiagnostics);
