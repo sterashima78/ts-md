@@ -14,7 +14,7 @@ import {
 } from '../src/index.ts';
 
 function fence(header: string, code: string) {
-  return ['```' + header, code, '```'].join('\n');
+  return [`\`\`\`${header}`, code, '```'].join('\n');
 }
 
 describe('document module model', () => {
@@ -78,11 +78,13 @@ describe('virtual module IDs', () => {
 describe('module graph', () => {
   it('collects imports, re-exports, and dynamic imports from the AST', () => {
     expect(
-      collectModuleSpecifiers([
-        "import { a } from ':a'",
-        "export { b } from ':b'",
-        "void import(':c')",
-      ].join('\n')),
+      collectModuleSpecifiers(
+        [
+          "import { a } from ':a'",
+          "export { b } from ':b'",
+          "void import(':c')",
+        ].join('\n'),
+      ),
     ).toEqual([':a', ':b', ':c']);
   });
 
@@ -92,11 +94,9 @@ describe('module graph', () => {
       main: "import { value } from ':dep'",
       dep: "import ':main'; export const value = 1",
     });
-    expect(detectCycle('/a.ts.md:main', (file) => documents.get(file))).toEqual([
-      '/a.ts.md:main',
-      '/a.ts.md:dep',
-      '/a.ts.md:main',
-    ]);
+    expect(detectCycle('/a.ts.md:main', (file) => documents.get(file))).toEqual(
+      ['/a.ts.md:main', '/a.ts.md:dep', '/a.ts.md:main'],
+    );
   });
 });
 
@@ -116,9 +116,9 @@ describe('tangle', () => {
     expect(await fs.readFile(path.join(output, 'doc', 'main.ts'), 'utf8')).toBe(
       'export const value = 1',
     );
-    expect(await fs.readFile(path.join(output, 'doc', 'view.tsx'), 'utf8')).toBe(
-      'export const view = <div />',
-    );
+    expect(
+      await fs.readFile(path.join(output, 'doc', 'view.tsx'), 'utf8'),
+    ).toBe('export const view = <div />');
     await fs.rm(output, { recursive: true, force: true });
   });
 });
