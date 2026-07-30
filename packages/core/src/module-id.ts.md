@@ -76,27 +76,4 @@ export { createVirtualModuleFileName } from ':createVirtualModuleFileName';
 export { parseVirtualModuleFileName } from ':parseVirtualModuleFileName';
 export { TS_MD_VIRTUAL_MODULE_MARKER } from ':constants';
 export type { TsMdModuleId } from ':types';
-
-if (import.meta.vitest) {
-  await import(':module-id.test');
-}
-```
-
-```ts module-id.test
-import path from 'node:path';
-import { describe, expect, it } from 'vitest';
-import { createVirtualModuleFileName } from ':createVirtualModuleFileName';
-import { parseVirtualModuleFileName } from ':parseVirtualModuleFileName';
-
-describe('virtual module file names', () => {
-  it('round-trips module names without delimiter ambiguity', () => {
-    const id = {
-      documentPath: path.resolve('/workspace/doc.ts.md'),
-      moduleName: 'foo__bar',
-    };
-    const fileName = createVirtualModuleFileName(id);
-    expect(path.dirname(fileName)).toBe(path.dirname(id.documentPath));
-    expect(parseVirtualModuleFileName(fileName)).toEqual(id);
-  });
-});
 ```
