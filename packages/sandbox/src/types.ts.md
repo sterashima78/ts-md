@@ -7,5 +7,5 @@ export interface Greeter {
 ```
 
 ```ts main
-export type { Greeter } from '#greeter'
+export type { Greeter } from ':greeter'
 ```
