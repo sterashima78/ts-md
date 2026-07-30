@@ -2,7 +2,7 @@ export { detectCycle } from './graph.ts.md';
 export {
   createVirtualModuleFileName,
   parseVirtualModuleFileName,
-  TS_MD_VIRTUAL_DIRECTORY_SUFFIX,
+  TS_MD_VIRTUAL_MODULE_MARKER,
 } from './module-id.ts.md';
 export type { TsMdModuleId } from './module-id.ts.md';
 export {
