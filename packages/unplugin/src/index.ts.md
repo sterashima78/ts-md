@@ -1,41 +1,41 @@
 # Unplugin
 
-`.ts.md` ファイルを処理するための共通ロジックを提供します。
+すべての bundler で、`.ts.md` の各コードフェンスを同じ仮想 TypeScript module として扱います。
 
-## parseFile: Markdown を読み込みチャンク化
-
-Markdown を読み込んでチャンク辞書を生成し、キャッシュにも保存します。
+## parseFile
 
 ```ts parseFile
 import fs from 'node:fs/promises';
-import { parseChunks } from '@sterashima78/ts-md-core';
+import {
+  parseDocument,
+  type TsMdDocument,
+} from '@sterashima78/ts-md-core';
 
 export async function parseFile(
   file: string,
-  cache: Map<string, Record<string, string>>,
+  cache: Map<string, TsMdDocument>,
   force = false,
 ) {
   const cached = cache.get(file);
   if (cached && !force) return cached;
-  const md = await fs.readFile(file, 'utf8');
-  const chunks = parseChunks(md, file);
-  const dict: Record<string, string> = {};
-  for (const [name, chunk] of Object.entries(chunks)) {
-    dict[name] = chunk;
-  }
-  cache.set(file, dict);
-  return dict;
+  const markdown = await fs.readFile(file, 'utf8');
+  const document = parseDocument(markdown, file);
+  cache.set(file, document);
+  return document;
 }
 ```
 
-## プラグイン本体
-
-`unplugin` を利用して各ツール向けのプラグインを作成します。
+## plugin
 
 ```ts main
 import path from 'node:path';
 import { createFilter } from '@rollup/pluginutils';
-import { resolveImport } from '@sterashima78/ts-md-core';
+import {
+  createVirtualModuleFileName,
+  parseVirtualModuleFileName,
+  resolveImport,
+  type TsMdDocument,
+} from '@sterashima78/ts-md-core';
 import { createUnplugin } from 'unplugin';
 import { parseFile } from ':parseFile';
 
@@ -46,40 +46,56 @@ export interface Options {
 export const unplugin = createUnplugin((options: Options | undefined) => {
   const { include = /\.ts\.md$/ } = options ?? {};
   const filter = createFilter(include);
-  const cache = new Map<string, Record<string, string>>();
+  const cache = new Map<string, TsMdDocument>();
 
   return {
     name: 'ts-md',
     enforce: 'pre',
+
     resolveId(id, importer) {
-      if (/\.ts\.md__.+\.ts$/.test(id)) return id;
+      if (parseVirtualModuleFileName(id)) return id;
+
       if (id.endsWith('.ts.md')) {
-        const abs = importer ? path.resolve(path.dirname(importer), id) : id;
-        return `${abs}__main.ts`;
+        const documentPath = importer
+          ? path.resolve(path.dirname(importer), id)
+          : path.resolve(id);
+        return createVirtualModuleFileName({
+          documentPath,
+          moduleName: 'main',
+        });
       }
-      if (!(id.includes('.ts.md:') || id.startsWith(':')) || !importer) return;
-      const info = resolveImport(id, importer);
-      if (!info) return;
-      const { absPath, chunk } = info;
-      return `${absPath}__${chunk}.ts`;
+
+      if (!importer) return;
+      const resolved = resolveImport(id, importer);
+      if (!resolved) return;
+      return createVirtualModuleFileName({
+        documentPath: resolved.absPath,
+        moduleName: resolved.chunk,
+      });
     },
+
     async load(id) {
-      const chunkMatch = /(.*\.ts\.md)__(.+)\.ts$/.exec(id);
-      if (chunkMatch) {
-        const [, file, block] = chunkMatch;
-        if (!filter(file)) return;
-        const dict = await parseFile(file, cache);
-        return dict[block];
+      const moduleId = parseVirtualModuleFileName(id);
+      if (!moduleId || !filter(moduleId.documentPath)) return;
+
+      const document = await parseFile(moduleId.documentPath, cache);
+      const module = document.modules.find(
+        (candidate) => candidate.name === moduleId.moduleName,
+      );
+      if (!module) {
+        throw new Error(
+          `module '${moduleId.moduleName}' not found in ${moduleId.documentPath}`,
+        );
       }
-      if (!filter(id)) return;
-      const dict = await parseFile(id, cache);
-      if (!dict.main) return '';
-      return `export * from '${id}__main.ts'`;
+      return module.code;
     },
+
     async watchChange(id) {
-      const m = /(.*\.ts\.md)__(.+)\.ts$/.exec(id);
-      const file = m ? m[1] : id;
-      if (filter(file)) await parseFile(file, cache, true);
+      const moduleId = parseVirtualModuleFileName(id);
+      const documentPath = moduleId?.documentPath ?? id;
+      if (filter(documentPath)) {
+        await parseFile(documentPath, cache, true);
+      }
     },
   };
 });
