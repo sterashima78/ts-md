@@ -5,5 +5,5 @@ export const num = 123
 ```
 
 ```ts main
-export { num } from '#foo'
+export { num } from ':foo'
 ```
