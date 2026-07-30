@@ -25,10 +25,10 @@ function getUri(fileName: unknown): string {
   return typeof fileName === 'string' ? fileName : String(fileName);
 }
 
-function getChunkName(codeId: string): string | undefined {
-  const marker = codeId.lastIndexOf('__');
-  if (marker < 0 || !codeId.endsWith('.ts')) return;
-  return codeId.slice(marker + 2, -3);
+function getChunkName(rootId: string, codeId: string): string | undefined {
+  const prefix = `${rootId}__`;
+  if (!codeId.startsWith(prefix) || !codeId.endsWith('.ts')) return;
+  return codeId.slice(prefix.length, -3);
 }
 
 export function resolveTsMdFileName(
@@ -108,7 +108,7 @@ function createPlugin(bundleServiceScript: boolean): TsMdPlugin {
               ) {
                 continue;
               }
-              const chunkName = getChunkName(code.id);
+              const chunkName = getChunkName(root.id, code.id);
               if (!chunkName) continue;
               scripts.push({
                 fileName: `${fileName}__${chunkName}.ts`,
@@ -215,6 +215,75 @@ describe('ts-md-ls-core diagnostics', () => {
         lengths: ['const value = { name: "ts-md" };'.length],
       }),
     ]);
+  });
+
+  it('maps split chunks as separate source ranges', () => {
+    const first = 'const first = 1;';
+    const second = 'const second = 2;';
+    const markdown = [
+      '```ts main',
+      first,
+      '```',
+      '',
+      'Markdown between chunks.',
+      '',
+      '```ts main',
+      second,
+      '```',
+    ].join('\n');
+    const snapshot = ts.ScriptSnapshot.fromString(markdown);
+    const virtualCode = tsMdEditorLanguagePlugin.createVirtualCode?.(
+      URI.file('/test.ts.md'),
+      'ts-md',
+      snapshot,
+      { getAssociatedScript: () => undefined },
+    );
+    const main = virtualCode?.embeddedCodes.find((code) =>
+      code.id.endsWith('__main.ts'),
+    );
+
+    expect(main?.mappings).toEqual([
+      expect.objectContaining({
+        sourceOffsets: [markdown.indexOf(first)],
+        generatedOffsets: [0],
+        lengths: [first.length],
+      }),
+      expect.objectContaining({
+        sourceOffsets: [markdown.indexOf(second)],
+        generatedOffsets: [first.length + 1],
+        lengths: [second.length],
+      }),
+    ]);
+  });
+
+  it('preserves double underscores in extra service script names', () => {
+    const markdown = [
+      '```ts foo__bar',
+      'export const value = 1;',
+      '```',
+      '',
+      '```ts main',
+      "import { value } from ':foo__bar';",
+      '```',
+    ].join('\n');
+    const snapshot = ts.ScriptSnapshot.fromString(markdown);
+    const virtualCode = tsMdEditorLanguagePlugin.createVirtualCode?.(
+      '/test.ts.md',
+      'ts-md',
+      snapshot,
+      { getAssociatedScript: () => undefined },
+    );
+    expect(virtualCode).toBeDefined();
+    if (!virtualCode) return;
+
+    const scripts =
+      tsMdEditorLanguagePlugin.typescript?.getExtraServiceScripts?.(
+        '/test.ts.md',
+        virtualCode,
+      );
+    expect(scripts?.map((script) => script.fileName)).toContain(
+      '/test.ts.md__foo__bar.ts',
+    );
   });
 
   it('resolves shorthand chunk imports to virtual TypeScript files', () => {
