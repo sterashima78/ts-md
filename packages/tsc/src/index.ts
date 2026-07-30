@@ -247,7 +247,7 @@ function createTsMdCompilerHost(
           extension:
             module.language === 'tsx' ? ts.Extension.Tsx : ts.Extension.Ts,
           isExternalLibraryImport: false,
-        } satisfies ts.ResolvedModule;
+        } as ts.ResolvedModuleFull;
       }
 
       return ts.resolveModuleName(
