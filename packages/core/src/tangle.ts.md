@@ -77,8 +77,9 @@ import { describe, expect, it } from 'vitest';
 import { parseDocument } from './parser.ts.md';
 import { tangle } from ':tangle';
 
-const fence = (header: string, code: string) =>
-  ['```' + header, code, '```'].join('\n');
+function fence(header: string, code: string) {
+  return ['```' + header, code, '```'].join('\n');
+}
 
 describe('tangle', () => {
   it('writes one file for each module', async () => {
