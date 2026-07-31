@@ -92,9 +92,10 @@ export function extractModules(
 
     const start = codeNode.position?.start.offset ?? 0;
     const end = codeNode.position?.end.offset ?? start + codeNode.value.length;
-    const full = markdown.slice(start, end);
-    const index = full.indexOf(codeNode.value);
-    const codeStart = index === -1 ? start : start + index;
+    const openingFenceEnd = markdown.indexOf('\n', start);
+    const searchStart = openingFenceEnd === -1 ? start : openingFenceEnd + 1;
+    const index = markdown.indexOf(codeNode.value, searchStart);
+    const codeStart = index === -1 || index > end ? searchStart : index;
 
     modules.push({
       name,
