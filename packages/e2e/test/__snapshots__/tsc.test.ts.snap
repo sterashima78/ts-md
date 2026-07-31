@@ -1,6 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`ts-md-tsc > generates dts for mixed refs 1`] = `
-"export { bar } from ':bar';
-"
-`;
