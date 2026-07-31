@@ -271,10 +271,12 @@ function isModuleSpecifierLiteral(node: ts.StringLiteral) {
   if (ts.isLiteralTypeNode(parent) && ts.isImportTypeNode(parent.parent)) {
     return true;
   }
+  if (!ts.isCallExpression(parent) || parent.arguments[0] !== node) {
+    return false;
+  }
   return (
-    ts.isCallExpression(parent) &&
-    parent.arguments[0] === node &&
-    parent.expression.kind === ts.SyntaxKind.ImportKeyword
+    parent.expression.kind === ts.SyntaxKind.ImportKeyword ||
+    (ts.isIdentifier(parent.expression) && parent.expression.text === 'require')
   );
 }
 
