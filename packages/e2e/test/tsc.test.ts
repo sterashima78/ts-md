@@ -8,7 +8,7 @@ const dist = path.join(fixture, 'dist');
 
 function runTsMdTsc(...args: string[]) {
   execFileSync('pnpm', ['exec', 'ts-md-tsc', ...args], {
-    cwd: fixture,
+    cwd: path.join(__dirname, '..'),
     stdio: 'inherit',
   });
 }
@@ -47,7 +47,7 @@ describe('ts-md-tsc', () => {
   });
 
   it('emits resolvable declarations when project is a directory', async () => {
-    runTsMdTsc('-p', '.', '--emitDeclarationOnly');
+    runTsMdTsc('-p', fixture, '--emitDeclarationOnly');
 
     const declaration = await readOutput('dep.ts.md.d.ts');
     expect(declaration).toContain(
@@ -61,7 +61,7 @@ describe('ts-md-tsc', () => {
   });
 
   it('rewrites runtime imports and source map references', async () => {
-    runTsMdTsc('-p', '.');
+    runTsMdTsc('-p', fixture);
 
     const documentJavaScript = await readOutput('dep.ts.md.js');
     expect(documentJavaScript).toContain(
