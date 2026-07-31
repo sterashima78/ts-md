@@ -50,8 +50,20 @@ function findModuleCode(root: TsMdVirtualFile, moduleName: string) {
   return root.embeddedCodes.find((code) => code.id === id);
 }
 
-function getPrimaryCode(root: TsMdVirtualFile) {
-  return findModuleCode(root, 'main') ?? root.embeddedCodes[0];
+function getMainCode(root: TsMdVirtualFile) {
+  return findModuleCode(root, 'main');
+}
+
+function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
+  const code = 'export {};';
+  return {
+    id: `${root.fileName}.__tsmd_document__.ts`,
+    languageId: 'typescript',
+    mappings: [],
+    embeddedCodes: [],
+    linkedCodeMappings: [],
+    snapshot: ts.ScriptSnapshot.fromString(code),
+  };
 }
 
 export function resolveTsMdFileName(
@@ -107,14 +119,18 @@ export const tsMdLanguagePlugin: TsMdPlugin = {
     ],
 
     getServiceScript(root: TsMdVirtualFile) {
-      const code = getPrimaryCode(root);
-      if (!code) return;
-      const moduleName = getModuleName(code);
-      if (!moduleName) return;
+      const main = getMainCode(root);
+      if (!main) {
+        return {
+          code: createDocumentServiceCode(root),
+          extension: '.ts',
+          scriptKind: ts.ScriptKind.TS,
+        };
+      }
       return {
-        code,
-        extension: getExtension(root, moduleName),
-        scriptKind: getScriptKind(root, moduleName),
+        code: main,
+        extension: getExtension(root, 'main'),
+        scriptKind: getScriptKind(root, 'main'),
       };
     },
 
@@ -122,10 +138,10 @@ export const tsMdLanguagePlugin: TsMdPlugin = {
       _fileName: string,
       root: TsMdVirtualFile,
     ): TypeScriptExtraServiceScript[] {
-      const primary = getPrimaryCode(root);
+      const main = getMainCode(root);
       const scripts: TypeScriptExtraServiceScript[] = [];
       for (const code of forEachEmbeddedCode(root)) {
-        if (code.languageId !== 'typescript' || code === primary) continue;
+        if (code.languageId !== 'typescript' || code === main) continue;
         const moduleName = getModuleName(code);
         if (!moduleName) continue;
         scripts.push({
