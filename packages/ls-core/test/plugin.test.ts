@@ -75,7 +75,8 @@ describe('ts-md language plugin', () => {
       ts.ScriptSnapshot.fromString(markdown),
       { getAssociatedScript: () => undefined },
     ) as TsMdVirtualFile;
-    const service = createTsMdPlugin.typescript?.getServiceScript?.(virtualFile);
+    const service =
+      createTsMdPlugin.typescript?.getServiceScript?.(virtualFile);
     const scripts = createTsMdPlugin.typescript?.getExtraServiceScripts?.(
       '/test.ts.md',
       virtualFile,
