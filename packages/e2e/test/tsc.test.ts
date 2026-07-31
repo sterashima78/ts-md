@@ -84,19 +84,9 @@ describe('ts-md-tsc', () => {
   });
 
   it('rewrites CommonJS require calls', async () => {
-    runTsMdTsc(
-      '-p',
-      fixture,
-      '--module',
-      'CommonJS',
-      '--outDir',
-      commonJsDist,
-    );
+    runTsMdTsc('-p', fixture, '--module', 'CommonJS', '--outDir', commonJsDist);
 
-    const documentJavaScript = await readOutput(
-      'dep.ts.md.js',
-      commonJsDist,
-    );
+    const documentJavaScript = await readOutput('dep.ts.md.js', commonJsDist);
     expect(documentJavaScript).toContain(
       'require("./dep.ts.md.__tsmd__.bar.js")',
     );
