@@ -67,6 +67,30 @@ describe('ts-md language plugin', () => {
     ).toContain('foo__bar');
   });
 
+  it('does not expose the first named module as document main', () => {
+    const markdown = fence('ts foo', 'export const value = 1;');
+    const virtualFile = createTsMdPlugin.createVirtualCode?.(
+      '/test.ts.md',
+      'ts-md',
+      ts.ScriptSnapshot.fromString(markdown),
+      { getAssociatedScript: () => undefined },
+    ) as TsMdVirtualFile;
+    const service = createTsMdPlugin.typescript?.getServiceScript?.(virtualFile);
+    const scripts = createTsMdPlugin.typescript?.getExtraServiceScripts?.(
+      '/test.ts.md',
+      virtualFile,
+    );
+
+    expect(
+      service?.code.snapshot.getText(0, service.code.snapshot.getLength()),
+    ).toBe('export {};');
+    expect(
+      scripts?.map(
+        (script) => parseVirtualModuleFileName(script.fileName)?.moduleName,
+      ),
+    ).toEqual(['foo']);
+  });
+
   it('resolves supported module specifiers only', () => {
     expect(resolveTsMdFileName(':foo', '/test.ts.md')).toBe(
       createVirtualModuleFileName({
