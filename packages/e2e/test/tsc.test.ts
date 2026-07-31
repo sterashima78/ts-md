@@ -28,9 +28,9 @@ function checkDeclarationConsumer() {
       'Node',
       '--target',
       'ESNext',
-      'consumer.ts',
+      path.join(fixture, 'consumer.ts'),
     ],
-    { cwd: fixture, stdio: 'inherit' },
+    { cwd: path.join(__dirname, '..'), stdio: 'inherit' },
   );
 }
 
