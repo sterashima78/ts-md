@@ -1,25 +1,86 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 const fixture = path.join(__dirname, 'fixtures', 'tsc');
-const tsconfig = path.join(fixture, 'tsconfig.json');
+const dist = path.join(fixture, 'dist');
 
-async function runTsc() {
-  execSync(`pnpm exec ts-md-tsc -p ${tsconfig} --emitDeclarationOnly`, {
+function runTsMdTsc(...args: string[]) {
+  execFileSync('pnpm', ['exec', 'ts-md-tsc', ...args], {
     cwd: fixture,
     stdio: 'inherit',
   });
 }
 
+function checkDeclarationConsumer() {
+  execFileSync(
+    'pnpm',
+    [
+      'exec',
+      'tsc',
+      '--noEmit',
+      '--strict',
+      '--module',
+      'ESNext',
+      '--moduleResolution',
+      'Node',
+      '--target',
+      'ESNext',
+      'consumer.ts',
+    ],
+    { cwd: fixture, stdio: 'inherit' },
+  );
+}
+
+async function readOutput(fileName: string) {
+  return fs.readFile(path.join(dist, fileName), 'utf8');
+}
+
 describe('ts-md-tsc', () => {
-  it('generates dts for mixed refs', async () => {
-    await runTsc();
-    const out = await fs.readFile(
-      path.join(fixture, 'dist', 'dep.ts.md.d.ts'),
-      'utf8',
+  beforeEach(async () => {
+    await fs.rm(dist, { recursive: true, force: true });
+  });
+
+  afterAll(async () => {
+    await fs.rm(dist, { recursive: true, force: true });
+  });
+
+  it('emits resolvable declarations when project is a directory', async () => {
+    runTsMdTsc('-p', '.', '--emitDeclarationOnly');
+
+    const declaration = await readOutput('dep.ts.md.d.ts');
+    expect(declaration).toContain(
+      "export { bar } from './dep.ts.md.__tsmd__.bar.js';",
     );
-    expect(out).toMatchSnapshot();
+    expect(declaration).toContain(
+      'sourceMappingURL=dep.ts.md.d.ts.map',
+    );
+
+    const declarationMap = JSON.parse(
+      await readOutput('dep.ts.md.d.ts.map'),
+    );
+    expect(declarationMap.file).toBe('dep.ts.md.d.ts');
+    checkDeclarationConsumer();
+  });
+
+  it('rewrites runtime imports and source map references', async () => {
+    runTsMdTsc('-p', '.');
+
+    const documentJavaScript = await readOutput('dep.ts.md.js');
+    expect(documentJavaScript).toContain(
+      "export { bar } from './dep.ts.md.__tsmd__.bar.js';",
+    );
+    expect(documentJavaScript).toContain('sourceMappingURL=dep.ts.md.js.map');
+
+    const importingJavaScript = await readOutput('index.js');
+    expect(importingJavaScript).toContain("from './dep.ts.md.js'");
+
+    const sourceMap = JSON.parse(await readOutput('dep.ts.md.js.map'));
+    expect(sourceMap.file).toBe('dep.ts.md.js');
+    const declarationMap = JSON.parse(
+      await readOutput('dep.ts.md.d.ts.map'),
+    );
+    expect(declarationMap.file).toBe('dep.ts.md.d.ts');
   });
 });
