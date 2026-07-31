@@ -53,12 +53,12 @@ describe('document module model', () => {
     ).toThrow('TypeScript code fence requires a module name');
   });
 
-  it('provides code and source range compatibility views', () => {
-    const code = 'console.log(1)';
-    const markdown = fence('ts main', code);
-    expect(parseChunks(markdown, '/doc.ts.md')).toEqual({ main: code });
-    const info = parseChunkInfos(markdown, '/doc.ts.md').main;
-    expect(info.start).toBe(markdown.indexOf(code));
+  it('locates code after the opening fence header', () => {
+    const code = 'foo';
+    const markdown = fence('ts foo', code);
+    expect(parseChunks(markdown, '/doc.ts.md')).toEqual({ foo: code });
+    const info = parseChunkInfos(markdown, '/doc.ts.md').foo;
+    expect(info.start).toBe(markdown.lastIndexOf(code));
     expect(info.end).toBe(info.start + code.length);
   });
 });
