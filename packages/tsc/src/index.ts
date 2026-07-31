@@ -18,6 +18,20 @@ interface VirtualModule {
   fileName: string;
 }
 
+interface PendingWrite {
+  fileName: string;
+  data: string;
+  writeByteOrderMark: boolean;
+  onError?: (message: string) => void;
+  sourceFiles?: readonly ts.SourceFile[];
+}
+
+interface OutputIndex {
+  renamedFileNames: Map<string, string>;
+  declarationBySource: Map<string, string>;
+  runtimeBySource: Map<string, string>;
+}
+
 const extraFileExtensions: ts.FileExtensionInfo[] = [
   {
     extension: '.ts.md',
@@ -25,6 +39,9 @@ const extraFileExtensions: ts.FileExtensionInfo[] = [
     scriptKind: ts.ScriptKind.Deferred,
   },
 ];
+
+const DECLARATION_OUTPUT_PATTERN = /\.d\.(?:ts|mts|cts)$/;
+const RUNTIME_OUTPUT_PATTERN = /\.(?:js|jsx|mjs|cjs)$/;
 
 function normalize(fileName: string) {
   return path.normalize(path.resolve(fileName));
@@ -37,17 +54,35 @@ function extractProjectArgument(args: string[]) {
   for (let index = 0; index < args.length; index++) {
     const argument = args[index];
     if (argument === '-p' || argument === '--project') {
-      project = args[++index];
+      const value = args[index + 1];
+      if (!value) {
+        compilerArgs.push(argument);
+        continue;
+      }
+      project = value;
+      index++;
       continue;
     }
     if (argument.startsWith('--project=')) {
-      project = argument.slice('--project='.length);
+      const value = argument.slice('--project='.length);
+      if (!value) {
+        compilerArgs.push(argument);
+        continue;
+      }
+      project = value;
       continue;
     }
     compilerArgs.push(argument);
   }
 
   return { project, compilerArgs };
+}
+
+function resolveConfigPath(project: string) {
+  const candidate = normalize(project);
+  return ts.sys.directoryExists?.(candidate)
+    ? path.join(candidate, 'tsconfig.json')
+    : candidate;
 }
 
 function parseConfiguration(args: string[]): ts.ParsedCommandLine {
@@ -59,7 +94,7 @@ function parseConfiguration(args: string[]): ts.ParsedCommandLine {
   }
 
   const configPath = project
-    ? normalize(project)
+    ? resolveConfigPath(project)
     : ts.findConfigFile(process.cwd(), ts.sys.fileExists, 'tsconfig.json');
 
   if (!configPath) return commandLine;
@@ -178,15 +213,198 @@ function rewriteOutputFileName(fileName: string) {
   return fileName;
 }
 
+function createOutputIndex(writes: readonly PendingWrite[]): OutputIndex {
+  const renamedFileNames = new Map<string, string>();
+  const declarationBySource = new Map<string, string>();
+  const runtimeBySource = new Map<string, string>();
+
+  for (const write of writes) {
+    const inputFileName = normalize(write.fileName);
+    const outputFileName = normalize(rewriteOutputFileName(inputFileName));
+    renamedFileNames.set(inputFileName, outputFileName);
+
+    for (const sourceFile of write.sourceFiles ?? []) {
+      const sourceFileName = normalize(sourceFile.fileName);
+      if (DECLARATION_OUTPUT_PATTERN.test(inputFileName)) {
+        declarationBySource.set(sourceFileName, outputFileName);
+      } else if (RUNTIME_OUTPUT_PATTERN.test(inputFileName)) {
+        runtimeBySource.set(sourceFileName, outputFileName);
+      }
+    }
+  }
+
+  return { renamedFileNames, declarationBySource, runtimeBySource };
+}
+
+function toRelativeModuleSpecifier(fromFile: string, targetFile: string) {
+  let relative = path
+    .relative(path.dirname(fromFile), targetFile)
+    .split(path.sep)
+    .join('/');
+  if (!relative.startsWith('.')) relative = `./${relative}`;
+  return relative;
+}
+
+function runtimeOutputFromDeclaration(
+  declarationFileName: string,
+  module: TsMdModule,
+  options: ts.CompilerOptions,
+) {
+  if (declarationFileName.endsWith('.d.mts')) {
+    return declarationFileName.slice(0, -'.d.mts'.length) + '.mjs';
+  }
+  if (declarationFileName.endsWith('.d.cts')) {
+    return declarationFileName.slice(0, -'.d.cts'.length) + '.cjs';
+  }
+  const extension =
+    module.language === 'tsx' && options.jsx === ts.JsxEmit.Preserve
+      ? '.jsx'
+      : '.js';
+  return declarationFileName.slice(0, -'.d.ts'.length) + extension;
+}
+
+function isModuleSpecifierLiteral(node: ts.StringLiteral) {
+  const parent = node.parent;
+  if (ts.isImportDeclaration(parent)) return parent.moduleSpecifier === node;
+  if (ts.isExportDeclaration(parent)) return parent.moduleSpecifier === node;
+  if (ts.isExternalModuleReference(parent)) return parent.expression === node;
+  if (ts.isLiteralTypeNode(parent) && ts.isImportTypeNode(parent.parent)) {
+    return true;
+  }
+  return (
+    ts.isCallExpression(parent) &&
+    parent.arguments[0] === node &&
+    parent.expression.kind === ts.SyntaxKind.ImportKeyword
+  );
+}
+
+function rewriteModuleSpecifiers(
+  data: string,
+  sourceFileName: string,
+  outputFileName: string,
+  options: ts.CompilerOptions,
+  store: ReturnType<typeof createDocumentStore>,
+  outputs: OutputIndex,
+) {
+  const scriptKind = outputFileName.endsWith('.jsx')
+    ? ts.ScriptKind.JSX
+    : ts.ScriptKind.TS;
+  const sourceFile = ts.createSourceFile(
+    outputFileName,
+    data,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKind,
+  );
+  const replacements: Array<{ start: number; end: number; text: string }> = [];
+
+  function visit(node: ts.Node) {
+    if (ts.isStringLiteral(node) && isModuleSpecifierLiteral(node)) {
+      const resolved = resolveImport(node.text, sourceFileName);
+      if (resolved) {
+        const targetSourceFileName = normalize(
+          createVirtualModuleFileName({
+            documentPath: resolved.absPath,
+            moduleName: resolved.chunk,
+          }),
+        );
+        const targetModule = store.getVirtualModule(targetSourceFileName);
+        const targetRuntimeOutput =
+          outputs.runtimeBySource.get(targetSourceFileName) ??
+          (() => {
+            const declarationOutput =
+              outputs.declarationBySource.get(targetSourceFileName);
+            if (!declarationOutput || !targetModule) return;
+            return runtimeOutputFromDeclaration(
+              declarationOutput,
+              targetModule.module,
+              options,
+            );
+          })();
+
+        if (targetRuntimeOutput) {
+          const quote = data[node.getStart(sourceFile)];
+          const specifier = toRelativeModuleSpecifier(
+            outputFileName,
+            targetRuntimeOutput,
+          ).replaceAll(quote, `\\${quote}`);
+          replacements.push({
+            start: node.getStart(sourceFile) + 1,
+            end: node.getEnd() - 1,
+            text: specifier,
+          });
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  for (const replacement of replacements.sort((a, b) => b.start - a.start)) {
+    data =
+      data.slice(0, replacement.start) +
+      replacement.text +
+      data.slice(replacement.end);
+  }
+  return data;
+}
+
+function rewriteSourceMapReferences(
+  data: string,
+  inputFileName: string,
+  outputFileName: string,
+  outputs: OutputIndex,
+) {
+  if (inputFileName.endsWith('.map')) {
+    try {
+      const map = JSON.parse(data) as { file?: unknown };
+      if (typeof map.file === 'string') {
+        const referencedInput = normalize(
+          path.resolve(path.dirname(inputFileName), map.file),
+        );
+        const referencedOutput =
+          outputs.renamedFileNames.get(referencedInput) ??
+          normalize(rewriteOutputFileName(referencedInput));
+        map.file = path
+          .relative(path.dirname(outputFileName), referencedOutput)
+          .split(path.sep)
+          .join('/');
+      }
+      return JSON.stringify(map);
+    } catch {
+      return data;
+    }
+  }
+
+  return data.replace(
+    /([#@]\s*sourceMappingURL=)([^\r\n]+)/g,
+    (match, prefix: string, sourceMapUrl: string) => {
+      if (/^(?:data:|[a-z]+:)/i.test(sourceMapUrl)) return match;
+      const referencedInput = normalize(
+        path.resolve(path.dirname(inputFileName), sourceMapUrl),
+      );
+      const referencedOutput =
+        outputs.renamedFileNames.get(referencedInput) ??
+        normalize(rewriteOutputFileName(referencedInput));
+      const relative = path
+        .relative(path.dirname(outputFileName), referencedOutput)
+        .split(path.sep)
+        .join('/');
+      return `${prefix}${relative}`;
+    },
+  );
+}
+
 function createTsMdCompilerHost(
   options: ts.CompilerOptions,
   store: ReturnType<typeof createDocumentStore>,
-): ts.CompilerHost {
+) {
   const host = ts.createCompilerHost(options);
   const originalFileExists = host.fileExists.bind(host);
   const originalReadFile = host.readFile.bind(host);
   const originalGetSourceFile = host.getSourceFile.bind(host);
   const originalWriteFile = host.writeFile.bind(host);
+  const pendingWrites: PendingWrite[] = [];
 
   host.fileExists = (fileName) =>
     Boolean(store.getVirtualModule(fileName)) || originalFileExists(fileName);
@@ -258,10 +476,63 @@ function createTsMdCompilerHost(
       ).resolvedModule;
     });
 
-  host.writeFile = (fileName, data, ...rest) =>
-    originalWriteFile(rewriteOutputFileName(fileName), data, ...rest);
+  host.writeFile = (
+    fileName,
+    data,
+    writeByteOrderMark,
+    onError,
+    sourceFiles,
+  ) => {
+    pendingWrites.push({
+      fileName,
+      data,
+      writeByteOrderMark,
+      onError,
+      sourceFiles,
+    });
+  };
 
-  return host;
+  function flushWrites() {
+    const outputs = createOutputIndex(pendingWrites);
+    for (const write of pendingWrites) {
+      const inputFileName = normalize(write.fileName);
+      const outputFileName =
+        outputs.renamedFileNames.get(inputFileName) ?? inputFileName;
+      let data = write.data;
+      const sourceFile =
+        write.sourceFiles?.length === 1 ? write.sourceFiles[0] : undefined;
+      if (
+        sourceFile &&
+        (DECLARATION_OUTPUT_PATTERN.test(inputFileName) ||
+          RUNTIME_OUTPUT_PATTERN.test(inputFileName))
+      ) {
+        data = rewriteModuleSpecifiers(
+          data,
+          normalize(sourceFile.fileName),
+          outputFileName,
+          options,
+          store,
+          outputs,
+        );
+      }
+      data = rewriteSourceMapReferences(
+        data,
+        inputFileName,
+        outputFileName,
+        outputs,
+      );
+      originalWriteFile(
+        outputFileName,
+        data,
+        write.writeByteOrderMark,
+        write.onError,
+        write.sourceFiles,
+      );
+    }
+    pendingWrites.length = 0;
+  }
+
+  return { flushWrites, host };
 }
 
 function mapDiagnostic(
@@ -308,18 +579,19 @@ export function runTsMdTsc(args: string[]) {
 
   const store = createDocumentStore();
   const rootNames = store.getRootFileNames(configuration.fileNames);
-  const host = createTsMdCompilerHost(configuration.options, store);
+  const compiler = createTsMdCompilerHost(configuration.options, store);
   const program = ts.createProgram({
     rootNames,
     options: configuration.options,
     projectReferences: configuration.projectReferences,
-    host,
+    host: compiler.host,
   });
 
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
     .map((diagnostic) => mapDiagnostic(diagnostic, store));
   const emitResult = configuration.options.noEmit ? undefined : program.emit();
+  compiler.flushWrites();
   const emitDiagnostics =
     emitResult?.diagnostics.map((diagnostic) =>
       mapDiagnostic(diagnostic, store),
