@@ -5,9 +5,10 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 const fixture = path.join(__dirname, 'fixtures', 'tsc');
 const dist = path.join(fixture, 'dist');
+const tsMdTsc = path.resolve(__dirname, '../../tsc/index.js');
 
 function runTsMdTsc(...args: string[]) {
-  execFileSync('pnpm', ['exec', 'ts-md-tsc', ...args], {
+  execFileSync(process.execPath, [tsMdTsc, ...args], {
     cwd: path.join(__dirname, '..'),
     stdio: 'inherit',
   });
