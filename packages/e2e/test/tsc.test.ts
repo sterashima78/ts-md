@@ -53,13 +53,9 @@ describe('ts-md-tsc', () => {
     expect(declaration).toContain(
       "export { bar } from './dep.ts.md.__tsmd__.bar.js';",
     );
-    expect(declaration).toContain(
-      'sourceMappingURL=dep.ts.md.d.ts.map',
-    );
+    expect(declaration).toContain('sourceMappingURL=dep.ts.md.d.ts.map');
 
-    const declarationMap = JSON.parse(
-      await readOutput('dep.ts.md.d.ts.map'),
-    );
+    const declarationMap = JSON.parse(await readOutput('dep.ts.md.d.ts.map'));
     expect(declarationMap.file).toBe('dep.ts.md.d.ts');
     checkDeclarationConsumer();
   });
@@ -78,9 +74,7 @@ describe('ts-md-tsc', () => {
 
     const sourceMap = JSON.parse(await readOutput('dep.ts.md.js.map'));
     expect(sourceMap.file).toBe('dep.ts.md.js');
-    const declarationMap = JSON.parse(
-      await readOutput('dep.ts.md.d.ts.map'),
-    );
+    const declarationMap = JSON.parse(await readOutput('dep.ts.md.d.ts.map'));
     expect(declarationMap.file).toBe('dep.ts.md.d.ts');
   });
 });
