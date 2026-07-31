@@ -5,6 +5,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 const fixture = path.join(__dirname, 'fixtures', 'tsc');
 const dist = path.join(fixture, 'dist');
+const commonJsDist = path.join(fixture, 'dist-cjs');
 const tsMdTsc = path.resolve(__dirname, '../../tsc/index.js');
 
 function runTsMdTsc(...args: string[]) {
@@ -34,18 +35,21 @@ function checkDeclarationConsumer() {
   );
 }
 
-async function readOutput(fileName: string) {
-  return fs.readFile(path.join(dist, fileName), 'utf8');
+async function readOutput(fileName: string, outputDirectory = dist) {
+  return fs.readFile(path.join(outputDirectory, fileName), 'utf8');
+}
+
+async function cleanOutputs() {
+  await Promise.all(
+    [dist, commonJsDist].map((directory) =>
+      fs.rm(directory, { recursive: true, force: true }),
+    ),
+  );
 }
 
 describe('ts-md-tsc', () => {
-  beforeEach(async () => {
-    await fs.rm(dist, { recursive: true, force: true });
-  });
-
-  afterAll(async () => {
-    await fs.rm(dist, { recursive: true, force: true });
-  });
+  beforeEach(cleanOutputs);
+  afterAll(cleanOutputs);
 
   it('emits resolvable declarations when project is a directory', async () => {
     runTsMdTsc('-p', fixture, '--emitDeclarationOnly');
@@ -77,5 +81,27 @@ describe('ts-md-tsc', () => {
     expect(sourceMap.file).toBe('dep.ts.md.js');
     const declarationMap = JSON.parse(await readOutput('dep.ts.md.d.ts.map'));
     expect(declarationMap.file).toBe('dep.ts.md.d.ts');
+  });
+
+  it('rewrites CommonJS require calls', async () => {
+    runTsMdTsc(
+      '-p',
+      fixture,
+      '--module',
+      'CommonJS',
+      '--outDir',
+      commonJsDist,
+    );
+
+    const documentJavaScript = await readOutput(
+      'dep.ts.md.js',
+      commonJsDist,
+    );
+    expect(documentJavaScript).toContain(
+      'require("./dep.ts.md.__tsmd__.bar.js")',
+    );
+
+    const importingJavaScript = await readOutput('index.js', commonJsDist);
+    expect(importingJavaScript).toContain('require("./dep.ts.md.js")');
   });
 });
