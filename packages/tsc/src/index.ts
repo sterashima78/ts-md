@@ -251,10 +251,10 @@ function runtimeOutputFromDeclaration(
   options: ts.CompilerOptions,
 ) {
   if (declarationFileName.endsWith('.d.mts')) {
-    return declarationFileName.slice(0, -'.d.mts'.length) + '.mjs';
+    return `${declarationFileName.slice(0, -'.d.mts'.length)}.mjs`;
   }
   if (declarationFileName.endsWith('.d.cts')) {
-    return declarationFileName.slice(0, -'.d.cts'.length) + '.cjs';
+    return `${declarationFileName.slice(0, -'.d.cts'.length)}.cjs`;
   }
   const extension =
     module.language === 'tsx' && options.jsx === ts.JsxEmit.Preserve
@@ -340,13 +340,14 @@ function rewriteModuleSpecifiers(
   }
 
   visit(sourceFile);
+  let result = data;
   for (const replacement of replacements.sort((a, b) => b.start - a.start)) {
-    data =
-      data.slice(0, replacement.start) +
+    result =
+      result.slice(0, replacement.start) +
       replacement.text +
-      data.slice(replacement.end);
+      result.slice(replacement.end);
   }
-  return data;
+  return result;
 }
 
 function rewriteSourceMapReferences(
