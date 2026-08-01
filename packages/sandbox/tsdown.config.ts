@@ -9,6 +9,7 @@ export default defineConfig({
   },
   format: ['esm'],
   target: 'node18',
+  dts: false,
   clean: true,
   outDir: 'dist/tsdown',
   outExtensions: () => ({ js: '.js' }),
