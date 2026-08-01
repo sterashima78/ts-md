@@ -7,8 +7,12 @@ export default defineConfig({
   dts: false,
   clean: true,
   target: 'node18',
+  outExtensions: () => ({ js: '.js' }),
   deps: {
     neverBundle: ['typescript'],
   },
   plugins: [tsMd],
+  define: {
+    'import.meta.vitest': 'undefined',
+  },
 });
