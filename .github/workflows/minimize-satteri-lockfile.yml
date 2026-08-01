@@ -6,12 +6,19 @@ on:
       - agent/use-satteri-markdown-parser
     paths:
       - .github/workflows/minimize-satteri-lockfile.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - pnpm-lock.yaml
+      - .github/workflows/minimize-satteri-lockfile.yml
 
 permissions:
   contents: write
 
 jobs:
   update-lockfile:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
