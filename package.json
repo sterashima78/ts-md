@@ -13,17 +13,17 @@
     "release": "pnpm changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.4",
-    "@types/node": "^22.15.29",
-    "@volar/kit": "^2.4.14",
-    "ts-morph": "^26.0.0",
-    "tsup": "^8.5.0",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.0",
-    "vitest": "^3.2.1"
+    "@biomejs/biome": "2.5.6",
+    "@changesets/changelog-github": "0.7.0",
+    "@changesets/cli": "2.31.1",
+    "@types/node": "26.1.2",
+    "@volar/kit": "2.4.28",
+    "ts-morph": "28.0.0",
+    "tsup": "8.5.1",
+    "turbo": "2.10.7",
+    "typescript": "6.0.3",
+    "vite": "8.2.0",
+    "vitest": "4.1.10"
   },
-  "packageManager": "pnpm@10.12.4"
+  "packageManager": "pnpm@11.18.0"
 }

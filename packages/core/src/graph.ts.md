@@ -32,10 +32,8 @@ export function collectModuleSpecifiers(code: string): string[] {
   }
   for (const call of source.getDescendantsOfKind(SyntaxKind.CallExpression)) {
     if (call.getExpression().getKind() !== SyntaxKind.ImportKeyword) continue;
-    const argument = call.getArguments()[0];
-    if (argument?.getKind() === SyntaxKind.StringLiteral) {
-      specifiers.add(argument.getLiteralText());
-    }
+    const argument = call.getArguments()[0]?.asKind(SyntaxKind.StringLiteral);
+    if (argument) specifiers.add(argument.getLiteralValue());
   }
 
   return [...specifiers];

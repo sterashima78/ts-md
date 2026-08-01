@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/typescript": "^2.4.14"
+    "@volar/typescript": "2.4.28"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
