@@ -7,6 +7,7 @@ export default defineConfig({
   format: ['esm'],
   clean: true,
   target: 'node18',
+  outExtensions: () => ({ js: '.js' }),
   plugins: [tsMd],
   define: {
     'import.meta.vitest': 'undefined',
