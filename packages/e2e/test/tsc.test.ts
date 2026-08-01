@@ -120,6 +120,12 @@ describe('tsmd check', () => {
     await expect(fs.stat(dist)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
+  it('keeps noEmit enabled when a user tries to disable it', async () => {
+    runTsMdCheck('-p', fixture, '--noEmit', 'false');
+
+    await expect(fs.stat(dist)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
   it('returns compiler diagnostics and a failing exit status', () => {
     try {
       runTsMdCheck('-p', errorFixture);
