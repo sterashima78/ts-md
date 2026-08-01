@@ -1,0 +1,211 @@
+name: dependency-update-runner
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  update-and-validate:
+    if: github.head_ref == 'agent/update-dependencies-2026-08'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: agent/update-dependencies-2026-08
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Configure GitHub Packages
+        run: |
+          printf '%s\n' \
+            '@sterashima78:registry=https://npm.pkg.github.com' \
+            "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" \
+            > "$HOME/.npmrc"
+          echo "NPM_CONFIG_USERCONFIG=$HOME/.npmrc" >> "$GITHUB_ENV"
+
+      - name: Update released ts-md packages first
+        shell: bash
+        run: |
+          npm install --global pnpm@10.12.4
+
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const packagePaths = fs
+            .readdirSync('packages', { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => `packages/${entry.name}/package.json`)
+            .filter((path) => fs.existsSync(path));
+          const manifestPaths = ['package.json', ...packagePaths];
+
+          const versions = new Map();
+          for (const path of packagePaths) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            if (pkg.name?.startsWith('@sterashima78/') && pkg.version) {
+              versions.set(pkg.name, pkg.version);
+            }
+          }
+
+          for (const path of manifestPaths) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            let changed = false;
+
+            for (const section of [
+              'dependencies',
+              'devDependencies',
+              'peerDependencies',
+              'optionalDependencies',
+            ]) {
+              for (const [name, spec] of Object.entries(pkg[section] ?? {})) {
+                if (versions.has(name) && !String(spec).startsWith('workspace:')) {
+                  const next = versions.get(name);
+                  if (spec !== next) {
+                    pkg[section][name] = next;
+                    changed = true;
+                  }
+                  continue;
+                }
+
+                const alias = String(spec).match(
+                  /^npm:(@sterashima78\/[^@]+)@(.+)$/,
+                );
+                if (alias && versions.has(alias[1])) {
+                  const next = `npm:${alias[1]}@${versions.get(alias[1])}`;
+                  if (spec !== next) {
+                    pkg[section][name] = next;
+                    changed = true;
+                  }
+                }
+              }
+            }
+
+            if (changed) {
+              fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+            }
+          }
+          NODE
+
+          pnpm install --no-frozen-lockfile
+
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add package.json packages/*/package.json pnpm-lock.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "update released ts-md package references"
+          fi
+
+      - name: Update external dependencies
+        shell: bash
+        run: |
+          npm install --global pnpm@11.18.0
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const root = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          root.packageManager = 'pnpm@11.18.0';
+          fs.writeFileSync('package.json', `${JSON.stringify(root, null, 2)}\n`);
+          NODE
+
+          cat > pnpm-workspace.yaml <<'YAML'
+          packages:
+            - packages/*
+          allowBuilds:
+            '@biomejs/biome': true
+            '@vscode/vsce-sign': false
+            esbuild: true
+            keytar: false
+            sharp: true
+          YAML
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const paths = [
+            'package.json',
+            ...fs
+              .readdirSync('packages', { withFileTypes: true })
+              .filter((entry) => entry.isDirectory())
+              .map((entry) => `packages/${entry.name}/package.json`)
+              .filter((path) => fs.existsSync(path)),
+          ];
+          const preserved = {};
+          for (const path of paths) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            for (const section of [
+              'dependencies',
+              'devDependencies',
+              'peerDependencies',
+              'optionalDependencies',
+            ]) {
+              for (const [name, spec] of Object.entries(pkg[section] ?? {})) {
+                if (
+                  name.startsWith('@sterashima78/') ||
+                  String(spec).startsWith('workspace:') ||
+                  String(spec).startsWith('npm:@sterashima78/')
+                ) {
+                  preserved[`${path}\0${section}\0${name}`] = spec;
+                }
+              }
+            }
+          }
+          fs.writeFileSync('/tmp/internal-dependencies.json', JSON.stringify(preserved));
+          NODE
+
+          pnpm update --recursive --latest
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const preserved = JSON.parse(
+            fs.readFileSync('/tmp/internal-dependencies.json', 'utf8'),
+          );
+          const byPath = new Map();
+          for (const [key, spec] of Object.entries(preserved)) {
+            const [path, section, name] = key.split('\0');
+            if (!byPath.has(path)) byPath.set(path, []);
+            byPath.get(path).push([section, name, spec]);
+          }
+          for (const [path, entries] of byPath) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            for (const [section, name, spec] of entries) {
+              pkg[section][name] = spec;
+            }
+            fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+          }
+          NODE
+
+          pnpm install --no-frozen-lockfile
+          pnpm exec biome migrate --write
+
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "update external dependencies"
+          fi
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Publish validated commits
+        run: |
+          rm .github/workflows/dependency-update-runner.yml
+          git add -A
+          git commit -m "remove dependency update runner"
+          git push --force-with-lease origin agent/update-dependencies-2026-08
