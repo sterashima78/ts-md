@@ -6,7 +6,6 @@ export default defineConfig({
     index: 'src/index.ts.md',
     vite: 'src/vite.ts',
     rollup: 'src/rollup.ts',
-    rolldown: 'src/rolldown.ts',
     webpack: 'src/webpack.ts',
     esbuild: 'src/esbuild.ts',
   },
