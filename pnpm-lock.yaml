@@ -50,24 +50,15 @@ importers:
       '@sterashima78/ts-md-loader':
         specifier: workspace:*
         version: link:../loader
-      '@sterashima78/ts-md-ls-core':
+      '@sterashima78/ts-md-tsc':
         specifier: workspace:*
-        version: link:../ls-core
-      '@volar/kit':
-        specifier: 2.4.28
-        version: 2.4.28(typescript@6.0.3)
-      '@volar/typescript':
-        specifier: 2.4.28
-        version: 2.4.28
+        version: link:../tsc
       commander:
         specifier: 15.0.0
         version: 15.0.0
       fast-glob:
         specifier: 3.3.3
         version: 3.3.3
-      picocolors:
-        specifier: 1.1.1
-        version: 1.1.1
       tsx:
         specifier: 4.23.1
         version: 4.23.1
@@ -255,9 +246,9 @@ importers:
       '@sterashima78/ts-md-ls-core':
         specifier: workspace:*
         version: link:../ls-core
-      '@volar/typescript':
-        specifier: 2.4.28
-        version: 2.4.28
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
 
   packages/unplugin:
     dependencies:
