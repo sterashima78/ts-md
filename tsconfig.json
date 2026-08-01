@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "vitest/globals", "vitest/importMeta"],
     "declaration": true,
+    "rootDir": "${configDir}/src",
     "outDir": "${configDir}/dist",
     "baseUrl": ".",
     "ignoreDeprecations": "6.0"
