@@ -7,10 +7,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals", "vitest/importMeta"],
     "declaration": true,
     "outDir": "${configDir}/dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["dist", "node_modules"]
 }
