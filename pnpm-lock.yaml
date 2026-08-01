@@ -4,42 +4,174 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@astrojs/starlight':
+      specifier: 0.41.5
+      version: 0.41.5
+    '@biomejs/biome':
+      specifier: 2.5.6
+      version: 2.5.6
+    '@changesets/changelog-github':
+      specifier: 0.7.0
+      version: 0.7.0
+    '@changesets/cli':
+      specifier: 2.31.1
+      version: 2.31.1
+    '@monaco-editor/react':
+      specifier: 4.7.0
+      version: 4.7.0
+    '@rollup/pluginutils':
+      specifier: 5.4.0
+      version: 5.4.0
+    '@sterashima78/ts-md-tsc':
+      specifier: 0.2.0
+      version: 0.2.0
+    '@sterashima78/ts-md-unplugin':
+      specifier: 0.4.0
+      version: 0.4.0
+    '@testing-library/react':
+      specifier: 16.3.2
+      version: 16.3.2
+    '@types/mdast':
+      specifier: 4.0.4
+      version: 4.0.4
+    '@types/node':
+      specifier: 26.1.2
+      version: 26.1.2
+    '@types/react':
+      specifier: 19.2.18
+      version: 19.2.18
+    '@types/vscode':
+      specifier: 1.125.0
+      version: 1.125.0
+    '@volar/kit':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/language-core':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/language-server':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/language-service':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/monaco':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/typescript':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@volar/vscode':
+      specifier: 2.4.28
+      version: 2.4.28
+    '@vscode/test-electron':
+      specifier: 3.1.0
+      version: 3.1.0
+    '@vscode/vsce':
+      specifier: 3.9.2
+      version: 3.9.2
+    astro:
+      specifier: 7.1.6
+      version: 7.1.6
+    commander:
+      specifier: 15.0.0
+      version: 15.0.0
+    fast-glob:
+      specifier: 3.3.3
+      version: 3.3.3
+    jsdom:
+      specifier: 30.0.1
+      version: 30.0.1
+    monaco-editor:
+      specifier: 0.56.0
+      version: 0.56.0
+    react:
+      specifier: 19.2.8
+      version: 19.2.8
+    react-dom:
+      specifier: 19.2.8
+      version: 19.2.8
+    rollup:
+      specifier: 4.62.3
+      version: 4.62.3
+    satteri:
+      specifier: 0.9.5
+      version: 0.9.5
+    sharp:
+      specifier: 0.35.3
+      version: 0.35.3
+    ts-md-unplugin-build:
+      specifier: npm:@sterashima78/ts-md-unplugin@0.4.0
+      version: 0.4.0
+    ts-morph:
+      specifier: 28.0.0
+      version: 28.0.0
+    tsdown:
+      specifier: 0.22.14
+      version: 0.22.14
+    tsx:
+      specifier: 4.23.1
+      version: 4.23.1
+    turbo:
+      specifier: 2.10.7
+      version: 2.10.7
+    typescript:
+      specifier: 6.0.3
+      version: 6.0.3
+    unplugin:
+      specifier: 3.3.0
+      version: 3.3.0
+    vite:
+      specifier: 8.2.0
+      version: 8.2.0
+    vitest:
+      specifier: 4.1.10
+      version: 4.1.10
+    volar-service-typescript:
+      specifier: 0.0.71
+      version: 0.0.71
+    vscode-uri:
+      specifier: 3.1.0
+      version: 3.1.0
+
 importers:
 
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: 2.5.6
+        specifier: 'catalog:'
         version: 2.5.6
       '@changesets/changelog-github':
-        specifier: 0.7.0
+        specifier: 'catalog:'
         version: 0.7.0
       '@changesets/cli':
-        specifier: 2.31.1
+        specifier: 'catalog:'
         version: 2.31.1(@types/node@26.1.2)
       '@types/node':
-        specifier: 26.1.2
+        specifier: 'catalog:'
         version: 26.1.2
       '@volar/kit':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28(typescript@6.0.3)
       ts-morph:
-        specifier: 28.0.0
+        specifier: 'catalog:'
         version: 28.0.0
       tsdown:
-        specifier: 0.22.14
+        specifier: 'catalog:'
         version: 0.22.14(@volar/typescript@2.4.28)(tsx@4.23.1)(typescript@6.0.3)
       turbo:
-        specifier: 2.10.7
+        specifier: 'catalog:'
         version: 2.10.7
       typescript:
-        specifier: 6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       vite:
-        specifier: 8.2.0
+        specifier: 'catalog:'
         version: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1)
       vitest:
-        specifier: 4.1.10
+        specifier: 'catalog:'
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
 
   packages/cli:
@@ -54,57 +186,57 @@ importers:
         specifier: workspace:*
         version: link:../tsc
       commander:
-        specifier: 15.0.0
+        specifier: 'catalog:'
         version: 15.0.0
       fast-glob:
-        specifier: 3.3.3
+        specifier: 'catalog:'
         version: 3.3.3
       tsx:
-        specifier: 4.23.1
+        specifier: 'catalog:'
         version: 4.23.1
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.4.0
-        version: 0.4.0(supports-color@7.2.0)
+        specifier: 'catalog:'
+        version: 0.4.0
       tsdown:
-        specifier: 0.22.14
+        specifier: 'catalog:'
         version: 0.22.14(@volar/typescript@2.4.28)(tsx@4.23.1)(typescript@6.0.3)
       vitest:
-        specifier: 4.1.10
+        specifier: 'catalog:'
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
 
   packages/core:
     dependencies:
       satteri:
-        specifier: 0.9.5
+        specifier: 'catalog:'
         version: 0.9.5
       ts-morph:
-        specifier: 28.0.0
+        specifier: 'catalog:'
         version: 28.0.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.4.0
-        version: 0.4.0(supports-color@7.2.0)
+        specifier: 'catalog:'
+        version: 0.4.0
       '@types/mdast':
-        specifier: 4.0.4
+        specifier: 'catalog:'
         version: 4.0.4
 
   packages/docs:
     dependencies:
       '@astrojs/starlight':
-        specifier: 0.41.5
-        version: 0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(typescript@6.0.3)
+        specifier: 'catalog:'
+        version: 0.41.5(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(supports-color@7.2.0)(typescript@6.0.3)
       astro:
-        specifier: 7.1.6
-        version: 7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
+        specifier: 'catalog:'
+        version: 7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
       fast-glob:
-        specifier: 3.3.3
+        specifier: 'catalog:'
         version: 3.3.3
       sharp:
-        specifier: 0.35.3
+        specifier: 'catalog:'
         version: 0.35.3(@types/node@26.1.2)
 
   packages/e2e:
@@ -122,17 +254,17 @@ importers:
         specifier: workspace:*
         version: link:../vscode
       '@vscode/test-electron':
-        specifier: 3.1.0
+        specifier: 'catalog:'
         version: 3.1.0(supports-color@7.2.0)
       vitest:
-        specifier: 4.1.10
+        specifier: 'catalog:'
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
     devDependencies:
       '@types/vscode':
-        specifier: 1.125.0
+        specifier: 'catalog:'
         version: 1.125.0
       typescript:
-        specifier: 6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
 
   packages/loader:
@@ -142,11 +274,11 @@ importers:
         version: link:../core
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.4.0
-        version: 0.4.0(supports-color@7.2.0)
+        specifier: 'catalog:'
+        version: 0.4.0
 
   packages/ls-core:
     dependencies:
@@ -154,69 +286,69 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@volar/language-core':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       '@volar/language-service':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       '@volar/typescript':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       vscode-uri:
-        specifier: 3.1.0
+        specifier: 'catalog:'
         version: 3.1.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.4.0
-        version: 0.4.0(supports-color@7.2.0)
+        specifier: 'catalog:'
+        version: 0.4.0
 
   packages/monaco:
     dependencies:
       '@monaco-editor/react':
-        specifier: 4.7.0
+        specifier: 'catalog:'
         version: 4.7.0(monaco-editor@0.56.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@sterashima78/ts-md-ls-core':
         specifier: workspace:*
         version: link:../ls-core
       '@volar/monaco':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       monaco-editor:
-        specifier: 0.56.0
+        specifier: 'catalog:'
         version: 0.56.0
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       react-dom:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       '@testing-library/react':
-        specifier: 16.3.2
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/react':
-        specifier: 19.2.18
+        specifier: 'catalog:'
         version: 19.2.18
       jsdom:
-        specifier: 30.0.1
+        specifier: 'catalog:'
         version: 30.0.1
       tsdown:
-        specifier: 0.22.14
+        specifier: 'catalog:'
         version: 0.22.14(@volar/typescript@2.4.28)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
-        specifier: 6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       vite:
-        specifier: 8.2.0
+        specifier: 'catalog:'
         version: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1)
       vitest:
-        specifier: 4.1.10
+        specifier: 'catalog:'
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
 
   packages/sandbox:
@@ -241,30 +373,30 @@ importers:
         specifier: workspace:*
         version: link:../ls-core
       typescript:
-        specifier: 6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
 
   packages/unplugin:
     dependencies:
       '@rollup/pluginutils':
-        specifier: 5.4.0
+        specifier: 'catalog:'
         version: 5.4.0(rollup@4.62.3)
       '@sterashima78/ts-md-core':
         specifier: workspace:*
         version: link:../core
       rollup:
-        specifier: 4.62.3
+        specifier: 'catalog:'
         version: 4.62.3
       unplugin:
-        specifier: 3.3.0
+        specifier: 'catalog:'
         version: 3.3.0(esbuild@0.28.1)(rolldown@1.2.1)(rollup@4.62.3)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       ts-md-unplugin-build:
-        specifier: npm:@sterashima78/ts-md-unplugin@0.4.0
-        version: '@sterashima78/ts-md-unplugin@0.4.0(supports-color@7.2.0)'
+        specifier: 'catalog:'
+        version: '@sterashima78/ts-md-unplugin@0.4.0'
 
   packages/vscode:
     dependencies:
@@ -272,41 +404,41 @@ importers:
         specifier: workspace:*
         version: link:../ls-core
       '@volar/language-server':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       '@volar/language-service':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       '@volar/vscode':
-        specifier: 2.4.28
+        specifier: 'catalog:'
         version: 2.4.28
       tsx:
-        specifier: 4.23.1
+        specifier: 'catalog:'
         version: 4.23.1
       typescript:
-        specifier: 6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       volar-service-typescript:
-        specifier: 0.0.71
+        specifier: 'catalog:'
         version: 0.0.71(@volar/language-service@2.4.28)
       vscode-uri:
-        specifier: 3.1.0
+        specifier: 'catalog:'
         version: 3.1.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.2.0
+        specifier: 'catalog:'
         version: 0.2.0(supports-color@7.2.0)
       '@types/vscode':
-        specifier: 1.125.0
+        specifier: 'catalog:'
         version: 1.125.0
       '@vscode/test-electron':
-        specifier: 3.1.0
+        specifier: 'catalog:'
         version: 3.1.0(supports-color@7.2.0)
       '@vscode/vsce':
-        specifier: 3.9.2
+        specifier: 'catalog:'
         version: 3.9.2(supports-color@7.2.0)
       vitest:
-        specifier: 4.1.10
+        specifier: 'catalog:'
         version: 4.1.10(@types/node@26.1.2)(jsdom@30.0.1)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
 
 packages:
@@ -1643,9 +1775,6 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@22.20.1':
-    resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
-
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
 
@@ -1723,26 +1852,17 @@ packages:
     peerDependencies:
       typescript: '*'
 
-  '@volar/language-core@2.4.14':
-    resolution: {integrity: sha512-X6beusV0DvuVseaOEy7GoagS4rYHgDHnTrdOj5jeUb49fW5ceQyP9Ej5rBhqgz2wJggl+2fDbbojq1XKaxDi6w==}
-
   '@volar/language-core@2.4.28':
     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
 
   '@volar/language-server@2.4.28':
     resolution: {integrity: sha512-NqcLnE5gERKuS4PUFwlhMxf6vqYo7hXtbMFbViXcbVkbZ905AIVWhnSo0ZNBC2V127H1/2zP7RvVOVnyITFfBw==}
 
-  '@volar/language-service@2.4.14':
-    resolution: {integrity: sha512-vNC3823EJohdzLTyjZoCMPwoWCfINB5emusniCkW5CGoGHQov4VVmT6yI5ncgP/NpgAIUv2NEkJooXvLHA4VeQ==}
-
   '@volar/language-service@2.4.28':
     resolution: {integrity: sha512-Rh/wYCZJrI5vCwMk9xyw/Z+MsWxlJY1rmMZPsxUoJKfzIRjS/NF1NmnuEcrMbEVGja00aVpCsInJfixQTMdvLw==}
 
   '@volar/monaco@2.4.28':
     resolution: {integrity: sha512-gB7iYRodZouKFrj1x1C9gcacYr7ChgQ93oPDFRLGUFM7zjGb63Ft73MG5aTurGIh08Q6JWz3L8dkpt6Lxg3ovQ==}
-
-  '@volar/source-map@2.4.14':
-    resolution: {integrity: sha512-5TeKKMh7Sfxo8021cJfmBzcjfY1SsXsPMMjMvjY7ivesdnybqqS+GxGAoXHAOUawQTwtdUxgP65Im+dEmvWtYQ==}
 
   '@volar/source-map@2.4.28':
     resolution: {integrity: sha512-yX2BDBqJkRXfKw8my8VarTyjv48QwxdJtvRgUpNE5erCsgEUdI2DsLbpa+rOQVAJYshY99szEcRDmyHbF10ggQ==}
@@ -4238,9 +4358,6 @@ packages:
   underscore@1.13.8:
     resolution: {integrity: sha512-DXtD3ZtEQzc7M8m4cXotyHR+FAS18C64asBYY5vqZexfYryNNnDc02W4hKg3rdQuqOYas1jkseX0+nZXjTXnvQ==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
@@ -4760,7 +4877,7 @@ snapshots:
       smol-toml: 1.7.1
       unified: 11.0.5
 
-  '@astrojs/markdown-remark@7.2.2':
+  '@astrojs/markdown-remark@7.2.2(supports-color@7.2.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.10.2
       '@astrojs/prism': 4.0.2
@@ -4770,7 +4887,7 @@ snapshots:
       mdast-util-definitions: 6.0.0
       rehype-raw: 7.0.0
       rehype-stringify: 10.0.1
-      remark-gfm: 4.0.1
+      remark-gfm: 4.0.1(supports-color@7.2.0)
       remark-parse: 11.0.0(supports-color@7.2.0)
       remark-rehype: 11.1.2
       remark-smartypants: 3.0.3
@@ -4790,19 +4907,19 @@ snapshots:
       hast-util-from-html: 2.0.3
       satteri: 0.9.5
 
-  '@astrojs/mdx@7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))':
+  '@astrojs/mdx@7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(supports-color@7.2.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.10.2
-      '@astrojs/markdown-remark': 7.2.2
-      '@mdx-js/mdx': 3.1.1
+      '@astrojs/markdown-remark': 7.2.2(supports-color@7.2.0)
+      '@mdx-js/mdx': 3.1.1(supports-color@7.2.0)
       acorn: 8.18.0
-      astro: 7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
+      astro: 7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
       es-module-lexer: 2.3.1
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
       piccolore: 0.1.3
       rehype-raw: 7.0.0
-      remark-gfm: 4.0.1
+      remark-gfm: 4.0.1(supports-color@7.2.0)
       remark-smartypants: 3.0.3
       source-map: 0.7.6
       unist-util-visit: 5.1.0
@@ -4822,17 +4939,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 4.4.3
 
-  '@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(typescript@6.0.3)':
+  '@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@astrojs/markdown-satteri': 0.3.5
-      '@astrojs/mdx': 7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))
+      '@astrojs/mdx': 7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))(supports-color@7.2.0)
       '@astrojs/sitemap': 3.7.3
       '@pagefind/default-ui': 1.5.2
       '@types/hast': 3.0.5
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
-      astro-expressive-code: 0.44.1(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))
+      astro: 7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
+      astro-expressive-code: 0.44.1(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1))
       bcp-47: 2.1.1
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -4842,20 +4959,20 @@ snapshots:
       js-yaml: 4.3.0
       klona: 2.0.6
       magic-string: 0.30.21
-      mdast-util-directive: 3.1.0
+      mdast-util-directive: 3.1.0(supports-color@7.2.0)
       mdast-util-to-markdown: 2.1.2
       mdast-util-to-string: 4.0.0
       pagefind: 1.5.2
       rehype: 13.0.2
       rehype-format: 5.0.1
-      remark-directive: 4.0.0
+      remark-directive: 4.0.0(supports-color@7.2.0)
       satteri: 0.9.5
       ultrahtml: 1.7.0
       unified: 11.0.5
       unist-util-visit: 5.1.0
       vfile: 6.0.3
     optionalDependencies:
-      '@astrojs/markdown-remark': 7.2.2
+      '@astrojs/markdown-remark': 7.2.2(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5536,7 +5653,7 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@mdx-js/mdx@3.1.1':
+  '@mdx-js/mdx@3.1.1(supports-color@7.2.0)':
     dependencies:
       '@types/estree': 1.0.9
       '@types/estree-jsx': 1.0.5
@@ -5548,13 +5665,13 @@ snapshots:
       estree-util-is-identifier-name: 3.0.0
       estree-util-scope: 1.0.0
       estree-walker: 3.0.3
-      hast-util-to-jsx-runtime: 2.3.6
+      hast-util-to-jsx-runtime: 2.3.6(supports-color@7.2.0)
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
       recma-jsx: 1.0.1(acorn@8.18.0)
       recma-stringify: 1.0.0
-      rehype-recma: 1.0.0
-      remark-mdx: 3.1.1
+      rehype-recma: 1.0.0(supports-color@7.2.0)
+      remark-mdx: 3.1.1(supports-color@7.2.0)
       remark-parse: 11.0.0(supports-color@7.2.0)
       remark-rehype: 11.1.2
       source-map: 0.7.6
@@ -5899,7 +6016,7 @@ snapshots:
     dependencies:
       '@sterashima78/ts-md-core': 0.3.0(supports-color@7.2.0)
       '@volar/language-core': 2.4.28
-      '@volar/language-service': 2.4.14
+      '@volar/language-service': 2.4.28
       '@volar/typescript': 2.4.28
       vscode-uri: 3.1.0
     transitivePeerDependencies:
@@ -5912,7 +6029,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-unplugin@0.4.0(supports-color@7.2.0)':
+  '@sterashima78/ts-md-unplugin@0.4.0':
     dependencies:
       '@rollup/pluginutils': 5.4.0(rollup@4.62.3)
       '@sterashima78/ts-md-core': 0.3.0(supports-color@7.2.0)
@@ -6045,10 +6162,6 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@22.20.1':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@24.13.3':
     dependencies:
       undici-types: 7.18.2
@@ -6072,7 +6185,7 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 22.20.1
+      '@types/node': 26.1.2
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -6143,10 +6256,6 @@ snapshots:
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
 
-  '@volar/language-core@2.4.14':
-    dependencies:
-      '@volar/source-map': 2.4.14
-
   '@volar/language-core@2.4.28':
     dependencies:
       '@volar/source-map': 2.4.28
@@ -6159,13 +6268,6 @@ snapshots:
       path-browserify: 1.0.1
       request-light: 0.7.0
       vscode-languageserver: 9.0.1
-      vscode-languageserver-protocol: 3.18.2
-      vscode-languageserver-textdocument: 1.0.12
-      vscode-uri: 3.1.0
-
-  '@volar/language-service@2.4.14':
-    dependencies:
-      '@volar/language-core': 2.4.14
       vscode-languageserver-protocol: 3.18.2
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
@@ -6184,8 +6286,6 @@ snapshots:
       monaco-languageserver-types: 0.4.1
       monaco-types: 0.1.2
       vscode-uri: 3.1.0
-
-  '@volar/source-map@2.4.14': {}
 
   '@volar/source-map@2.4.28': {}
 
@@ -6420,13 +6520,13 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.44.1(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)):
+  astro-expressive-code@0.44.1(astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)):
     dependencies:
-      astro: 7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
+      astro: 7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1)
       rehype-expressive-code: 0.44.1
       url-extras: 0.1.0
 
-  astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@azure/identity@4.13.1)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1):
+  astro@7.1.6(@astrojs/markdown-remark@7.2.2(supports-color@7.2.0))(@azure/identity@4.13.1(supports-color@7.2.0))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(rollup@4.62.3)(tsx@4.23.1):
     dependencies:
       '@astrojs/compiler-rs': 0.3.2(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)
       '@astrojs/internal-helpers': 0.10.2
@@ -6475,14 +6575,14 @@ snapshots:
       tinyglobby: 0.2.17
       ultrahtml: 1.7.0
       unifont: 0.7.4
-      unstorage: 1.17.5(@azure/identity@4.13.1)
+      unstorage: 1.17.5(@azure/identity@4.13.1(supports-color@7.2.0))
       vite: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1)
       vitefu: 1.1.3(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1))
       xxhash-wasm: 1.1.0
       yargs-parser: 22.0.0
       zod: 4.4.3
     optionalDependencies:
-      '@astrojs/markdown-remark': 7.2.2
+      '@astrojs/markdown-remark': 7.2.2(supports-color@7.2.0)
       sharp: 0.35.3(@types/node@26.1.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -7270,7 +7370,7 @@ snapshots:
       unist-util-visit: 5.1.0
       zwitch: 2.0.4
 
-  hast-util-to-estree@3.1.3:
+  hast-util-to-estree@3.1.3(supports-color@7.2.0):
     dependencies:
       '@types/estree': 1.0.9
       '@types/estree-jsx': 1.0.5
@@ -7280,9 +7380,9 @@ snapshots:
       estree-util-attach-comments: 3.0.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@7.2.0)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@7.2.0)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@7.2.0)
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.21
@@ -7305,7 +7405,7 @@ snapshots:
       stringify-entities: 4.0.4
       zwitch: 2.0.4
 
-  hast-util-to-jsx-runtime@2.3.6:
+  hast-util-to-jsx-runtime@2.3.6(supports-color@7.2.0):
     dependencies:
       '@types/estree': 1.0.9
       '@types/hast': 3.0.5
@@ -7314,9 +7414,9 @@ snapshots:
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@7.2.0)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@7.2.0)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@7.2.0)
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.21
@@ -7727,7 +7827,7 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-visit: 5.1.0
 
-  mdast-util-directive@3.1.0:
+  mdast-util-directive@3.1.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
@@ -7773,7 +7873,7 @@ snapshots:
       mdast-util-find-and-replace: 3.0.2
       micromark-util-character: 2.1.1
 
-  mdast-util-gfm-footnote@2.1.0:
+  mdast-util-gfm-footnote@2.1.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
@@ -7783,7 +7883,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-strikethrough@2.0.0:
+  mdast-util-gfm-strikethrough@2.0.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
       mdast-util-from-markdown: 2.0.3(supports-color@7.2.0)
@@ -7791,7 +7891,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-table@2.0.0:
+  mdast-util-gfm-table@2.0.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
@@ -7801,7 +7901,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-task-list-item@2.0.0:
+  mdast-util-gfm-task-list-item@2.0.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
@@ -7810,19 +7910,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm@3.1.0:
+  mdast-util-gfm@3.1.0(supports-color@7.2.0):
     dependencies:
       mdast-util-from-markdown: 2.0.3(supports-color@7.2.0)
       mdast-util-gfm-autolink-literal: 2.0.1
-      mdast-util-gfm-footnote: 2.1.0
-      mdast-util-gfm-strikethrough: 2.0.0
-      mdast-util-gfm-table: 2.0.0
-      mdast-util-gfm-task-list-item: 2.0.0
+      mdast-util-gfm-footnote: 2.1.0(supports-color@7.2.0)
+      mdast-util-gfm-strikethrough: 2.0.0(supports-color@7.2.0)
+      mdast-util-gfm-table: 2.0.0(supports-color@7.2.0)
+      mdast-util-gfm-task-list-item: 2.0.0(supports-color@7.2.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx-expression@2.0.1:
+  mdast-util-mdx-expression@2.0.1(supports-color@7.2.0):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.5
@@ -7833,7 +7933,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx-jsx@3.2.0:
+  mdast-util-mdx-jsx@3.2.0(supports-color@7.2.0):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.5
@@ -7850,17 +7950,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx@3.0.0:
+  mdast-util-mdx@3.0.0(supports-color@7.2.0):
     dependencies:
       mdast-util-from-markdown: 2.0.3(supports-color@7.2.0)
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@7.2.0)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@7.2.0)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@7.2.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdxjs-esm@2.0.1:
+  mdast-util-mdxjs-esm@2.0.1(supports-color@7.2.0):
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.5
@@ -8658,11 +8758,11 @@ snapshots:
       hast-util-raw: 9.1.0
       vfile: 6.0.3
 
-  rehype-recma@1.0.0:
+  rehype-recma@1.0.0(supports-color@7.2.0):
     dependencies:
       '@types/estree': 1.0.9
       '@types/hast': 3.0.5
-      hast-util-to-estree: 3.1.3
+      hast-util-to-estree: 3.1.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -8679,19 +8779,19 @@ snapshots:
       rehype-stringify: 10.0.1
       unified: 11.0.5
 
-  remark-directive@4.0.0:
+  remark-directive@4.0.0(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-directive: 3.1.0
+      mdast-util-directive: 3.1.0(supports-color@7.2.0)
       micromark-extension-directive: 4.0.0
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
 
-  remark-gfm@4.0.1:
+  remark-gfm@4.0.1(supports-color@7.2.0):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-gfm: 3.1.0
+      mdast-util-gfm: 3.1.0(supports-color@7.2.0)
       micromark-extension-gfm: 3.0.0
       remark-parse: 11.0.0(supports-color@7.2.0)
       remark-stringify: 11.0.0
@@ -8699,9 +8799,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remark-mdx@3.1.1:
+  remark-mdx@3.1.1(supports-color@7.2.0):
     dependencies:
-      mdast-util-mdx: 3.0.0
+      mdast-util-mdx: 3.0.0(supports-color@7.2.0)
       micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
@@ -9292,8 +9392,6 @@ snapshots:
 
   underscore@1.13.8: {}
 
-  undici-types@6.21.0: {}
-
   undici-types@7.18.2: {}
 
   undici-types@8.3.0: {}
@@ -9390,7 +9488,7 @@ snapshots:
       rollup: 4.62.3
       vite: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(tsx@4.23.1)
 
-  unstorage@1.17.5(@azure/identity@4.13.1):
+  unstorage@1.17.5(@azure/identity@4.13.1(supports-color@7.2.0)):
     dependencies:
       anymatch: 3.1.3
       chokidar: 5.0.0

@@ -17,16 +17,16 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "satteri": "0.9.5",
-    "ts-morph": "28.0.0"
+    "satteri": "catalog:",
+    "ts-morph": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-tsc": "0.2.0",
-    "@sterashima78/ts-md-unplugin": "0.4.0",
-    "@types/mdast": "4.0.4"
+    "@sterashima78/ts-md-tsc": "catalog:",
+    "@sterashima78/ts-md-unplugin": "catalog:",
+    "@types/mdast": "catalog:"
   }
 }

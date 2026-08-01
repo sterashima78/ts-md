@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "typescript": "6.0.3"
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
