@@ -1,38 +1,27 @@
 # check コマンド
 
-`.ts.md` ファイルを型検査する `runCheck` 関数を公開します。
+`tsconfig.json` に従って型検査する `runCheck` 関数を公開します。
+`ts-md-tsc` に `--noEmit` を付けて委譲するため、コンパイラと同じ診断結果になります。
 
 ```ts runCheck
-import {
-  type TsMdVirtualFile,
-  createTsMdPlugin,
-} from '@sterashima78/ts-md-ls-core';
-import { createTypeScriptInferredChecker } from '@volar/kit';
-import type { Diagnostic, LanguagePlugin } from '@volar/language-service';
-import pc from 'picocolors';
-import type { URI } from 'vscode-uri';
-import { expandGlobs } from '../utils/globs.ts.md';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
-export async function runCheck(globs: string[] = []) {
-  const files = await expandGlobs(globs);
-  if (!files.length) return console.log(pc.yellow('No .ts.md files found.'));
-
-  const checker = createTypeScriptInferredChecker(
-    [createTsMdPlugin as unknown as LanguagePlugin<URI, TsMdVirtualFile>],
-    [],
-    () => files,
+export function runCheck(tscArgs: string[] = []) {
+  const require = createRequire(import.meta.url);
+  const packageJson = require.resolve(
+    '@sterashima78/ts-md-tsc/package.json',
+  );
+  const executable = path.join(path.dirname(packageJson), 'index.js');
+  const result = spawnSync(
+    process.execPath,
+    [executable, '--noEmit', ...tscArgs],
+    { stdio: 'inherit' },
   );
 
-  let errorCount = 0;
-  for (const file of files) {
-    const diags = (await checker.check(file)) as Diagnostic[];
-    if (diags.length) {
-      console.error(checker.printErrors(file, diags));
-    }
-    errorCount += diags.length;
-  }
-
-  if (errorCount) process.exit(1);
+  if (result.error) throw result.error;
+  return result.status ?? 1;
 }
 ```
 
