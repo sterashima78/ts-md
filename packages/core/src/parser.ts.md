@@ -37,13 +37,23 @@ export class TsMdParseError extends Error {
 
 ## buildAst: AST の構築
 
+Sätteri で Markdown を標準 MDAST に変換します。従来の `remark-parse` と同じ CommonMark の解析範囲を保つため、Sätteri で既定有効の GFM と frontmatter は無効化します。
+
 ```ts buildAst
 import type { Root } from 'mdast';
-import remarkParse from 'remark-parse';
-import { unified } from 'unified';
+import { markdownToMdast } from 'satteri';
 
 export function buildAst(markdown: string): Root {
-  return unified().use(remarkParse).parse(markdown) as Root;
+  const tree = markdownToMdast(markdown, {
+    features: {
+      frontmatter: false,
+      gfm: false,
+    },
+  });
+  if (tree.type !== 'root') {
+    throw new TypeError(`Expected a Markdown root, got '${tree.type}'`);
+  }
+  return tree;
 }
 ```
 
@@ -53,12 +63,21 @@ TypeScript コードフェンスには一意な module 名が必要です。同�
 
 ```ts extractModules
 import type { Code, Root } from 'mdast';
-import { visit } from 'unist-util-visit';
+import type { MdastNode } from 'satteri';
 import { extIsTs } from './utils.ts.md';
 import type { TsMdLanguage, TsMdModule } from ':types';
 import { TsMdParseError } from ':types';
 
 const MODULE_NAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
+
+function visitCodeNodes(
+  node: MdastNode,
+  callback: (codeNode: Code) => void,
+): void {
+  if (node.type === 'code') callback(node);
+  if (!('children' in node)) return;
+  for (const child of node.children) visitCodeNodes(child, callback);
+}
 
 export function extractModules(
   tree: Root,
@@ -68,9 +87,7 @@ export function extractModules(
   const modules: TsMdModule[] = [];
   const names = new Set<string>();
 
-  visit(tree, (node) => {
-    if (node.type !== 'code') return;
-    const codeNode = node as Code;
+  visitCodeNodes(tree, (codeNode) => {
     if (!extIsTs(codeNode.lang ?? '')) return;
 
     const offset = codeNode.position?.start.offset ?? 0;
