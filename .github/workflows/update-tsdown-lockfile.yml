@@ -1,12 +1,13 @@
 name: Update tsdown lockfile
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/migrate-to-tsdown
+      - main
 
 permissions:
   contents: write
+  packages: read
 
 jobs:
   update-lockfile:
@@ -16,6 +17,8 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
