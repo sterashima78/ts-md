@@ -20,14 +20,14 @@
     "@sterashima78/ts-md-core": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-tsc": "workspace:*",
-    "commander": "15.0.0",
-    "fast-glob": "3.3.3",
-    "tsx": "4.23.1"
+    "commander": "catalog:",
+    "fast-glob": "catalog:",
+    "tsx": "catalog:"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-unplugin": "0.4.0",
-    "tsdown": "0.22.14",
-    "vitest": "4.1.10"
+    "@sterashima78/ts-md-unplugin": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
