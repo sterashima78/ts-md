@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup && tsx scripts/postbuild.ts",
+    "build": "tsdown && tsx scripts/postbuild.ts",
     "package": "tsx scripts/package.ts",
     "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run",

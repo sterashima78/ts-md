@@ -1,11 +1,13 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/extension.ts', 'src/server/server.ts'],
   format: ['cjs'],
-  splitting: false,
   dts: true,
   target: 'node18',
   clean: true,
-  external: ['vscode'],
+  outExtensions: () => ({ js: '.js' }),
+  deps: {
+    neverBundle: ['vscode'],
+  },
 });

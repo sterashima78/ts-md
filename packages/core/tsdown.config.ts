@@ -1,5 +1,5 @@
-import tsMd from '@sterashima78/ts-md-unplugin/esbuild';
-import { defineConfig } from 'tsup';
+import tsMd from '@sterashima78/ts-md-unplugin/rollup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -7,7 +7,8 @@ export default defineConfig({
   format: ['esm'],
   clean: true,
   target: 'node18',
-  esbuildPlugins: [tsMd],
+  outExtensions: () => ({ js: '.js' }),
+  plugins: [tsMd],
   define: {
     'import.meta.vitest': 'undefined',
   },
