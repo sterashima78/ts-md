@@ -4,9 +4,9 @@
 `ts-md-tsc` に `--noEmit` を付けて委譲するため、コンパイラと同じ診断結果になります。
 
 ```ts runCheck
+import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 
 export function runCheck(tscArgs: string[] = []) {
   const require = createRequire(import.meta.url);
