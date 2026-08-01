@@ -16,7 +16,7 @@ export function runCheck(tscArgs: string[] = []) {
   const executable = path.join(path.dirname(packageJson), 'index.js');
   const result = spawnSync(
     process.execPath,
-    [executable, '--noEmit', ...tscArgs],
+    [executable, ...tscArgs, '--noEmit'],
     { stdio: 'inherit' },
   );
 
