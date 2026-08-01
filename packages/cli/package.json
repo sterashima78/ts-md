@@ -12,8 +12,8 @@
     "index.js"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "vitest run"
   },
   "dependencies": {
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@sterashima78/ts-md-unplugin": "0.4.0",
-    "tsup": "8.5.1",
+    "tsdown": "0.22.14",
     "vitest": "4.1.10"
   },
   "publishConfig": {
