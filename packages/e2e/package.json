@@ -12,12 +12,12 @@
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-tsc": "workspace:*",
     "@sterashima78/ts-md-vscode": "workspace:*",
-    "@vscode/test-electron": "3.1.0",
-    "vitest": "4.1.10"
+    "@vscode/test-electron": "catalog:",
+    "vitest": "catalog:"
   },
   "devDependencies": {
-    "@types/vscode": "1.125.0",
-    "typescript": "6.0.3"
+    "@types/vscode": "catalog:",
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
