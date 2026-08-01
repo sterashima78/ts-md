@@ -11,5 +11,6 @@ export default defineConfig({
   target: 'node18',
   clean: true,
   outDir: 'dist/tsdown',
+  outExtensions: () => ({ js: '.js' }),
   plugins: [tsMd],
 });
