@@ -127,6 +127,15 @@ jobs:
             esbuild: true
             keytar: false
             sharp: true
+          minimumReleaseAgeExclude:
+            - '@sterashima78/ts-md-cli@0.4.0'
+            - '@sterashima78/ts-md-core@0.3.0'
+            - '@sterashima78/ts-md-loader@0.3.0'
+            - '@sterashima78/ts-md-ls-core@0.3.0'
+            - '@sterashima78/ts-md-monaco@0.1.0'
+            - '@sterashima78/ts-md-tsc@0.2.0'
+            - '@sterashima78/ts-md-unplugin@0.4.0'
+            - '@sterashima78/ts-md-vscode@0.1.0'
           YAML
 
           node <<'NODE'
