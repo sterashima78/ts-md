@@ -6,6 +6,7 @@ export default defineConfig({
   target: 'node18',
   dts: false,
   clean: true,
+  outExtensions: () => ({ js: '.js' }),
   deps: {
     neverBundle: [
       '@volar/typescript',
