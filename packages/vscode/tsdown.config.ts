@@ -6,6 +6,7 @@ export default defineConfig({
   dts: true,
   target: 'node18',
   clean: true,
+  outExtensions: () => ({ js: '.js' }),
   deps: {
     neverBundle: ['vscode'],
   },
