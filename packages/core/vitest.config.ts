@@ -4,12 +4,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   root: import.meta.dirname,
   plugins: [tsMd],
-  define: {
-    'import.meta.vitest': 'true',
-  },
   test: {
     globals: true,
     include: ['test/**/*.test.ts'],
+    includeSource: ['src/resolver.ts.md'],
   },
   resolve: {
     alias: {
