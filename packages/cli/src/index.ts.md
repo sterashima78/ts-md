@@ -41,7 +41,9 @@ export function createCli() {
 
 ```ts main
 #!/usr/bin/env node
-export { createCli } from ':createCli';
+import { createCli } from ':createCli';
+
+export { createCli };
 
 createCli().parse();
 ```
