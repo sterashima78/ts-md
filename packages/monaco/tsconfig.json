@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
+    "rootDir": "src",
     "baseUrl": ".",
     "allowArbitraryExtensions": true
   },
