@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
@@ -24,7 +24,7 @@
     "@testing-library/react": "16.3.2",
     "@types/react": "19.2.18",
     "jsdom": "30.0.1",
-    "tsup": "8.5.1",
+    "tsdown": "0.22.14",
     "typescript": "6.0.3",
     "vite": "8.2.0",
     "vitest": "4.1.10"
