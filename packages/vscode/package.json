@@ -27,7 +27,7 @@
     "vscode-uri": "^3.0.8"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-tsc": "0.1.0",
+    "@sterashima78/ts-md-tsc": "0.2.0",
     "@types/vscode": "^1.85.0",
     "@vscode/test-electron": "^2.4.2",
     "@vscode/vsce": "^3.0.0",

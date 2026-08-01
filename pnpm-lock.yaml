@@ -73,8 +73,8 @@ importers:
         version: 4.19.4
     devDependencies:
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.3.1
-        version: 0.3.1
+        specifier: 0.4.0
+        version: 0.4.0
       tsup:
         specifier: ^8
         version: 8.5.0(postcss@8.5.6)(tsx@4.19.4)(typescript@5.8.3)
@@ -98,11 +98,11 @@ importers:
         version: 5.0.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.3.1
-        version: 0.3.1
+        specifier: 0.4.0
+        version: 0.4.0
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
@@ -157,11 +157,11 @@ importers:
         version: link:../core
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.3.1
-        version: 0.3.1
+        specifier: 0.4.0
+        version: 0.4.0
 
   packages/ls-core:
     dependencies:
@@ -182,11 +182,11 @@ importers:
         version: 3.1.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@sterashima78/ts-md-unplugin':
-        specifier: 0.3.1
-        version: 0.3.1
+        specifier: 0.4.0
+        version: 0.4.0
 
   packages/monaco:
     dependencies:
@@ -210,8 +210,8 @@ importers:
         version: 19.1.0(react@19.1.0)
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@testing-library/react':
         specifier: ^16.0.0
         version: 16.3.0(@testing-library/dom@9.3.4)(@types/react-dom@18.3.7(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -275,11 +275,11 @@ importers:
         version: 2.3.5
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       ts-md-unplugin-build:
-        specifier: npm:@sterashima78/ts-md-unplugin@0.3.1
-        version: '@sterashima78/ts-md-unplugin@0.3.1'
+        specifier: npm:@sterashima78/ts-md-unplugin@0.4.0
+        version: '@sterashima78/ts-md-unplugin@0.4.0'
 
   packages/vscode:
     dependencies:
@@ -309,8 +309,8 @@ importers:
         version: 3.1.0
     devDependencies:
       '@sterashima78/ts-md-tsc':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@types/vscode':
         specifier: ^1.85.0
         version: 1.100.0
@@ -1354,21 +1354,18 @@ packages:
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
 
-  '@sterashima78/ts-md-core@0.2.0':
-    resolution: {integrity: sha512-GPRszyXDVz9FeLHbJYsggAUFk7hOxfC2Bwh3Lqikk26VmjQQsmdE962kob3lGpeKYuGlVv/Y9F6Nvnva5/qSNg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.2.0/908bcf2a74b6d63781999fd31c5d368b30c222c2}
+  '@sterashima78/ts-md-core@0.3.0':
+    resolution: {integrity: sha512-3EDbb8vtLQ+5A9P7Eywt4dr0foVIndmuljfjph+dAqnPYwkUNlu+KbhHTsshup0WghmhhYcY/Yp0oClArPrjOQ==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.3.0/7c77b1134d565bb483ef55320393cb9081e6e6ab}
 
-  '@sterashima78/ts-md-core@0.2.1':
-    resolution: {integrity: sha512-cR82i0TytTs+MZMaVGOFyQF+lRVUbelwfhpwtgHvt+/yKD6RmsioqVqS6OHYe15nSccCPn15/OZGur/za/bvYQ==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-core/0.2.1/a9622465ca46b819508b5c562d64a92456d736cc}
+  '@sterashima78/ts-md-ls-core@0.3.0':
+    resolution: {integrity: sha512-Hr1RjX7mvlTcqQR70xzbf5sBA2AMJk368l6NRF03itoYiVOtgsKDBTGypBWCtTkXVR0HU9hlRErcqD6ckEcdjg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-ls-core/0.3.0/b2ad4496f3db004d1ab2eb1c437d06eba93572d4}
 
-  '@sterashima78/ts-md-ls-core@0.2.0':
-    resolution: {integrity: sha512-29YvBEV3YztzUilrQrmO3GUCnLvqzjXFFI67zviB6WFS51fgDZYTiQRLZGiqvPp8usKCVLGxKsF4kXsi6UGazQ==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-ls-core/0.2.0/c0f3b1b2fe0a8f98d72da10cddfaa758337dad97}
-
-  '@sterashima78/ts-md-tsc@0.1.0':
-    resolution: {integrity: sha512-SxrDO9C68ZN2e0rYQBcpM/beVEqEMDd+XDYuf0wM+sQzuLT3S0KnBbr/yIC1/kXYHbon9yGqYZzt7oznkRu58A==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-tsc/0.1.0/05e03efa41b0b7e96f505d80acab31351155323e}
+  '@sterashima78/ts-md-tsc@0.2.0':
+    resolution: {integrity: sha512-iHg8hpL3HSMykGiw0nRIYX7nEBMQcynYtaKRaYBgV0v7X0W/OpSkUBzoWV6ikPDq80FtRtV4YGaX+ktU4zkcCQ==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-tsc/0.2.0/b250e07fb5b429488f04d31896a18d812eb877af}
     hasBin: true
 
-  '@sterashima78/ts-md-unplugin@0.3.1':
-    resolution: {integrity: sha512-wJDsVupADNcrIWOlBAn9u7YD7XIqrNNJwJTszylsG/fngCmkZ+PDPvbru7+o0QyBJadunDXml9rnqJ+I03ogXQ==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.3.1/8071c3178006f138a4f557a243d2eeac3099e23f}
+  '@sterashima78/ts-md-unplugin@0.4.0':
+    resolution: {integrity: sha512-/jqt3TpAvNZRm94jcuSDKZHEI0RLlAbyJZgULo6/J62YszXPbNWJK7lokHgZQLIzz4qGHrRTE94XLQ5TpZzWPg==, tarball: https://npm.pkg.github.com/download/@sterashima78/ts-md-unplugin/0.4.0/34abe7bad675552f2a38b70f433cc6672259ff06}
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
@@ -5727,7 +5724,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@sterashima78/ts-md-core@0.2.0':
+  '@sterashima78/ts-md-core@0.3.0':
     dependencies:
       remark-parse: 11.0.0
       ts-morph: 26.0.0
@@ -5736,36 +5733,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-core@0.2.1':
+  '@sterashima78/ts-md-ls-core@0.3.0':
     dependencies:
-      remark-parse: 11.0.0
-      ts-morph: 26.0.0
-      unified: 11.0.5
-      unist-util-visit: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sterashima78/ts-md-ls-core@0.2.0':
-    dependencies:
-      '@sterashima78/ts-md-core': 0.2.0
-      '@volar/language-core': 2.4.14
+      '@sterashima78/ts-md-core': 0.3.0
+      '@volar/language-core': 2.4.15
       '@volar/language-service': 2.4.14
-      '@volar/typescript': 2.4.14
+      '@volar/typescript': 2.4.15
       vscode-uri: 3.1.0
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-tsc@0.1.0':
+  '@sterashima78/ts-md-tsc@0.2.0':
     dependencies:
-      '@sterashima78/ts-md-ls-core': 0.2.0
-      '@volar/typescript': 2.4.14
+      '@sterashima78/ts-md-ls-core': 0.3.0
+      '@volar/typescript': 2.4.15
     transitivePeerDependencies:
       - supports-color
 
-  '@sterashima78/ts-md-unplugin@0.3.1':
+  '@sterashima78/ts-md-unplugin@0.4.0':
     dependencies:
       '@rollup/pluginutils': 5.2.0(rollup@4.44.0)
-      '@sterashima78/ts-md-core': 0.2.1
+      '@sterashima78/ts-md-core': 0.3.0
       rollup: 4.44.0
       unplugin: 2.3.5
     transitivePeerDependencies:
@@ -6958,7 +6946,7 @@ snapshots:
     dependencies:
       magic-string: 0.30.17
       mlly: 1.7.4
-      rollup: 4.41.1
+      rollup: 4.44.0
 
   flattie@1.1.1: {}
 
@@ -9694,7 +9682,7 @@ snapshots:
       fdir: 6.4.5(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.4
-      rollup: 4.41.1
+      rollup: 4.44.0
       tinyglobby: 0.2.14
     optionalDependencies:
       '@types/node': 22.15.34
@@ -9707,7 +9695,7 @@ snapshots:
       fdir: 6.4.5(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.4
-      rollup: 4.41.1
+      rollup: 4.44.0
       tinyglobby: 0.2.14
     optionalDependencies:
       '@types/node': 24.0.7
@@ -9720,7 +9708,7 @@ snapshots:
       fdir: 6.4.5(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.4
-      rollup: 4.41.1
+      rollup: 4.44.0
       tinyglobby: 0.2.14
     optionalDependencies:
       '@types/node': 24.0.7

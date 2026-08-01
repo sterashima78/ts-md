@@ -27,8 +27,8 @@
     "unplugin": "^2.3.5"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-tsc": "0.1.0",
-    "ts-md-unplugin-build": "npm:@sterashima78/ts-md-unplugin@0.3.1"
+    "@sterashima78/ts-md-tsc": "0.2.0",
+    "ts-md-unplugin-build": "npm:@sterashima78/ts-md-unplugin@0.4.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
