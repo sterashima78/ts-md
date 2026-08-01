@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*",
-    "@volar/language-core": "2.4.28",
-    "@volar/language-service": "2.4.28",
-    "@volar/typescript": "2.4.28",
-    "vscode-uri": "3.1.0"
+    "@volar/language-core": "catalog:",
+    "@volar/language-service": "catalog:",
+    "@volar/typescript": "catalog:",
+    "vscode-uri": "catalog:"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-tsc": "0.2.0",
-    "@sterashima78/ts-md-unplugin": "0.4.0"
+    "@sterashima78/ts-md-tsc": "catalog:",
+    "@sterashima78/ts-md-unplugin": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
