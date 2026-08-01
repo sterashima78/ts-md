@@ -7,7 +7,12 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'TS-MD Docs',
-      sidebar: [{ label: 'Packages', autogenerate: { directory: 'packages' } }],
+      sidebar: [
+        {
+          label: 'Packages',
+          items: [{ autogenerate: { directory: 'packages' } }],
+        },
+      ],
       markdown: { headingLinks: false },
     }),
   ],
