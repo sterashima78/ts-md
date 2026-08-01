@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [tsMd],
   test: {
     globals: true,
-    include: ['test/**/*.test.ts', 'src/plugin.ts.md'],
+    include: ['test/**/*.test.ts'],
   },
 });

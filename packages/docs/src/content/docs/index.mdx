@@ -1,15 +1,51 @@
 ---
-title: パッケージ一覧
+title: TS-MD
 template: splash
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
+TS-MD は、Markdown の説明文と実行・型検査可能な TypeScript modules を同じ `.ts.md` document に記述するためのツール群です。
+
+## 基本モデル
+
+一つの `ts` または `tsx` コードフェンスを、一つの独立した ES module として扱います。
+
+~~~markdown
+# Example
+
+```ts values
+export const value = 42
+```
+
+```ts main
+import { value } from ':values'
+console.log(value)
+```
+~~~
+
+- TypeScript コードフェンスには module 名が必要です
+- module 名は document 内で一意です
+- 同名コードフェンスは連結されません
+- document を直接実行・importすると `main` module が使われます
+
+## Module imports
+
+```ts
+import { value } from ':values'
+import { start } from './app.ts.md'
+import type { User } from './user.ts.md:types'
+```
+
+型検査、補完、Node.js実行、bundler integration、tangleはすべて同じmodule modelを使用します。
+
+## Packages
+
 <CardGrid stagger>
-  <Card title="CLI" icon="package"><a href="packages/cli/README">CLI README</a></Card>
-  <Card title="Core" icon="package"><a href="packages/core/README">Core README</a></Card>
-  <Card title="Loader" icon="package"><a href="packages/loader/README">Loader README</a></Card>
-  <Card title="LS-Core" icon="package"><a href="packages/ls-core/README">LS-Core README</a></Card>
-  <Card title="Unplugin" icon="package"><a href="packages/unplugin/README">Unplugin README</a></Card>
-  <Card title="GitHub" icon="github"><a href="https://github.com/sterashima78/ts-md">GitHub</a></Card>
+  <Card title="CLI" icon="package"><a href="packages/cli/README">check、run、tangle</a></Card>
+  <Card title="Core" icon="package"><a href="packages/core/README">parser、resolver、module ID</a></Card>
+  <Card title="Loader" icon="package"><a href="packages/loader/README">Node.js ESM loader</a></Card>
+  <Card title="LS-Core" icon="package"><a href="packages/ls-core/README">TypeScript language service</a></Card>
+  <Card title="Unplugin" icon="package"><a href="packages/unplugin/README">Vite、Rollup、Webpack、esbuild</a></Card>
+  <Card title="GitHub" icon="github"><a href="https://github.com/sterashima78/ts-md">Repository</a></Card>
 </CardGrid>

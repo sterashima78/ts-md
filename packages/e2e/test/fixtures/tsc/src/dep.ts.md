@@ -9,5 +9,5 @@ export function bar(): string {
 ```
 
 ```ts main
-export { bar } from '#bar';
+export { bar } from ':bar';
 ```

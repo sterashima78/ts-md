@@ -5,5 +5,5 @@ export const val = 'cross value'
 ```
 
 ```ts main
-export { val } from '#foo'
+export { val } from ':foo'
 ```

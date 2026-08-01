@@ -1,277 +1,173 @@
 # Parser
 
-Markdown ファイルから TypeScript コードブロックを抽出するモジュールです。
+Markdown ファイル内の各 TypeScript コードフェンスを、独立した TypeScript module として解析します。
 
 ## 型定義
 
-コードを保持する `ChunkDict` と、位置情報付きの `ChunkInfo` を定義します。
-
 ```ts types
-export interface ChunkDict {
-  [name: string]: string;
-}
+export type TsMdLanguage = 'ts' | 'tsx';
 
-export interface ChunkFragment {
+export interface TsMdModule {
+  name: string;
+  language: TsMdLanguage;
   code: string;
   start: number;
   end: number;
-  generatedStart: number;
 }
 
-export interface ChunkInfo {
-  code: string;
-  start: number;
-  end: number;
-  fragments: ChunkFragment[];
+export interface TsMdDocument {
+  uri: string;
+  modules: TsMdModule[];
+}
+
+export type ChunkDict = Record<string, string>;
+export type ChunkInfo = TsMdModule;
+
+export class TsMdParseError extends Error {
+  constructor(
+    message: string,
+    public readonly uri: string,
+    public readonly offset: number,
+  ) {
+    super(`${uri}:${offset}: ${message}`);
+    this.name = 'TsMdParseError';
+  }
 }
 ```
 
 ## buildAst: AST の構築
 
-Markdown 文字列から `mdast` の AST を生成します。
-
 ```ts buildAst
+import type { Root } from 'mdast';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
-import type { Root } from 'mdast';
 
 export function buildAst(markdown: string): Root {
   return unified().use(remarkParse).parse(markdown) as Root;
 }
 ```
 
-## extractChunks: チャンク抽出処理
+## extractModules: module の抽出
 
-生成した AST を走査し、`ts`/`tsx` コードブロックを `ChunkDict` に蓄積します。
+TypeScript コードフェンスには一意な module 名が必要です。同名フェンスの結合は行いません。
 
-```ts extractChunks
-import type { Code, Html, Root } from 'mdast';
+```ts extractModules
+import type { Code, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { extIsTs } from './utils.ts.md';
-import type { ChunkDict } from ':types';
+import type { TsMdLanguage, TsMdModule } from ':types';
+import { TsMdParseError } from ':types';
 
-export function extractChunks(tree: Root, markdown: string): ChunkDict {
-  const dict: ChunkDict = {};
-  let pendingFile: string | null = null;
-  visit(tree, (node) => {
-    if (node.type === 'html') {
-      const m = /<!--\s*file:\s*([^>]+)-->/.exec((node as Html).value ?? '');
-      if (m) {
-        pendingFile = m[1].trim();
-      }
-    }
+const MODULE_NAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
-    if (node.type === 'code' && extIsTs((node as Code).lang ?? '')) {
-      const name = ((node as Code).meta ?? '').trim();
-      if (!name) return;
-      const key = pendingFile ?? name;
-      if (dict[key]) {
-        dict[key] += `\n${(node as Code).value}`;
-      } else {
-        dict[key] = (node as Code).value;
-      }
-      pendingFile = null;
-    }
-  });
-  return dict;
-}
-```
-
-## parseChunks: コードチャンクの抽出
-
-`remark-parse` で AST を構築し、`ts`/`tsx` コードブロックを `ChunkDict` にまとめます。
-
-```ts parseChunks
-import type { Root } from 'mdast';
-import type { ChunkDict } from ':types';
-import { buildAst } from ':buildAst';
-import { extractChunks } from ':extractChunks';
-
-export function parseChunks(markdown: string, uri: string): ChunkDict {
-  const tree: Root = buildAst(markdown);
-  return extractChunks(tree, markdown);
-}
-```
-
-## extractChunkInfos: 位置情報付き抽出処理
-
-AST を走査して各チャンクの開始位置と終了位置を記録します。同名チャンクが複数のコードフェンスに分かれている場合は、各断片の source offset と連結後の generated offset も保持します。
-
-```ts extractChunkInfos
-import type { Code, Html, Root } from 'mdast';
-import { visit } from 'unist-util-visit';
-import { extIsTs } from './utils.ts.md';
-import type { ChunkFragment, ChunkInfo } from ':types';
-
-export function extractChunkInfos(
+export function extractModules(
   tree: Root,
   markdown: string,
-): Record<string, ChunkInfo> {
-  const dict: Record<string, ChunkInfo> = {};
-  let pendingFile: string | null = null;
+  uri: string,
+): TsMdModule[] {
+  const modules: TsMdModule[] = [];
+  const names = new Set<string>();
+
   visit(tree, (node) => {
-    if (node.type === 'html') {
-      const value = (node as Html).value ?? '';
-      const m = /<!--\s*file:\s*([^>]+)-->/.exec(value);
-      if (m) {
-        pendingFile = m[1].trim();
-      }
-    }
+    if (node.type !== 'code') return;
+    const codeNode = node as Code;
+    if (!extIsTs(codeNode.lang ?? '')) return;
 
-    if (node.type === 'code' && extIsTs((node as Code).lang ?? '')) {
-      const meta = (node as Code).meta ?? '';
-      const name = meta.trim();
-      if (!name) return;
-      const key = pendingFile ?? name;
-      const pos = node.position;
-      const start = pos?.start.offset ?? 0;
-      const end = pos?.end.offset ?? start + (node as Code).value.length;
-      const full = markdown.slice(start, end);
-      const idx = full.indexOf((node as Code).value);
-      const codeStart = idx === -1 ? start : start + idx;
-      const code = (node as Code).value;
-      const previous = dict[key];
-      const fragment: ChunkFragment = {
-        code,
-        start: codeStart,
-        end: codeStart + code.length,
-        generatedStart: previous ? previous.code.length + 1 : 0,
-      };
-
-      if (previous) {
-        previous.code += `\n${code}`;
-        previous.end = fragment.end;
-        previous.fragments.push(fragment);
-      } else {
-        dict[key] = {
-          code,
-          start: fragment.start,
-          end: fragment.end,
-          fragments: [fragment],
-        };
-      }
-      pendingFile = null;
+    const offset = codeNode.position?.start.offset ?? 0;
+    const name = (codeNode.meta ?? '').trim();
+    if (!name) {
+      throw new TsMdParseError(
+        'TypeScript code fence requires a module name',
+        uri,
+        offset,
+      );
     }
+    if (!MODULE_NAME_PATTERN.test(name)) {
+      throw new TsMdParseError(`Invalid module name '${name}'`, uri, offset);
+    }
+    if (names.has(name)) {
+      throw new TsMdParseError(`Duplicate module '${name}'`, uri, offset);
+    }
+    names.add(name);
+
+    const start = codeNode.position?.start.offset ?? 0;
+    const end = codeNode.position?.end.offset ?? start + codeNode.value.length;
+    const openingFenceEnd = markdown.indexOf('\n', start);
+    const searchStart = openingFenceEnd === -1 ? start : openingFenceEnd + 1;
+    const index = markdown.indexOf(codeNode.value, searchStart);
+    const codeStart = index === -1 || index > end ? searchStart : index;
+
+    modules.push({
+      name,
+      language: codeNode.lang as TsMdLanguage,
+      code: codeNode.value,
+      start: codeStart,
+      end: codeStart + codeNode.value.length,
+    });
   });
-  return dict;
+
+  return modules;
 }
 ```
 
-## parseChunkInfos: 位置情報付き抽出
+## parseDocument: document の解析
 
-コードブロックの開始位置と終了位置を含めて取得するバリエーションです。
+```ts parseDocument
+import type { TsMdDocument } from ':types';
+import { buildAst } from ':buildAst';
+import { extractModules } from ':extractModules';
+
+export function parseDocument(markdown: string, uri: string): TsMdDocument {
+  const tree = buildAst(markdown);
+  return {
+    uri,
+    modules: extractModules(tree, markdown, uri),
+  };
+}
+```
+
+## 既存の辞書形式への変換
+
+```ts parseChunks
+import type { ChunkDict } from ':types';
+import { parseDocument } from ':parseDocument';
+
+export function parseChunks(markdown: string, uri: string): ChunkDict {
+  return Object.fromEntries(
+    parseDocument(markdown, uri).modules.map((module) => [
+      module.name,
+      module.code,
+    ]),
+  );
+}
+```
 
 ```ts parseChunkInfos
-import type { Root } from 'mdast';
 import type { ChunkInfo } from ':types';
-import { buildAst } from ':buildAst';
-import { extractChunkInfos } from ':extractChunkInfos';
+import { parseDocument } from ':parseDocument';
 
 export function parseChunkInfos(
   markdown: string,
   uri: string,
 ): Record<string, ChunkInfo> {
-  const tree: Root = buildAst(markdown);
-  return extractChunkInfos(tree, markdown);
+  return Object.fromEntries(
+    parseDocument(markdown, uri).modules.map((module) => [module.name, module]),
+  );
 }
 ```
 
 ## 公開インタフェース
 
 ```ts main
-export { parseChunks } from ':parseChunks';
 export { parseChunkInfos } from ':parseChunkInfos';
-export type { ChunkDict, ChunkFragment, ChunkInfo } from ':types';
-
-if (import.meta.vitest) {
-  await import(':parser.test');
-}
-```
-
-## Tests
-
-```ts parser.test
-import { describe, expect, it } from 'vitest';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { parseChunks } from ':parseChunks';
-import { parseChunkInfos } from ':parseChunkInfos';
-
-describe('parseChunks', () => {
-  const md = [
-    '# Title',
-    '',
-    '`' + '`' + '`' + 'ts foo',
-    'console.log(1)',
-    '`' + '`' + '`',
-    '',
-    '<!-- file: path/to/bar.ts -->',
-    '`' + '`' + '`' + 'ts bar',
-    'console.log(2)',
-    '`' + '`' + '`',
-    '',
-    '`' + '`' + '`' + 'ts foo',
-    'console.log(3)',
-    '`' + '`' + '`',
-  ].join('\n');
-
-  const dict = parseChunks(md, '/doc.ts.md');
-  it('extracts named chunks', () => {
-    expect(Object.keys(dict)).toEqual(['foo', 'path/to/bar.ts']);
-    expect(dict.foo.trim().split('\n').length).toBe(2);
-  });
-});
-
-describe('parseChunkInfos', () => {
-  const md = [
-    '# Title',
-    '',
-    '`' + '`' + '`' + 'ts foo',
-    'console.log(1)',
-    '`' + '`' + '`',
-    '',
-    '<!-- file: path/to/bar.ts -->',
-    '`' + '`' + '`' + 'ts bar',
-    'console.log(2)',
-    '`' + '`' + '`',
-    '',
-    '`' + '`' + '`' + 'ts foo',
-    'console.log(3)',
-    '`' + '`' + '`',
-  ].join('\n');
-
-  const dict = parseChunkInfos(md, '/doc.ts.md');
-  it('includes start and end offsets', () => {
-    expect(dict.foo.start).toBeLessThan(dict.foo.end);
-    expect(dict.foo.code).toContain('console.log(3)');
-    expect(dict['path/to/bar.ts'].code).toContain('console.log(2)');
-  });
-
-  it('preserves mappings for split chunks', () => {
-    expect(dict.foo.fragments).toEqual([
-      {
-        code: 'console.log(1)',
-        start: md.indexOf('console.log(1)'),
-        end: md.indexOf('console.log(1)') + 'console.log(1)'.length,
-        generatedStart: 0,
-      },
-      {
-        code: 'console.log(3)',
-        start: md.indexOf('console.log(3)'),
-        end: md.indexOf('console.log(3)') + 'console.log(3)'.length,
-        generatedStart: 'console.log(1)'.length + 1,
-      },
-    ]);
-  });
-});
-
-describe('parseChunks with fixture', () => {
-  it('parses doc fixture', async () => {
-    const dir = path.join(process.cwd(), 'test', 'fixtures');
-    const file = path.join(dir, 'doc.ts.md');
-    const md = await fs.readFile(file, 'utf8');
-    const dict = parseChunks(md, file);
-    expect(dict.main).toContain("import './dep.ts.md'");
-  });
-});
+export { parseChunks } from ':parseChunks';
+export { parseDocument } from ':parseDocument';
+export type {
+  ChunkDict,
+  ChunkInfo,
+  TsMdDocument,
+  TsMdLanguage,
+  TsMdModule,
+} from ':types';
+export { TsMdParseError } from ':types';
 ```

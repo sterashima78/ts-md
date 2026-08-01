@@ -1,6 +1,13 @@
 # Virtual File
 
+各 `.ts.md` コードフェンスを、一つの仮想 TypeScript module として公開します。
+
 ```ts main
+import {
+  createVirtualModuleFileName,
+  parseDocument,
+  type TsMdModule,
+} from '@sterashima78/ts-md-core';
 import type {
   CodeInformation,
   CodeMapping,
@@ -8,7 +15,6 @@ import type {
   VirtualCode,
 } from '@volar/language-core';
 import type ts from 'typescript';
-import { getChunkInfoDict } from './parsers.ts.md';
 
 const typescriptFeatures = {
   completion: true,
@@ -20,33 +26,58 @@ const typescriptFeatures = {
 } satisfies CodeInformation;
 
 export class TsMdVirtualFile implements VirtualCode {
-  id!: string;
+  id: string;
   languageId = 'markdown';
   mappings: CodeMapping[] = [];
   embeddedCodes: VirtualCode[] = [];
   linkedCodeMappings: Mapping[] = [];
+  private modules = new Map<string, TsMdModule>();
 
   constructor(
     public snapshot: ts.IScriptSnapshot,
-    public uri: string,
-    private dict: Record<string, string>,
+    public readonly fileName: string,
   ) {
-    this.id = uri;
+    this.id = fileName;
     this.refreshEmbedded();
   }
 
-  /** Markdown が更新された時に呼ぶ */
-  update(snapshot: ts.IScriptSnapshot, dict: Record<string, string>) {
+  update(snapshot: ts.IScriptSnapshot) {
     this.snapshot = snapshot;
-    this.dict = dict;
     this.refreshEmbedded();
+  }
+
+  getModule(moduleName: string): TsMdModule | undefined {
+    return this.modules.get(moduleName);
   }
 
   private refreshEmbedded() {
-    const infoDict = getChunkInfoDict(this.snapshot, this.uri);
-    this.embeddedCodes = [];
+    const markdown = this.snapshot.getText(0, this.snapshot.getLength());
+    const document = parseDocument(markdown, this.fileName);
+    this.modules = new Map(
+      document.modules.map((module) => [module.name, module]),
+    );
+    this.embeddedCodes = document.modules.map((module) => ({
+      id: createVirtualModuleFileName({
+        documentPath: this.fileName,
+        moduleName: module.name,
+      }),
+      languageId: 'typescript',
+      mappings: [
+        {
+          sourceOffsets: [module.start],
+          generatedOffsets: [0],
+          lengths: [module.code.length],
+          data: typescriptFeatures,
+        },
+      ],
+      linkedCodeMappings: [],
+      snapshot: {
+        getText: (start, end) => module.code.slice(start, end),
+        getLength: () => module.code.length,
+        getChangeRange: () => undefined,
+      },
+    }));
     this.linkedCodeMappings = [];
-    this.dict = {};
     this.mappings = [
       {
         sourceOffsets: [0],
@@ -55,27 +86,6 @@ export class TsMdVirtualFile implements VirtualCode {
         data: typescriptFeatures,
       },
     ];
-
-    for (const [name, info] of Object.entries(infoDict)) {
-      const { code, fragments } = info;
-      this.dict[name] = code;
-      this.embeddedCodes.push({
-        id: `${this.uri}__${name}.ts`,
-        languageId: 'typescript',
-        mappings: fragments.map((fragment) => ({
-          sourceOffsets: [fragment.start],
-          generatedOffsets: [fragment.generatedStart],
-          lengths: [fragment.code.length],
-          data: typescriptFeatures,
-        })),
-        linkedCodeMappings: [],
-        snapshot: {
-          getText: (s, e) => code.slice(s, e),
-          getLength: () => code.length,
-          getChangeRange: () => undefined,
-        },
-      });
-    }
   }
 }
 ```

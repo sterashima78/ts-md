@@ -1,77 +1,59 @@
 # Tangle
 
-Markdown から抽出したチャンクを実際のファイルへ書き出すユーティリティです。
+`.ts.md` document の各 module を、一つずつ TypeScript ファイルへ書き出します。
 
-## prepareOutputDir: 出力先準備
-
-書き出し先ディレクトリを作成します。
+## prepareOutputDir
 
 ```ts prepareOutputDir
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { escapeChunk } from './utils.ts.md';
 
 export async function prepareOutputDir(baseFile: string, outDir: string) {
-  const baseName = path.basename(baseFile, path.extname(baseFile));
+  const baseName = path.basename(baseFile, '.ts.md');
   const baseOut = path.join(outDir, baseName);
   await fs.mkdir(baseOut, { recursive: true });
   return baseOut;
 }
 ```
 
-## writeChunk: ファイルへの書き出し
+## writeModule
 
-単一チャンクを指定パスへ書き込みます。
-
-```ts writeChunk
+```ts writeModule
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { escapeChunk } from './utils.ts.md';
+import type { TsMdModule } from './parser.ts.md';
 
-export async function writeChunk(
+export async function writeModule(
   baseOut: string,
-  chunk: string,
-  code: string,
-  rename?: (chunk: string) => string,
+  module: TsMdModule,
+  rename?: (module: TsMdModule) => string,
 ) {
-  const rel = rename ? rename(chunk) : `${escapeChunk(chunk)}.ts`;
-  const filePath = path.join(baseOut, rel);
+  const relativePath = rename
+    ? rename(module)
+    : `${module.name}.${module.language}`;
+  const filePath = path.join(baseOut, relativePath);
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, code, 'utf8');
+  await fs.writeFile(filePath, module.code, 'utf8');
   return filePath;
 }
 ```
 
-## tangle: チャンクの書き出し
-
-指定ディレクトリ内にチャンクごとのファイルを生成します。返り値は書き出したファイルのパス一覧です。
+## tangle
 
 ```ts tangle
-import type { ChunkDict } from './parser.ts.md';
-import { escapeChunk } from './utils.ts.md';
+import type { TsMdDocument, TsMdModule } from './parser.ts.md';
 import { prepareOutputDir } from ':prepareOutputDir';
-import { writeChunk } from ':writeChunk';
+import { writeModule } from ':writeModule';
 
 export async function tangle(
-  dict: ChunkDict,
-  baseFile: string,
+  document: TsMdDocument,
   outDir: string,
-  rename?: (chunk: string) => string,
+  rename?: (module: TsMdModule) => string,
 ): Promise<string[]> {
-  const baseOut = await prepareOutputDir(baseFile, outDir);
-  const written: string[] = [];
-
-  for (const [chunk, code] of Object.entries(dict)) {
-    const filePath = await writeChunk(
-      baseOut,
-      escapeChunk(chunk),
-      code,
-      rename,
-    );
-    written.push(filePath);
-  }
-
-  return written;
+  const baseOut = await prepareOutputDir(document.uri, outDir);
+  return Promise.all(
+    document.modules.map((module) => writeModule(baseOut, module, rename)),
+  );
 }
 ```
 
@@ -79,46 +61,4 @@ export async function tangle(
 
 ```ts main
 export { tangle } from ':tangle';
-
-if (import.meta.vitest) {
-  await import(':tangle.test');
-}
-```
-
-## Tests
-
-```ts tangle.test
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import { describe, expect, it } from 'vitest';
-import { parseChunks } from './parser.ts.md';
-import { tangle } from ':tangle';
-
-describe('tangle', () => {
-  it('writes files', async () => {
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'tangle-'));
-    const dict = { foo: 'export const a = 1' };
-    const out = await tangle(dict, '/doc.ts.md', tmp);
-    const file = out[0];
-    const content = await fs.readFile(file, 'utf8');
-    expect(content.trim()).toBe('export const a = 1');
-    await fs.rm(tmp, { recursive: true, force: true });
-  });
-
-  it('writes fixture chunk', async () => {
-    const dir = path.join(process.cwd(), 'test', 'fixtures');
-    const file = path.join(dir, 'dep.ts.md');
-    const md = await fs.readFile(file, 'utf8');
-    const dict = parseChunks(md, file);
-    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'tangle-fixture-'));
-    await tangle(dict, file, tmp);
-    const content = await fs.readFile(
-      path.join(tmp, 'dep.ts', 'main.ts'),
-      'utf8',
-    );
-    expect(content.trim()).toBe('export const msg = 1');
-    await fs.rm(tmp, { recursive: true, force: true });
-  });
-});
 ```

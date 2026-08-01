@@ -1,13 +1,28 @@
 # @sterashima78/ts-md-core
 
-`.ts.md` ドキュメントを処理するためのコアライブラリです。Markdown からチャンクを抽出し、依存関係を解決して実ファイルへ書き出すまでを担います。複数ファイルを一つにまとめるバンドル機能も含まれています。
+`.ts.md` document の共通意味モデルを提供するコアライブラリです。
 
-## Modules
-- [parser.ts.md](src/parser.ts.md) – Markdown からチャンクを抽出
-- [resolver.ts.md](src/resolver.ts.md) – `file.ts.md:chunk` や `:chunk` のインポートを解析
-- [graph.ts.md](src/graph.ts.md) – チャンク間の循環参照を検出
-- [tangle.ts.md](src/tangle.ts.md) – 抽出したチャンクをディスクへ書き出し
-- [bundle.ts.md](src/bundle.ts.md) – チャンクを結合して 1 ファイルに変換
-- [utils.ts.md](src/utils.ts.md) – 補助関数
+## Model
 
-テストは `test/` 以下にあります。
+- 一つの `ts` / `tsx` コードフェンスは一つの TypeScript module
+- module 名は必須かつ document 内で一意
+- 同名フェンスの暗黙的な連結は行わない
+- `:module` は同じ document、`./file.ts.md:module` は別 document の module を参照
+- module 指定のない `.ts.md` import は `main` を参照
+
+## Main APIs
+
+- `parseDocument(markdown, uri)`: `TsMdDocument` を生成
+- `parseChunks(markdown, uri)`: module code の辞書を生成
+- `resolveImport(specifier, importer)`: `.ts.md` module specifier を解決
+- `createVirtualModuleFileName` / `parseVirtualModuleFileName`: tool 間で共通の仮想 module ID
+- `detectCycle`: TypeScript AST に基づく module graph の循環検出
+- `tangle`: 各 module を個別の `.ts` / `.tsx` ファイルへ出力
+
+## Source
+
+- `src/parser.ts.md`: document parser
+- `src/module-id.ts.md`: virtual module ID
+- `src/resolver.ts.md`: module specifier resolver
+- `src/graph.ts.md`: dependency graph
+- `src/tangle.ts.md`: file output

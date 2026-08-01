@@ -10,7 +10,7 @@ export const msg = 'hello sandbox'
 ```
 
 ```ts greet
-export function greet(name) {
+export function greet(name: string) {
   return `Hello, ${name}!`
 }
 ```

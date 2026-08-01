@@ -1,7 +1,5 @@
 # CLI Entrypoint
 
-コマンド登録をまとめた `createCli` 関数を定義し、`main` ブロックではそれを実行するだけにします。
-
 ```ts createCli
 import { Command } from 'commander';
 import { runCheck } from './commands/check.ts.md';
@@ -12,34 +10,31 @@ export function createCli() {
   const program = new Command('tsmd');
 
   program
-    .command('check [args...]')
-    .allowUnknownOption()
-    .description('tsc と同様に .ts.md を型チェックします')
-    .action(() => runCheck());
+    .command('check [globs...]')
+    .description('Type-check .ts.md modules')
+    .action((globs: string[]) => runCheck(globs));
 
   program
     .command('tangle [globs...]')
     .option('-o, --outDir <dir>', 'output directory', 'dist')
-    .description('Extract code chunks to real files')
-    .action((globs: string[], opts: { outDir: string }) =>
-      runTangle(globs, opts.outDir),
+    .description('Write each .ts.md module to a TypeScript file')
+    .action((globs: string[], options: { outDir: string }) =>
+      runTangle(globs, options.outDir),
     );
 
   program
-    .command('run <file>')
+    .command('run <entry>')
     .allowUnknownOption()
-    .description('Execute a .ts.md file with Node')
-    .action((file: string, _opts: unknown, cmd: Command) => {
+    .description('Execute a .ts.md main or named module')
+    .action((entry: string, _options: unknown, command: Command) => {
       const rest =
-        cmd.parent?.args.slice(cmd.parent.args.indexOf('run') + 2) ?? [];
-      runTsMd(file, rest);
+        command.parent?.args.slice(command.parent.args.indexOf('run') + 2) ?? [];
+      runTsMd(entry, rest);
     });
 
   return program;
 }
 ```
-
-## 公開インタフェース
 
 ```ts main
 #!/usr/bin/env node

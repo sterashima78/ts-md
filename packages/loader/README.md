@@ -1,8 +1,13 @@
 # @sterashima78/ts-md-loader
 
-Node.js の ES module ローダーです。`.ts.md` ドキュメントやチャンクをそのまま
-`node --loader` で実行できるようにします。CLI の `run` コマンドから利用されます。
+Node.js の ESM loader として、`.ts.md` document 内の各コードフェンスを独立した TypeScript module としてロードします。
 
-## Structure
-- [src/index.ts.md](src/index.ts.md) – `resolve` と `load` の実装
-- `test/` – integration tests running Node with the loader
+`tsmd run` から利用されます。
+
+```bash
+node --import tsx/esm --loader @sterashima78/ts-md-loader app.ts.md
+```
+
+- `app.ts.md` は `main` module を読み込みます
+- `:module` は同じ document 内の module を読み込みます
+- `./other.ts.md:module` は別 document の名前付き module を読み込みます
