@@ -7,6 +7,7 @@ export default defineConfig({
   dts: false,
   clean: true,
   target: 'node18',
+  outExtensions: () => ({ js: '.js' }),
   deps: {
     neverBundle: ['typescript'],
   },
