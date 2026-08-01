@@ -191,6 +191,33 @@ jobs:
             }
             fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
           }
+
+          const paths = [
+            'package.json',
+            ...fs
+              .readdirSync('packages', { withFileTypes: true })
+              .filter((entry) => entry.isDirectory())
+              .map((entry) => `packages/${entry.name}/package.json`)
+              .filter((path) => fs.existsSync(path)),
+          ];
+          for (const path of paths) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            let changed = false;
+            for (const section of [
+              'dependencies',
+              'devDependencies',
+              'peerDependencies',
+              'optionalDependencies',
+            ]) {
+              if (pkg[section]?.typescript) {
+                pkg[section].typescript = '6.0.3';
+                changed = true;
+              }
+            }
+            if (changed) {
+              fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+            }
+          }
           NODE
 
           pnpm install --no-frozen-lockfile
