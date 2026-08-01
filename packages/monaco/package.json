@@ -12,22 +12,22 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@monaco-editor/react": "4.7.0",
+    "@monaco-editor/react": "catalog:",
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/monaco": "2.4.28",
-    "monaco-editor": "0.56.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "@volar/monaco": "catalog:",
+    "monaco-editor": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@sterashima78/ts-md-tsc": "0.2.0",
-    "@testing-library/react": "16.3.2",
-    "@types/react": "19.2.18",
-    "jsdom": "30.0.1",
-    "tsdown": "0.22.14",
-    "typescript": "6.0.3",
-    "vite": "8.2.0",
-    "vitest": "4.1.10"
+    "@sterashima78/ts-md-tsc": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "jsdom": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
