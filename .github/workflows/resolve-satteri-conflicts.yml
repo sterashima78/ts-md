@@ -1,0 +1,112 @@
+name: Resolve Satteri conflicts
+
+on:
+  push:
+    branches:
+      - agent/use-satteri-markdown-parser
+    paths:
+      - .github/workflows/resolve-satteri-conflicts.yml
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/use-satteri-markdown-parser
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.18.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+          cache: pnpm
+      - name: Merge main and resolve conflicts
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git fetch origin main
+
+          set +e
+          git merge --no-commit --no-ff origin/main
+          merge_status=$?
+          set -e
+
+          if [ "$merge_status" -ne 0 ]; then
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            unexpected="$(printf '%s\n' "$conflicts" | grep -vE '^(packages/core/package.json|pnpm-lock.yaml)$' || true)"
+            if [ -n "$unexpected" ]; then
+              echo "Unexpected conflicts:"
+              printf '%s\n' "$unexpected"
+              exit 1
+            fi
+          fi
+
+          cat > packages/core/package.json <<'JSON'
+          {
+            "name": "@sterashima78/ts-md-core",
+            "version": "0.3.0",
+            "type": "module",
+            "main": "dist/index.js",
+            "types": "dist/index.d.ts",
+            "exports": {
+              ".": "./dist/index.js"
+            },
+            "files": [
+              "dist"
+            ],
+            "scripts": {
+              "build": "tsdown",
+              "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist",
+              "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
+              "test": "vitest run"
+            },
+            "dependencies": {
+              "satteri": "catalog:",
+              "ts-morph": "catalog:"
+            },
+            "publishConfig": {
+              "registry": "https://npm.pkg.github.com",
+              "access": "public"
+            },
+            "devDependencies": {
+              "@sterashima78/ts-md-tsc": "catalog:",
+              "@sterashima78/ts-md-unplugin": "catalog:",
+              "@types/mdast": "catalog:"
+            }
+          }
+          JSON
+
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('pnpm-workspace.yaml')
+          content = path.read_text()
+          if '  satteri: 0.9.5\n' not in content:
+              marker = '  rollup: 4.62.3\n'
+              if content.count(marker) != 1:
+                  raise SystemExit('catalog insertion point was not found exactly once')
+              content = content.replace(marker, marker + '  satteri: 0.9.5\n')
+          path.write_text(content)
+          PY
+
+          if git ls-files -u -- pnpm-lock.yaml | grep -q .; then
+            git checkout --theirs pnpm-lock.yaml
+          fi
+
+          pnpm install --lockfile-only --no-frozen-lockfile
+
+          git add packages/core/package.json pnpm-workspace.yaml pnpm-lock.yaml
+          git rm .github/workflows/resolve-satteri-conflicts.yml
+          git add -A
+          git commit -m "Merge main and resolve Satteri catalog conflicts"
+          git push
