@@ -22,6 +22,8 @@ function checkDeclarationConsumer() {
       'exec',
       'tsc',
       '--ignoreConfig',
+      '--ignoreDeprecations',
+      '6.0',
       '--noEmit',
       '--strict',
       '--module',
