@@ -1,0 +1,128 @@
+name: pin-dependencies-runner
+
+on:
+  push:
+    branches:
+      - agent/update-dependencies-2026-08
+    paths:
+      - .github/workflows/pin-dependencies.yml
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  pin-and-validate:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/update-dependencies-2026-08
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+          cache: pnpm
+      - name: Install current lockfile
+        run: pnpm install --frozen-lockfile
+      - name: Pin dependency versions
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const manifests = [
+            'package.json',
+            ...fs
+              .readdirSync('packages', { withFileTypes: true })
+              .filter((entry) => entry.isDirectory())
+              .map((entry) => path.join('packages', entry.name, 'package.json'))
+              .filter((manifest) => fs.existsSync(manifest)),
+          ];
+          const sections = [
+            'dependencies',
+            'devDependencies',
+            'peerDependencies',
+            'optionalDependencies',
+          ];
+          const protocols = [
+            'workspace:',
+            'file:',
+            'link:',
+            'portal:',
+            'patch:',
+            'git:',
+            'git+',
+            'github:',
+            'http:',
+            'https:',
+          ];
+          const exactVersion = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+
+          function pinRange(spec) {
+            return spec.replace(/^[~^]/, '');
+          }
+
+          function pinSpecifier(spec) {
+            if (protocols.some((protocol) => spec.startsWith(protocol))) return spec;
+            if (spec.startsWith('npm:')) {
+              const separator = spec.lastIndexOf('@');
+              if (separator <= 4) return spec;
+              return `${spec.slice(0, separator + 1)}${pinRange(spec.slice(separator + 1))}`;
+            }
+            return pinRange(spec);
+          }
+
+          for (const manifest of manifests) {
+            const pkg = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+            for (const section of sections) {
+              for (const [name, specifier] of Object.entries(pkg[section] ?? {})) {
+                pkg[section][name] = pinSpecifier(String(specifier));
+              }
+            }
+            fs.writeFileSync(manifest, `${JSON.stringify(pkg, null, 2)}\n`);
+          }
+
+          const invalid = [];
+          for (const manifest of manifests) {
+            const pkg = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+            for (const section of sections) {
+              for (const [name, specifierValue] of Object.entries(pkg[section] ?? {})) {
+                const specifier = String(specifierValue);
+                if (protocols.some((protocol) => specifier.startsWith(protocol))) continue;
+                const version = specifier.startsWith('npm:')
+                  ? specifier.slice(specifier.lastIndexOf('@') + 1)
+                  : specifier;
+                if (!exactVersion.test(version)) {
+                  invalid.push(`${manifest}:${section}.${name}=${specifier}`);
+                }
+              }
+            }
+          }
+          if (invalid.length > 0) {
+            throw new Error(`Unpinned dependency specifiers:\n${invalid.join('\n')}`);
+          }
+          NODE
+          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build
+        run: pnpm build
+      - name: Test
+        run: pnpm test
+      - name: Publish pinned manifests
+        run: |
+          rm .github/workflows/pin-dependencies.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "pin dependency versions"
+          git push origin HEAD:agent/update-dependencies-2026-08
