@@ -1,5 +1,20 @@
 # @sterashima78/ts-md-ls-core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#245](https://github.com/sterashima78/ts-md/pull/245) [`4e4dfb0`](https://github.com/sterashima78/ts-md/commit/4e4dfb0f3004f668865737a504c7e3db22d35448) Thanks [@sterashima78](https://github.com/sterashima78)! - Treat every TypeScript code fence as one independent module across parsing, type checking, editor integration, execution, bundling, and tangle output. Duplicate and unnamed modules are now errors, `#module` imports are removed, and virtual module IDs are shared by all adapters.
+
+### Patch Changes
+
+- [#244](https://github.com/sterashima78/ts-md/pull/244) [`f3cd630`](https://github.com/sterashima78/ts-md/commit/f3cd630563fbf8f2ec44b1550c2acc485879158b) Thanks [@sterashima78](https://github.com/sterashima78)! - Preserve source mappings for split chunks and provide IntelliSense for imported chunks whose names contain double underscores.
+
+- [#244](https://github.com/sterashima78/ts-md/pull/244) [`f3cd630`](https://github.com/sterashima78/ts-md/commit/f3cd630563fbf8f2ec44b1550c2acc485879158b) Thanks [@sterashima78](https://github.com/sterashima78)! - Enable TypeScript completion, hover, navigation, and mapped diagnostics inside TS-MD code chunks in the VS Code extension.
+
+- Updated dependencies [[`f3cd630`](https://github.com/sterashima78/ts-md/commit/f3cd630563fbf8f2ec44b1550c2acc485879158b), [`4e4dfb0`](https://github.com/sterashima78/ts-md/commit/4e4dfb0f3004f668865737a504c7e3db22d35448)]:
+  - @sterashima78/ts-md-core@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes

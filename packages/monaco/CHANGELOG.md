@@ -1,5 +1,18 @@
 # @sterashima78/ts-md-monaco
 
+## 0.1.0
+
+### Minor Changes
+
+- [#245](https://github.com/sterashima78/ts-md/pull/245) [`4e4dfb0`](https://github.com/sterashima78/ts-md/commit/4e4dfb0f3004f668865737a504c7e3db22d35448) Thanks [@sterashima78](https://github.com/sterashima78)! - Treat every TypeScript code fence as one independent module across parsing, type checking, editor integration, execution, bundling, and tangle output. Duplicate and unnamed modules are now errors, `#module` imports are removed, and virtual module IDs are shared by all adapters.
+
+### Patch Changes
+
+- [#181](https://github.com/sterashima78/ts-md/pull/181) [`3090997`](https://github.com/sterashima78/ts-md/commit/30909971ebf8e909aff680d914600ecc46fd2918) Thanks [@renovate](https://github.com/apps/renovate)! - react-dom を依存に追加し、テストが失敗する問題を修正しました。
+
+- Updated dependencies [[`f3cd630`](https://github.com/sterashima78/ts-md/commit/f3cd630563fbf8f2ec44b1550c2acc485879158b), [`f3cd630`](https://github.com/sterashima78/ts-md/commit/f3cd630563fbf8f2ec44b1550c2acc485879158b), [`4e4dfb0`](https://github.com/sterashima78/ts-md/commit/4e4dfb0f3004f668865737a504c7e3db22d35448)]:
+  - @sterashima78/ts-md-ls-core@0.3.0
+
 ## 0.0.7
 
 ### Patch Changes
