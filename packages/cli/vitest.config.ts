@@ -7,11 +7,6 @@ export default defineConfig({
   test: {
     globals: true,
     include: ['test/**/*.test.ts'],
-    includeSource: [
-      'src/commands/run.ts.md',
-      'src/utils/globs.ts.md',
-      'src/utils/spawn.ts.md',
-    ],
   },
   resolve: {
     alias: {
