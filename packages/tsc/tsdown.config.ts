@@ -8,10 +8,6 @@ export default defineConfig({
   clean: true,
   outExtensions: () => ({ js: '.js' }),
   deps: {
-    neverBundle: [
-      '@volar/typescript',
-      '@sterashima78/ts-md-ls-core',
-      'typescript',
-    ],
+    neverBundle: ['@sterashima78/ts-md-ls-core', 'typescript'],
   },
 });

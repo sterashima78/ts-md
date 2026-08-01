@@ -19,12 +19,9 @@
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*",
-    "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/kit": "2.4.28",
-    "@volar/typescript": "2.4.28",
+    "@sterashima78/ts-md-tsc": "workspace:*",
     "commander": "15.0.0",
     "fast-glob": "3.3.3",
-    "picocolors": "1.1.1",
     "tsx": "4.23.1"
   },
   "devDependencies": {

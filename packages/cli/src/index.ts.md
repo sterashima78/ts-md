@@ -10,9 +10,12 @@ export function createCli() {
   const program = new Command('tsmd');
 
   program
-    .command('check [globs...]')
-    .description('Type-check .ts.md modules')
-    .action((globs: string[]) => runCheck(globs));
+    .command('check [tscArgs...]')
+    .allowUnknownOption()
+    .description('Type-check a tsconfig project without emitting files')
+    .action((tscArgs: string[]) => {
+      process.exitCode = runCheck(tscArgs);
+    });
 
   program
     .command('tangle [globs...]')
@@ -38,7 +41,9 @@ export function createCli() {
 
 ```ts main
 #!/usr/bin/env node
-export { createCli } from ':createCli';
+import { createCli } from ':createCli';
+
+export { createCli };
 
 createCli().parse();
 ```

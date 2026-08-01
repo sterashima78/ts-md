@@ -4,14 +4,25 @@ import path from 'node:path';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 const fixture = path.join(__dirname, 'fixtures', 'tsc');
+const errorFixture = path.join(__dirname, 'fixtures', 'tsc-error');
 const dist = path.join(fixture, 'dist');
 const commonJsDist = path.join(fixture, 'dist-cjs');
+const pkgRoot = path.join(__dirname, '..');
 const tsMdTsc = path.resolve(__dirname, '../../tsc/index.js');
+const tsmd = path.resolve(__dirname, '../../cli/index.js');
 
 function runTsMdTsc(...args: string[]) {
   execFileSync(process.execPath, [tsMdTsc, ...args], {
-    cwd: path.join(__dirname, '..'),
+    cwd: pkgRoot,
     stdio: 'inherit',
+  });
+}
+
+function runTsMdCheck(...args: string[]) {
+  return execFileSync(process.execPath, [tsmd, 'check', ...args], {
+    cwd: pkgRoot,
+    encoding: 'utf8',
+    stdio: 'pipe',
   });
 }
 
@@ -34,7 +45,7 @@ function checkDeclarationConsumer() {
       'ESNext',
       path.join(fixture, 'consumer.ts'),
     ],
-    { cwd: path.join(__dirname, '..'), stdio: 'inherit' },
+    { cwd: pkgRoot, stdio: 'inherit' },
   );
 }
 
@@ -96,5 +107,35 @@ describe('ts-md-tsc', () => {
 
     const importingJavaScript = await readOutput('index.js', commonJsDist);
     expect(importingJavaScript).toContain('require("./dep.ts.md.js")');
+  });
+});
+
+describe('tsmd check', () => {
+  beforeEach(cleanOutputs);
+  afterAll(cleanOutputs);
+
+  it('checks a project without emitting files', async () => {
+    runTsMdCheck('-p', fixture);
+
+    await expect(fs.stat(dist)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('keeps noEmit enabled when a user tries to disable it', async () => {
+    runTsMdCheck('-p', fixture, '--noEmit', 'false');
+
+    await expect(fs.stat(dist)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('returns compiler diagnostics and a failing exit status', () => {
+    try {
+      runTsMdCheck('-p', errorFixture);
+      throw new Error('expected failure');
+    } catch (error) {
+      const result = error as { status: number; stderr: string };
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain(
+        "Type 'number' is not assignable to type 'string'",
+      );
+    }
   });
 });

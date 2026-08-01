@@ -68,10 +68,12 @@ code .
 CLI:
 
 ```bash
-tsmd check 'src/**/*.ts.md'
+tsmd check -p tsconfig.json
 tsmd run src/app.ts.md
 tsmd tangle 'src/**/*.ts.md' --outDir dist
 ```
+
+`check` は `ts-md-tsc --noEmit` に委譲し、`tsconfig.json` と TypeScript のコマンドラインオプションに従ってプロジェクト全体を型検査します。
 
 `tangle` は各 module を個別ファイルへ出力します。
 
