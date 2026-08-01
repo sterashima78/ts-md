@@ -3,14 +3,14 @@
   "version": "0.0.3",
   "private": true,
   "type": "module",
-  "main": "dist/tsup/app.js",
+  "main": "dist/tsdown/app.js",
   "scripts": {
-    "build:tsup": "tsup",
+    "build:tsdown": "tsdown",
     "build:vite": "vite build",
-    "build": "pnpm build:vite && pnpm build:tsup",
+    "build": "pnpm build:vite && pnpm build:tsdown",
     "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "postbuild": "ts-md-tsc -p tsconfig.json --emitDeclarationOnly --outDir dist/types",
-    "start": "node dist/tsup/app.js",
+    "start": "node dist/tsdown/app.js",
     "test": "vitest run"
   },
   "dependencies": {
