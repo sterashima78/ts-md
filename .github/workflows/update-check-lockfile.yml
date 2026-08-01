@@ -1,8 +1,8 @@
 name: Update check lockfile
 
 on:
-  push:
-    branches: ["agent/unify-tsmd-check"]
+  pull_request:
+    branches: ["main"]
 
 permissions:
   contents: write
