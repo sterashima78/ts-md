@@ -20,17 +20,17 @@
     "@sterashima78/ts-md-core": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-ls-core": "workspace:*",
-    "@volar/kit": "^2.4.28",
-    "@volar/typescript": "^2.4.28",
-    "commander": "^15.0.0",
-    "fast-glob": "^3.3.3",
-    "picocolors": "^1.1.1",
-    "tsx": "^4.23.1"
+    "@volar/kit": "2.4.28",
+    "@volar/typescript": "2.4.28",
+    "commander": "15.0.0",
+    "fast-glob": "3.3.3",
+    "picocolors": "1.1.1",
+    "tsx": "4.23.1"
   },
   "devDependencies": {
     "@sterashima78/ts-md-unplugin": "0.4.0",
-    "tsup": "^8.5.1",
-    "vitest": "^4.1.10"
+    "tsup": "8.5.1",
+    "vitest": "4.1.10"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

@@ -21,10 +21,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^5.4.0",
+    "@rollup/pluginutils": "5.4.0",
     "@sterashima78/ts-md-core": "workspace:*",
-    "rollup": "^4.62.3",
-    "unplugin": "^3.3.0"
+    "rollup": "4.62.3",
+    "unplugin": "3.3.0"
   },
   "devDependencies": {
     "@sterashima78/ts-md-tsc": "0.2.0",

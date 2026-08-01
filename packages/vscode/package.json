@@ -21,17 +21,17 @@
     "@volar/language-server": "2.4.28",
     "@volar/language-service": "2.4.28",
     "@volar/vscode": "2.4.28",
-    "tsx": "^4.23.1",
+    "tsx": "4.23.1",
     "typescript": "6.0.3",
     "volar-service-typescript": "0.0.71",
-    "vscode-uri": "^3.1.0"
+    "vscode-uri": "3.1.0"
   },
   "devDependencies": {
     "@sterashima78/ts-md-tsc": "0.2.0",
-    "@types/vscode": "^1.125.0",
-    "@vscode/test-electron": "^3.1.0",
-    "@vscode/vsce": "^3.9.2",
-    "vitest": "^4.1.10"
+    "@types/vscode": "1.125.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "3.9.2",
+    "vitest": "4.1.10"
   },
   "activationEvents": [
     "onLanguage:ts-md"

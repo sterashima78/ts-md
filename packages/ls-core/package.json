@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@sterashima78/ts-md-core": "workspace:*",
-    "@volar/language-core": "^2.4.28",
-    "@volar/language-service": "^2.4.28",
-    "@volar/typescript": "^2.4.28",
-    "vscode-uri": "^3.1.0"
+    "@volar/language-core": "2.4.28",
+    "@volar/language-service": "2.4.28",
+    "@volar/typescript": "2.4.28",
+    "vscode-uri": "3.1.0"
   },
   "devDependencies": {
     "@sterashima78/ts-md-tsc": "0.2.0",
