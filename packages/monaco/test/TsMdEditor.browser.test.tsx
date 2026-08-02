@@ -10,16 +10,12 @@ import TsMdWorker from './fixtures/ts-md.worker?worker';
 const source = [
   '# Completion test',
   '',
-  '```ts values',
-  'export interface User {',
+  '```ts main',
+  'interface User {',
   '  name: string',
   '  age: number',
   '}',
-  "export const user: User = { name: 'Ada', age: 36 }",
-  '```',
-  '',
-  '```ts main',
-  "import { user } from ':values'",
+  "const user: User = { name: 'Ada', age: 36 }",
   'user.',
   '```',
   '',
@@ -71,7 +67,7 @@ describe('Monaco browser integration', () => {
     expect(editor?.getModel()?.uri.toString()).toBe('file:///component.ts.md');
   });
 
-  it('shows TypeScript IntelliSense from another code block', async () => {
+  it('shows TypeScript IntelliSense inside a TS-MD code block', async () => {
     const container = document.createElement('div');
     container.dataset.tsMdTest = '';
     container.style.width = '800px';
