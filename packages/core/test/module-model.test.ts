@@ -38,6 +38,13 @@ describe('document module model', () => {
     ]);
   });
 
+  it('keeps CommonMark thematic breaks from becoming frontmatter', () => {
+    const code = 'export const value = 1';
+    const markdown = ['---', fence('ts values', code), '---'].join('\n');
+
+    expect(parseChunks(markdown, '/doc.ts.md')).toEqual({ values: code });
+  });
+
   it('rejects duplicate and unnamed modules', () => {
     expect(() =>
       parseDocument(

@@ -17,10 +17,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "remark-parse": "catalog:",
-    "ts-morph": "catalog:",
-    "unified": "catalog:",
-    "unist-util-visit": "catalog:"
+    "satteri": "catalog:",
+    "ts-morph": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

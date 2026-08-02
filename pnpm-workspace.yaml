@@ -32,6 +32,7 @@ catalog:
   react-dom: 19.2.8
   remark-parse: 11.0.0
   rollup: 4.62.3
+  satteri: 0.9.5
   sharp: 0.35.3
   ts-md-unplugin-build: 'npm:@sterashima78/ts-md-unplugin@0.4.0'
   ts-morph: 28.0.0
