@@ -49,7 +49,10 @@ export function tsMdBootstrapPlugin() {
     resolveId(source: string, importer?: string) {
       if (!source.endsWith('.ts.md')) return;
       if (path.isAbsolute(source)) return source;
-      return path.resolve(importer ? path.dirname(importer) : process.cwd(), source);
+      return path.resolve(
+        importer ? path.dirname(importer) : process.cwd(),
+        source,
+      );
     },
 
     async load(id: string) {
