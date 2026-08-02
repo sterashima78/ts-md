@@ -1,6 +1,14 @@
-# Service
+# Collecting diagnostics through Volar
 
-共通の language plugin を使って `.ts.md` diagnostics を収集します。
+この document は TS-MD の language plugin を、editor だけでなく programmatic な diagnostics 収集にも使うための service layer です。
+
+重要なのは、別の簡易 compiler を作らないことです。editor と同じ virtual file、module resolution、source mapping を使って language service を構築し、CLI や test からも同じ診断結果を得ます。
+
+処理は source document の特定、language environment の構築、file ごとの diagnostics 収集に分かれます。
+
+## Result shape
+
+Volar の diagnostics から、利用側が必要とする message と range だけを表す型を定義します。結果は入力 file path を key にした辞書として返します。
 
 ```ts main
 import fs from 'node:fs';
@@ -78,3 +86,7 @@ export async function collectDiagnostics(
   return result;
 }
 ```
+
+`getSourceDocument` は language service が追加で要求した virtual module ID を元の `.ts.md` file へ戻します。language の callback は、その document がまだ登録されていない場合だけ snapshot を読み込みます。これにより、入力一覧に直接含まれない import 先 document も必要になった時点で参加できます。
+
+`createTsMdLanguageService` は再利用可能な低水準 API として language と service を返します。`collectDiagnostics` はその上に file 単位の反復を置いた convenience API です。診断位置の Markdown への変換は plugin と virtual file mapping が担当するため、この層では独自の offset 計算を行いません。
