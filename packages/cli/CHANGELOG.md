@@ -1,5 +1,20 @@
 # @sterashima78/ts-md-cli
 
+## 0.5.0
+
+### Minor Changes
+
+- [#248](https://github.com/sterashima78/ts-md/pull/248) [`733a710`](https://github.com/sterashima78/ts-md/commit/733a7105dec3d8b3505d387509b386c980528312) Thanks [@sterashima78](https://github.com/sterashima78)! - Make `tsmd check` type-check the configured TypeScript project by delegating to `ts-md-tsc --noEmit`, and remove the previous glob-based inferred-project checker.
+
+  Declare TypeScript as a direct runtime dependency of `@sterashima78/ts-md-tsc`.
+
+### Patch Changes
+
+- Updated dependencies [[`94cd4cc`](https://github.com/sterashima78/ts-md/commit/94cd4cc4a4c0d85210c97a48dc6e2f6f7b3cf08c), [`733a710`](https://github.com/sterashima78/ts-md/commit/733a7105dec3d8b3505d387509b386c980528312)]:
+  - @sterashima78/ts-md-core@0.3.1
+  - @sterashima78/ts-md-tsc@0.2.1
+  - @sterashima78/ts-md-loader@0.3.1
+
 ## 0.4.0
 
 ### Minor Changes
