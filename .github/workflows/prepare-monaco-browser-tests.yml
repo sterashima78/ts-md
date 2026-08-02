@@ -1,0 +1,39 @@
+name: prepare-monaco-browser-tests
+
+on:
+  push:
+    branches:
+      - test/monaco-browser-intellisense
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+          cache: pnpm
+      - name: Install dependencies and update lockfile
+        run: pnpm install --no-frozen-lockfile
+      - name: Upload lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: pnpm-lock
+          path: pnpm-lock.yaml
+      - name: Install Chromium
+        run: pnpm --filter @sterashima78/ts-md-monaco exec playwright install --with-deps chromium
+      - name: Run Lint
+        run: pnpm lint
+      - name: Run Type Check
+        run: pnpm typecheck
+      - name: Run Build
+        run: pnpm build
+      - name: Run Tests
+        run: pnpm test
