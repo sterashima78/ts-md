@@ -1,8 +1,20 @@
-# Parser
+# Parsing a TS-MD document
 
-Markdown ファイル内の各 TypeScript コードフェンスを、独立した TypeScript module として解析します。
+TS-MD の parser は Markdown を単なるコード抽出用の容器として扱いません。説明文を含む document 全体を Markdown として解析し、その中に現れる TypeScript fence だけを実行可能な module として取り出します。
 
-## 型定義
+ここで守る不変条件は次の三つです。
+
+- 一つの TypeScript fence は一つの独立した module である
+- すべての TypeScript fence は有効で一意な module 名を持つ
+- module の位置情報は、元 Markdown 上のコード本文だけを正確に指す
+
+処理は Markdown AST の構築、module の抽出、利用目的別の形への変換という順に進みます。
+
+## The document model
+
+parser が返す中心的な値は `TsMdDocument` です。module はコードだけでなく、言語と元 document 上の範囲を保持します。language service はこの範囲を使って diagnostics や補完位置を Markdown へ戻します。
+
+`ChunkDict` と `ChunkInfo` は既存 API との互換用の別名です。新しい処理は `TsMdDocument` を基準に組み立てます。
 
 ```ts types
 export type TsMdLanguage = 'ts' | 'tsx';
@@ -35,9 +47,11 @@ export class TsMdParseError extends Error {
 }
 ```
 
-## buildAst: AST の構築
+## Building the Markdown tree
 
-Sätteri で Markdown を標準 MDAST に変換します。従来の `remark-parse` と同じ CommonMark の解析範囲を保つため、Sätteri で既定有効の GFM と frontmatter は無効化します。
+最初に Sätteri で Markdown を MDAST へ変換します。TS-MD が受け入れる Markdown の範囲を parser の置き換え前後で変えないため、Sätteri で既定有効の GFM と frontmatter は明示的に無効化します。
+
+root 以外が返ることは API 上想定していませんが、後続処理の前提を曖昧にしないために境界で検証します。
 
 ```ts buildAst
 import type { Root } from 'mdast';
@@ -57,9 +71,11 @@ export function buildAst(markdown: string): Root {
 }
 ```
 
-## extractModules: module の抽出
+## Turning fences into modules
 
-TypeScript コードフェンスには一意な module 名が必要です。同名フェンスの結合は行いません。
+MDAST を再帰的に歩き、`ts` または `tsx` の code node だけを選びます。TypeScript fence の meta 部分を module 名として読み、空の名前、不正な文字、重複を document の構造エラーとして早い段階で拒否します。
+
+位置情報では code node 全体ではなく本文を指す必要があります。opening fence の次の行から node の value を探し、Markdown parser が返す node range を越えない範囲で本文の開始位置を決めます。同じ文字列が fence header より前に現れても誤って採用しないための処理です。
 
 ```ts extractModules
 import type { Code, Root } from 'mdast';
@@ -127,7 +143,9 @@ export function extractModules(
 }
 ```
 
-## parseDocument: document の解析
+## Assembling the document
+
+AST と抽出規則を一つの関数にまとめます。以後の package は Markdown parser の詳細に触れず、この document model だけを共有します。
 
 ```ts parseDocument
 import type { TsMdDocument } from ':types';
@@ -143,7 +161,11 @@ export function parseDocument(markdown: string, uri: string): TsMdDocument {
 }
 ```
 
-## 既存の辞書形式への変換
+## Compatibility views
+
+一部の呼び出し側は module 配列ではなく名前を key にした辞書を必要とします。別の parser を持たず、常に `parseDocument` の結果から派生させることで、名前の検証や位置計算を一度だけ行います。
+
+コードだけを必要とする場合は `parseChunks` を使います。
 
 ```ts parseChunks
 import type { ChunkDict } from ':types';
@@ -159,6 +181,8 @@ export function parseChunks(markdown: string, uri: string): ChunkDict {
 }
 ```
 
+位置情報を含む module 全体が必要な場合は `parseChunkInfos` を使います。
+
 ```ts parseChunkInfos
 import type { ChunkInfo } from ':types';
 import { parseDocument } from ':parseDocument';
@@ -173,7 +197,9 @@ export function parseChunkInfos(
 }
 ```
 
-## 公開インタフェース
+## Public surface
+
+公開 API では document model を中心に置きつつ、既存の辞書 API も同じ実装から提供します。AST 構築や node traversal は parser 内部の手順なので公開しません。
 
 ```ts main
 export { parseChunkInfos } from ':parseChunkInfos';

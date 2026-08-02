@@ -1,8 +1,20 @@
-# Resolver
+# Resolving TS-MD imports
 
-`.ts.md` module specifier を document path と module 名へ解決します。
+TS-MD では、一つの Markdown document の中に複数の TypeScript module が存在します。通常の module resolver が扱う path に加えて、どの module を指すかも解決しなければなりません。
 
-## cleanImporter
+この文書は import を三つの形に限定します。
+
+- `:module` は同じ document の名前付き module
+- `./other.ts.md` は別 document の `main` module
+- `./other.ts.md:module` は別 document の名前付き module
+
+npm package や通常の TypeScript import はここでは解決せず、呼び出し元の既定 resolver に残します。
+
+## Recovering the source document
+
+resolver の `importer` には、元の `.ts.md` path、`file:` URL、または TS-MD の仮想 module path が渡されます。最初にそれらを元 document の path へ戻しておくと、後続の分岐は同じ基準で相対 path を計算できます。
+
+query は bundler が付加することがあるため除去します。変換できない `file:` URL は resolver 全体を失敗させず、そのまま返して既定処理へ委ねられる形にします。
 
 ```ts cleanImporter
 import { fileURLToPath } from 'node:url';
@@ -24,9 +36,11 @@ export function cleanImporter(importer: string): string {
 }
 ```
 
-## resolveImport
+## Interpreting the three supported forms
 
-同じ document 内の module は `:module`、別 document の module は `./file.ts.md:module` で参照します。module 指定を省略した `.ts.md` import は `main` を参照します。
+解決結果は document の絶対 path と module 名に正規化します。この形は loader、bundler、language service のすべてで共有され、各 adapter は必要に応じて仮想ファイル名へ変換します。
+
+同一 document の `:module` では importer 自体が document path です。別 document の場合は importer のディレクトリを基準に path を解決します。空の module 名や不完全な記法は TS-MD import として受理しません。
 
 ```ts resolveImport
 import path from 'node:path';
@@ -75,7 +89,9 @@ export function resolveImport(
 }
 ```
 
-## 公開インタフェース
+## Public boundary
+
+`cleanImporter` は adapter が importer の正規化だけを必要とする場合にも使えるため公開します。テストは public module から遅延 import し、本番 bundle には含めません。
 
 ```ts main
 export { cleanImporter } from ':cleanImporter';
@@ -87,7 +103,9 @@ if (import.meta.vitest) {
 }
 ```
 
-## Tests
+## Executable examples
+
+テストは三つの import 形式と、仮想 module から元 document へ戻る経路を固定します。また、以前の `#module` shorthand を受理しないことも仕様として残します。
 
 ```ts resolveImport.test
 import path from 'node:path';

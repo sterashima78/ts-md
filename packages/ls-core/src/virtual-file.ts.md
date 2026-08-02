@@ -1,6 +1,20 @@
-# Virtual File
+# Projecting Markdown as virtual TypeScript files
 
-各 `.ts.md` コードフェンスを、一つの仮想 TypeScript module として公開します。
+Volar は source document と、その中に埋め込まれた language ごとの virtual code を対応付けて language feature を提供します。TS-MD では Markdown document 自体を root とし、各 TypeScript code fence を独立した embedded code として公開します。
+
+この class が維持する情報は三層あります。
+
+- root は元の Markdown snapshot 全体を表す
+- `modules` は parser が返した論理的な TS-MD module を名前で引けるようにする
+- `embeddedCodes` は TypeScript service が読む仮想 source と source mapping を表す
+
+document が編集されるたびに三層を同じ parser 結果から再構築し、古い module や mapping が残らないようにします。
+
+## Mapping policy
+
+すべての TypeScript feature を code fence 内で有効にします。各 embedded code は生成側 offset 0 から始まり、元 Markdown 側では parser が計算した `module.start` に対応します。
+
+これにより TypeScript service は通常の `.ts` source として code を扱い、Volar は completion、diagnostics、navigation の位置を Markdown 上へ戻せます。
 
 ```ts main
 import {
@@ -89,3 +103,5 @@ export class TsMdVirtualFile implements VirtualCode {
   }
 }
 ```
+
+`getModule` は language plugin が module の `ts` / `tsx` 種別を調べるための橋渡しです。embedded code の ID には core の仮想 module 規則を使うため、compiler、loader、bundler と同じ module identity を共有できます。

@@ -1,6 +1,14 @@
-# run コマンド
+# Running one document module
 
-`.ts.md` document の `main` module、または `file.ts.md:module` で指定した名前付きmoduleをNode.jsで実行します。
+`tsmd run` は `.ts.md` document を直接解釈しません。entry の表記を共通の module identity へ変換し、Node.js、TypeScript runtime、TS-MD loader を組み合わせて実行します。
+
+利用者は document path だけを渡して `main` を実行するか、`file.ts.md:module` の形で named module を entry にできます。まずこの表記を解析し、その後は core が定義する仮想 module file name を使います。
+
+## Parsing the entry notation
+
+`.ts.md:` の最後の出現を境界にするため、path の前半に `:` が含まれていても module 名との区切りを失いません。named module が指定されていない場合は `main` を補います。
+
+不完全な `file.ts.md:` は別の意味へ推測せず error にします。返り値を loader や bundler と同じ `{ documentPath, moduleName }` にそろえることで、CLI 固有の identity を作りません。
 
 ```ts parseEntry
 import path from 'node:path';
@@ -23,6 +31,12 @@ export function parseEntry(entry: string) {
   return { documentPath, moduleName };
 }
 ```
+
+## Building the Node.js process
+
+実行 process には二つの extension point を渡します。`tsx/esm` が TypeScript runtime を提供し、TS-MD loader が仮想 module と document 内 import を解決します。
+
+entry は仮想 module file name に変換してから Node.js へ渡します。working directory は元 document の directory に設定し、実行 code から見た relative file access も document の位置を基準にします。残りの command-line arguments は entry module へそのまま渡します。
 
 ```ts runTsMd
 import { createRequire } from 'node:module';
@@ -53,6 +67,10 @@ export async function runTsMd(entry: string, nodeArgs: string[]) {
 }
 ```
 
+## Public command module
+
+entry parser も public にして、CLI notation を利用する adapter や test が同じ規則を使えるようにします。test module は Vitest 実行時だけ読み込みます。
+
 ```ts main
 export { parseEntry } from ':parseEntry';
 export { runTsMd } from ':runTsMd';
@@ -61,6 +79,10 @@ if (import.meta.vitest) {
   await import(':runTsMd.test');
 }
 ```
+
+## Executable examples of the notation
+
+ここでは process 起動ではなく、document-only と named-module の二つの entry 表記が同じ identity model に変換されることを固定します。
 
 ```ts runTsMd.test
 import path from 'node:path';

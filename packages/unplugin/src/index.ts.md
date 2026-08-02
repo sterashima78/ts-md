@@ -1,8 +1,18 @@
-# Unplugin
+# Adapting TS-MD to bundlers
 
-すべての bundler で、`.ts.md` の各コードフェンスを同じ仮想 TypeScript module として扱います。
+Vite、Rollup、Webpack、esbuild は plugin API が異なりますが、TS-MD に必要な処理は共通です。specifier を仮想 module ID へ変換し、その ID が指す code fence の source を返します。
 
-## parseFile
+この document では bundler 固有の adapter を `unplugin` に任せ、TS-MD の処理を三つの段階にそろえます。
+
+1. document を読み、解析結果を cache する
+2. import を共通の仮想 module ID へ解決する
+3. 仮想 module ID から一つの code fence を load する
+
+## Parsing once per document
+
+一つの document に複数の module があるため、module ごとに Markdown を読み直すのは避けます。cache には code の辞書ではなく `TsMdDocument` 全体を保存し、module identity や language も同じ parser 結果から参照します。
+
+watch event では `force` を使って明示的に再読込します。
 
 ```ts parseFile
 import fs from 'node:fs/promises';
@@ -25,7 +35,13 @@ export async function parseFile(
 }
 ```
 
-## plugin
+## One plugin lifecycle, one module model
+
+`resolveId` は三種類の入力を同じ仮想 ID へ集約します。すでに仮想 ID ならそのまま返し、`.ts.md` document の直接 import は `main` へ、その他の TS-MD specifier は core resolver へ渡します。
+
+`load` は仮想 ID 以外を無視します。対象 document が include filter に合う場合だけ cache から document を取得し、指定 module の code を返します。
+
+`watchChange` は bundler から document path と仮想 module path のどちらが渡っても元 document を特定し、cache を更新します。各 hook が独自の命名規則を持たず、core の module ID と resolver を共有することがこの adapter の中心です。
 
 ```ts main
 import path from 'node:path';

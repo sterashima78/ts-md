@@ -1,20 +1,20 @@
-# Language Service Plugin
+# Connecting TS-MD to Volar and TypeScript
 
-TypeScript の型検査とエディタ機能の両方で、各コードフェンスを同じ仮想 module として扱います。
+この language plugin は、Markdown document、Volar の virtual code、TypeScript の service script という三つの見方を接続します。
 
-```ts main
-import {
-  createVirtualModuleFileName,
-  parseVirtualModuleFileName,
-  resolveImport,
-} from '@sterashima78/ts-md-core';
-import type { LanguagePlugin, VirtualCode } from '@volar/language-core';
-import { forEachEmbeddedCode } from '@volar/language-core';
-import type { TypeScriptExtraServiceScript } from '@volar/typescript';
-import ts from 'typescript';
-import { TsMdVirtualFile } from './virtual-file.ts.md';
+一つの `.ts.md` document は Volar では一つの root virtual file ですが、TypeScript には各 code fence を独立 module として見せます。`main` module は document の代表 service script、その他の module は extra service script になります。document に `main` がなくても named module の型検査を失わないよう、空の document service script を用意します。
 
-function getFileName(fileName: unknown): string {
+実装を読みやすくするため、値の正規化、service script の選択、import resolution、plugin 本体の順に組み立てます。
+
+## Normalizing file and module names
+
+Volar の API は file name を URI-like object として渡す場合と文字列で渡す場合があります。最初に path へ正規化し、embedded code の ID から module 名を取り出す処理も同じ場所に置きます。
+
+```ts fileNames
+import { parseVirtualModuleFileName } from '@sterashima78/ts-md-core';
+import type { VirtualCode } from '@volar/language-core';
+
+export function getFileName(fileName: unknown): string {
   if (
     typeof fileName === 'object' &&
     fileName !== null &&
@@ -26,17 +26,30 @@ function getFileName(fileName: unknown): string {
   return String(fileName);
 }
 
-function getModuleName(code: VirtualCode): string | undefined {
+export function getModuleName(code: VirtualCode): string | undefined {
   return parseVirtualModuleFileName(code.id)?.moduleName;
 }
+```
 
-function getScriptKind(root: TsMdVirtualFile, moduleName: string) {
+## Describing TypeScript service scripts
+
+TypeScript は `.ts` と `.tsx` で parser mode が異なるため、元 fence の language から extension と `ScriptKind` を決めます。
+
+embedded code は core と同じ仮想 module ID で検索します。`main` が存在しない document には、Markdown root 自体を TypeScript source と誤解させないため、内容が `export {};` だけの service code を返します。
+
+```ts serviceScripts
+import { createVirtualModuleFileName } from '@sterashima78/ts-md-core';
+import type { VirtualCode } from '@volar/language-core';
+import ts from 'typescript';
+import { TsMdVirtualFile } from './virtual-file.ts.md';
+
+export function getScriptKind(root: TsMdVirtualFile, moduleName: string) {
   return root.getModule(moduleName)?.language === 'tsx'
     ? ts.ScriptKind.TSX
     : ts.ScriptKind.TS;
 }
 
-function getExtension(root: TsMdVirtualFile, moduleName: string) {
+export function getExtension(root: TsMdVirtualFile, moduleName: string) {
   return root.getModule(moduleName)?.language === 'tsx'
     ? ('.tsx' as const)
     : ('.ts' as const);
@@ -50,11 +63,11 @@ function findModuleCode(root: TsMdVirtualFile, moduleName: string) {
   return root.embeddedCodes.find((code) => code.id === id);
 }
 
-function getMainCode(root: TsMdVirtualFile) {
+export function getMainCode(root: TsMdVirtualFile) {
   return findModuleCode(root, 'main');
 }
 
-function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
+export function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
   const code = 'export {};';
   return {
     id: `${root.fileName}.__tsmd_document__.ts`,
@@ -65,6 +78,20 @@ function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
     snapshot: ts.ScriptSnapshot.fromString(code),
   };
 }
+```
+
+## Resolving imports for TypeScript
+
+core resolver は TS-MD specifier を document path と module 名へ変換します。`main` module は document path 自体で TypeScript project に参加し、named module は仮想 file name で参加します。
+
+この区別により、`import './other.ts.md'` は通常の source document として扱われ、`import ':types'` のような named module だけが extra service script を直接参照します。
+
+```ts resolveTsMdFileName
+import {
+  createVirtualModuleFileName,
+  resolveImport,
+} from '@sterashima78/ts-md-core';
+import { getFileName } from ':fileNames';
 
 export function resolveTsMdFileName(
   specifier: string,
@@ -78,6 +105,36 @@ export function resolveTsMdFileName(
     moduleName: resolved.chunk,
   });
 }
+```
+
+## The language plugin
+
+plugin 本体は lifecycle の接着に集中します。
+
+- `.ts.md` file を `ts-md` language として認識する
+- snapshot から `TsMdVirtualFile` を作り、編集時は同じ instance を更新する
+- `main` を primary service script として返す
+- それ以外の TypeScript embedded code を extra service script として列挙する
+- import resolution を共通 resolver へ委譲する
+
+editor 用と compiler 用で別実装を持たず、同じ plugin object を公開します。
+
+```ts main
+import type { LanguagePlugin } from '@volar/language-core';
+import { forEachEmbeddedCode } from '@volar/language-core';
+import type { TypeScriptExtraServiceScript } from '@volar/typescript';
+import ts from 'typescript';
+import { TsMdVirtualFile } from './virtual-file.ts.md';
+import { getFileName, getModuleName } from ':fileNames';
+import {
+  createDocumentServiceCode,
+  getExtension,
+  getMainCode,
+  getScriptKind,
+} from ':serviceScripts';
+import { resolveTsMdFileName } from ':resolveTsMdFileName';
+
+export { resolveTsMdFileName };
 
 type TsMdPlugin = LanguagePlugin<unknown, TsMdVirtualFile> & {
   resolveFileName(specifier: string, fromFile: unknown): string | undefined;
