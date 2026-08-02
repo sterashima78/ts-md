@@ -58,7 +58,7 @@ interface MonacoWorkerEnvironment {
   ): Worker | Promise<Worker>;
 }
 
-function resolveWorker(options: TsMdWorkerOptions) {
+export function resolveWorker(options: TsMdWorkerOptions) {
   if (options.worker) return options.worker;
 
   const environment = (
@@ -87,6 +87,9 @@ import type { WorkerLanguageService } from '@volar/monaco/worker';
 import type * as monaco from 'monaco-editor';
 import { TS_MD_LANGUAGE_ID, registerTsMdLanguage } from ':language';
 import { type TsMdWorkerOptions, resolveWorker } from ':worker';
+
+export { TS_MD_LANGUAGE_ID, registerTsMdLanguage } from ':language';
+export type { TsMdWorkerOptions } from ':worker';
 
 export interface TsMdWorkerRegistration extends monaco.IDisposable {
   readonly worker: monaco.editor.MonacoWebWorker<WorkerLanguageService>;
