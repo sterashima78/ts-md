@@ -1,9 +1,10 @@
-import {
-  createTsMdEditorPlugin,
-  resolveTsMdFileName,
-} from '@sterashima78/ts-md-ls-core';
 import type {
+  CodeInformation,
+  CodeMapping,
   LanguagePlugin,
+  VirtualCode,
+} from '@volar/language-core';
+import type {
   LanguageServiceEnvironment,
   ProjectContext,
 } from '@volar/language-service';
@@ -14,6 +15,15 @@ import ts from 'typescript';
 import { create as createTypeScriptServicePlugins } from 'volar-service-typescript';
 import type { URI } from 'vscode-uri';
 import { URI as Uri } from 'vscode-uri';
+
+const typescriptFeatures = {
+  completion: true,
+  format: true,
+  navigation: true,
+  semantic: true,
+  structure: true,
+  verification: true,
+} satisfies CodeInformation;
 
 const rawTypeScriptLibraries = import.meta.glob(
   '../../node_modules/typescript/lib/lib.*.d.ts',
@@ -33,6 +43,42 @@ const defaultTypeScriptLibrarySource = Object.entries(rawTypeScriptLibraries)
 const defaultTypeScriptLibrarySnapshot = ts.ScriptSnapshot.fromString(
   defaultTypeScriptLibrarySource,
 );
+
+const testTsMdLanguagePlugin: LanguagePlugin<URI, TestTsMdVirtualFile> = {
+  getLanguageId(uri) {
+    return uri.path.endsWith('.ts.md') ? 'ts-md' : undefined;
+  },
+
+  createVirtualCode(_uri, languageId, snapshot) {
+    if (languageId !== 'ts-md') return;
+    return new TestTsMdVirtualFile(snapshot);
+  },
+
+  updateVirtualCode(_uri, virtualCode, snapshot) {
+    virtualCode.update(snapshot);
+    return virtualCode;
+  },
+
+  typescript: {
+    extraFileExtensions: [
+      {
+        extension: 'ts.md',
+        isMixedContent: true,
+        scriptKind: ts.ScriptKind.Deferred,
+      },
+    ],
+
+    getServiceScript(root) {
+      const main = root.embeddedCodes.find((code) => code.id === 'main');
+      if (!main) return;
+      return {
+        code: main,
+        extension: root.mainScriptKind === ts.ScriptKind.TSX ? '.tsx' : '.ts',
+        scriptKind: root.mainScriptKind,
+      };
+    },
+  },
+};
 
 self.onmessage = () => {
   editorWorker.initialize((workerContext: monaco.worker.IWorkerContext) => {
@@ -56,17 +102,87 @@ self.onmessage = () => {
         asUri: (fileName) => Uri.file(fileName),
       },
       workerContext,
-      languagePlugins: [
-        createTsMdEditorPlugin as unknown as LanguagePlugin<URI>,
-      ],
+      languagePlugins: [testTsMdLanguagePlugin],
       languageServicePlugins: createTypeScriptServicePlugins(ts),
       setup({ project }) {
         installTypeScriptLibraries(project);
-        installTsMdModuleResolver(project);
       },
     });
   });
 };
+
+class TestTsMdVirtualFile implements VirtualCode {
+  readonly id = 'root';
+  readonly languageId = 'markdown';
+  mappings: CodeMapping[] = [];
+  embeddedCodes: VirtualCode[] = [];
+  linkedCodeMappings = [];
+  mainScriptKind = ts.ScriptKind.TS;
+
+  constructor(public snapshot: ts.IScriptSnapshot) {
+    this.update(snapshot);
+  }
+
+  update(snapshot: ts.IScriptSnapshot) {
+    this.snapshot = snapshot;
+    const markdown = snapshot.getText(0, snapshot.getLength());
+    const main = extractMainModule(markdown);
+
+    this.mappings = [
+      {
+        sourceOffsets: [0],
+        generatedOffsets: [0],
+        lengths: [snapshot.getLength()],
+        data: typescriptFeatures,
+      },
+    ];
+    this.embeddedCodes = main
+      ? [
+          {
+            id: 'main',
+            languageId: 'typescript',
+            snapshot: ts.ScriptSnapshot.fromString(main.code),
+            mappings: [
+              {
+                sourceOffsets: [main.start],
+                generatedOffsets: [0],
+                lengths: [main.code.length],
+                data: typescriptFeatures,
+              },
+            ],
+            embeddedCodes: [],
+            linkedCodeMappings: [],
+          },
+        ]
+      : [];
+    this.mainScriptKind = main?.scriptKind ?? ts.ScriptKind.TS;
+  }
+}
+
+function extractMainModule(markdown: string) {
+  const opening = /^(`{3,}|~{3,})(ts|tsx)\s+main\s*$(?:\r?\n)?/m.exec(
+    markdown,
+  );
+  if (!opening) return;
+
+  const start = opening.index + opening[0].length;
+  const closing = new RegExp(
+    `^${escapeRegExp(opening[1])}\\s*$`,
+    'm',
+  ).exec(markdown.slice(start));
+  if (!closing) return;
+
+  return {
+    code: markdown.slice(start, start + closing.index),
+    start,
+    scriptKind:
+      opening[2] === 'tsx' ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  };
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function installTypeScriptLibraries(project: ProjectContext) {
   const host = project.typescript?.languageServiceHost;
@@ -98,54 +214,6 @@ function installTypeScriptLibraries(project: ProjectContext) {
     isDefaultTypeScriptLibrary(fileName)
       ? defaultTypeScriptLibrarySource
       : fallbackReadFile?.(fileName);
-}
-
-function installTsMdModuleResolver(project: ProjectContext) {
-  const host = project.typescript?.languageServiceHost;
-  if (!host) return;
-
-  const fallbackLiterals = host.resolveModuleNameLiterals?.bind(host);
-  const resolveModuleNameLiterals: NonNullable<
-    ts.LanguageServiceHost['resolveModuleNameLiterals']
-  > = (...args) => {
-    const [moduleLiterals, containingFile] = args;
-    const fallbackResults = fallbackLiterals?.(...args);
-    return moduleLiterals.map((literal, index) => {
-      const resolvedModule = resolveTsMdModule(literal.text, containingFile);
-      return resolvedModule
-        ? { resolvedModule }
-        : (fallbackResults?.[index] ?? { resolvedModule: undefined });
-    });
-  };
-  host.resolveModuleNameLiterals = resolveModuleNameLiterals;
-
-  const fallbackNames = host.resolveModuleNames?.bind(host);
-  const resolveModuleNames: NonNullable<
-    ts.LanguageServiceHost['resolveModuleNames']
-  > = (...args) => {
-    const [moduleNames, containingFile] = args;
-    const fallbackResults = fallbackNames?.(...args);
-    return moduleNames.map(
-      (moduleName, index) =>
-        resolveTsMdModule(moduleName, containingFile) ??
-        fallbackResults?.[index],
-    );
-  };
-  host.resolveModuleNames = resolveModuleNames;
-}
-
-function resolveTsMdModule(
-  specifier: string,
-  containingFile: string,
-): ts.ResolvedModuleFull | undefined {
-  const resolvedFileName = resolveTsMdFileName(specifier, containingFile);
-  if (!resolvedFileName) return;
-
-  return {
-    resolvedFileName,
-    extension: ts.Extension.Ts,
-    isExternalLibraryImport: false,
-  };
 }
 
 function isDefaultTypeScriptLibrary(fileName: string) {
