@@ -1,5 +1,12 @@
 # @sterashima78/ts-md-unplugin
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`94cd4cc`](https://github.com/sterashima78/ts-md/commit/94cd4cc4a4c0d85210c97a48dc6e2f6f7b3cf08c)]:
+  - @sterashima78/ts-md-core@0.3.1
+
 ## 0.4.0
 
 ### Minor Changes

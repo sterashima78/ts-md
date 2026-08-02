@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-core
 
+## 0.3.1
+
+### Patch Changes
+
+- [#250](https://github.com/sterashima78/ts-md/pull/250) [`94cd4cc`](https://github.com/sterashima78/ts-md/commit/94cd4cc4a4c0d85210c97a48dc6e2f6f7b3cf08c) Thanks [@sterashima78](https://github.com/sterashima78)! - Parse Markdown documents with Sätteri while preserving the existing CommonMark code-fence behavior.
+
 ## 0.3.0
 
 ### Minor Changes
