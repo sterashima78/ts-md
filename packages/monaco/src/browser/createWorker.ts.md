@@ -13,7 +13,7 @@ import type * as monaco from 'monaco-editor';
 
 export const TS_MD_LANGUAGE_ID = 'ts-md';
 
-function registerTsMdLanguage(m: typeof monaco) {
+export function registerTsMdLanguage(m: typeof monaco) {
   if (m.languages.getLanguages().some(({ id }) => id === TS_MD_LANGUAGE_ID)) {
     return;
   }
