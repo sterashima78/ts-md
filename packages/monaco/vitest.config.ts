@@ -17,7 +17,6 @@ const optimizedBrowserDependencies = [
   'react',
   'react-dom',
   'react/jsx-runtime',
-  'satteri',
   'ts-morph',
   'typescript',
   'volar-service-typescript',
@@ -30,6 +29,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: optimizedBrowserDependencies,
+    exclude: ['satteri', '@bruits/satteri-wasm32-wasi'],
   },
   server: {
     headers: {
