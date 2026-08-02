@@ -1,0 +1,40 @@
+name: format-monaco-review
+
+on:
+  push:
+    branches:
+      - agent/add-monaco-docs-playground
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/add-monaco-docs-playground
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec biome check --write packages/docs/src/workers/ts-md-language.ts packages/docs/src/workers/ts-md-language.test.ts packages/docs/src/workers/typescript-libs.ts
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/docs/src/workers
+          git commit -m "Format Monaco review fixes"
+          git push
