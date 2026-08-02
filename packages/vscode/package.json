@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown && tsx scripts/postbuild.ts",
+    "build": "tsdown && ts-md-tsc -p tsconfig.json --emitDeclarationOnly --rootDir src --outDir dist && tsx scripts/postbuild.ts",
     "package": "tsx scripts/package.ts",
     "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
