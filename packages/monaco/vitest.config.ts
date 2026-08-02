@@ -24,6 +24,7 @@ export default defineConfig({
   test: {
     projects: [
       {
+        extends: true,
         test: {
           name: 'unit',
           globals: true,
@@ -33,6 +34,7 @@ export default defineConfig({
         },
       },
       {
+        extends: true,
         test: {
           name: 'browser',
           globals: true,
