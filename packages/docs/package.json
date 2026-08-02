@@ -5,12 +5,19 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest run src/workers/ts-md-language.test.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "catalog:",
+    "@volar/language-service": "catalog:",
+    "@volar/monaco": "catalog:",
     "astro": "catalog:",
     "fast-glob": "catalog:",
-    "sharp": "catalog:"
+    "monaco-editor": "catalog:",
+    "sharp": "catalog:",
+    "typescript": "catalog:",
+    "volar-service-typescript": "catalog:",
+    "vscode-uri": "catalog:"
   }
 }

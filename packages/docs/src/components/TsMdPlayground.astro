@@ -1,0 +1,286 @@
+<ts-md-playground>
+  <div class="toolbar">
+    <div>
+      <strong>playground.ts.md</strong>
+      <span>Ctrl+Space で補完、hover で型情報を確認できます</span>
+    </div>
+    <div class="actions">
+      <button type="button" data-completion>補完を表示</button>
+      <button type="button" data-reset>リセット</button>
+    </div>
+  </div>
+  <div class="editor" data-editor aria-label="TS-MD Monaco Editor playground"></div>
+</ts-md-playground>
+
+<script>
+  import { activateMarkers, registerProviders } from '@volar/monaco';
+  import type { WorkerLanguageService } from '@volar/monaco/worker';
+  import * as monaco from 'monaco-editor';
+  import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
+  import TsMdWorker from '../workers/ts-md.worker?worker';
+
+  const languageId = 'ts-md';
+  const initialValue = [
+    '# Monaco Editor demo',
+    '',
+    '説明文と TypeScript modules を同じ document に記述できます。',
+    '',
+    '```ts values',
+    'export interface User {',
+    '  name: string',
+    '  age: number',
+    '}',
+    '',
+    "export const user: User = { name: 'Ada', age: 36 }",
+    '```',
+    '',
+    '```ts main',
+    "import { user } from ':values'",
+    '',
+    'const label = `${user.name} (${user.age})`',
+    'console.log(label)',
+    '```',
+    '',
+  ].join('\n');
+
+  const monacoGlobal = self as typeof self & {
+    MonacoEnvironment?: {
+      getWorker(moduleId: string, label: string): Worker;
+    };
+  };
+
+  monacoGlobal.MonacoEnvironment = {
+    getWorker(_moduleId, label) {
+      return label === languageId ? new TsMdWorker() : new EditorWorker();
+    },
+  };
+
+  if (!monaco.languages.getLanguages().some(({ id }) => id === languageId)) {
+    monaco.languages.register({ id: languageId, extensions: ['.ts.md'] });
+    monaco.languages.setLanguageConfiguration(languageId, {
+      brackets: [
+        ['{', '}'],
+        ['[', ']'],
+        ['(', ')'],
+      ],
+      autoClosingPairs: [
+        { open: '{', close: '}' },
+        { open: '[', close: ']' },
+        { open: '(', close: ')' },
+        { open: '"', close: '"' },
+        { open: "'", close: "'" },
+        { open: '`', close: '`' },
+      ],
+    });
+    monaco.languages.setMonarchTokensProvider(languageId, {
+      defaultToken: '',
+      tokenizer: {
+        root: [
+          [
+            /^```(?:ts|tsx)(?:\s+[\w.-]+)?\s*$/,
+            {
+              token: 'delimiter',
+              next: '@typescript',
+              nextEmbedded: 'typescript',
+            },
+          ],
+          [/^#{1,6}\s.*$/, 'keyword'],
+          [/`[^`]+`/, 'string'],
+          [/\*\*[^*]+\*\*/, 'strong'],
+        ],
+        typescript: [
+          [
+            /^```\s*$/,
+            {
+              token: 'delimiter',
+              next: '@pop',
+              nextEmbedded: '@pop',
+            },
+          ],
+          [/.*$/, ''],
+        ],
+      },
+    });
+
+    monaco.languages.onLanguage(languageId, () => {
+      const worker = monaco.editor.createWebWorker<WorkerLanguageService>({
+        moduleId: 'vs/language/ts-md/tsMdWorker',
+        label: languageId,
+      });
+      const getSyncedFiles = () =>
+        monaco.editor
+          .getModels()
+          .filter((model) => model.getLanguageId() === languageId)
+          .map((model) => model.uri);
+
+      activateMarkers(
+        worker,
+        [languageId],
+        'ts-md-markers',
+        getSyncedFiles,
+        monaco.editor,
+      );
+      registerProviders(
+        worker,
+        [languageId],
+        getSyncedFiles,
+        monaco.languages,
+      );
+    });
+  }
+
+  let modelId = 0;
+
+  class TsMdPlaygroundElement extends HTMLElement {
+    private editor?: monaco.editor.IStandaloneCodeEditor;
+    private model?: monaco.editor.ITextModel;
+    private abortController?: AbortController;
+
+    connectedCallback() {
+      if (this.editor) return;
+
+      const container = this.querySelector<HTMLElement>('[data-editor]');
+      const completionButton =
+        this.querySelector<HTMLButtonElement>('[data-completion]');
+      const resetButton = this.querySelector<HTMLButtonElement>('[data-reset]');
+      if (!container || !completionButton || !resetButton) return;
+
+      const uri = monaco.Uri.file(`/playground-${++modelId}.ts.md`);
+      this.model = monaco.editor.createModel(initialValue, languageId, uri);
+      this.model.updateOptions({ insertSpaces: true, tabSize: 2 });
+      this.editor = monaco.editor.create(container, {
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: { enabled: false },
+        model: this.model,
+        padding: { top: 16, bottom: 16 },
+        scrollBeyondLastLine: false,
+        theme: 'vs-dark',
+        wordWrap: 'on',
+      });
+
+      this.abortController = new AbortController();
+      const { signal } = this.abortController;
+      completionButton.addEventListener(
+        'click',
+        () => this.showCompletion(),
+        { signal },
+      );
+      resetButton.addEventListener(
+        'click',
+        () => {
+          this.model?.setValue(initialValue);
+          this.showCompletion();
+        },
+        { signal },
+      );
+    }
+
+    disconnectedCallback() {
+      this.abortController?.abort();
+      this.editor?.dispose();
+      this.model?.dispose();
+      this.abortController = undefined;
+      this.editor = undefined;
+      this.model = undefined;
+    }
+
+    private showCompletion() {
+      if (!this.editor || !this.model) return;
+      const completionOffset =
+        this.model.getValue().indexOf('user.name') + 'user.'.length;
+      if (completionOffset < 'user.'.length) return;
+
+      this.editor.setPosition(this.model.getPositionAt(completionOffset));
+      this.editor.focus();
+      this.editor.trigger(
+        'ts-md-playground',
+        'editor.action.triggerSuggest',
+        undefined,
+      );
+    }
+  }
+
+  if (!customElements.get('ts-md-playground')) {
+    customElements.define('ts-md-playground', TsMdPlaygroundElement);
+  }
+</script>
+
+<style>
+  ts-md-playground {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: #1e1e1e;
+    box-shadow: var(--sl-shadow-md);
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    padding: 0.65rem 0.8rem 0.65rem 1rem;
+    border-bottom: 1px solid #3c3c3c;
+    color: #f3f3f3;
+    background: #252526;
+  }
+
+  .toolbar > div:first-child {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .toolbar strong {
+    font-size: 0.875rem;
+  }
+
+  .toolbar span {
+    color: #c5c5c5;
+    font-size: 0.75rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.5rem;
+  }
+
+  button {
+    padding: 0.35rem 0.65rem;
+    border: 1px solid #5a5a5a;
+    border-radius: 0.35rem;
+    color: #f3f3f3;
+    background: #333333;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #444444;
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--sl-color-accent-high);
+    outline-offset: 2px;
+  }
+
+  .editor {
+    height: min(70vh, 42rem);
+    min-height: 30rem;
+  }
+
+  @media (max-width: 40rem) {
+    .toolbar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .editor {
+      min-height: 36rem;
+    }
+  }
+</style>
