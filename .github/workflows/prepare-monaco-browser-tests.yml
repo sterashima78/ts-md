@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 concurrency:
   group: prepare-monaco-browser-tests-${{ github.event_name }}-${{ github.ref }}
