@@ -9,7 +9,7 @@ import type {
 } from '@volar/language-service';
 import { createTypeScriptWorkerLanguageService } from '@volar/monaco/worker';
 import type * as monaco from 'monaco-editor';
-import * as worker from 'monaco-editor/esm/vs/editor/editor.worker';
+import * as worker from 'monaco-editor/esm/vs/editor/editor.worker.js';
 import ts from 'typescript';
 import { create as createTypeScriptServicePlugins } from 'volar-service-typescript';
 import type { URI } from 'vscode-uri';
