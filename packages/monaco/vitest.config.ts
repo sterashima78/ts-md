@@ -11,9 +11,7 @@ const optimizedBrowserDependencies = [
   '@volar/language-service',
   '@volar/monaco/lib/editor.js',
   '@volar/monaco/lib/languages.js',
-  '@volar/monaco/worker',
   'monaco-editor',
-  'monaco-editor/editor/editor.worker',
   'react',
   'react-dom',
   'react/jsx-runtime',
@@ -29,6 +27,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: optimizedBrowserDependencies,
+    exclude: [
+      '@volar/monaco/worker',
+      'monaco-editor/esm/vs/editor/editor.worker',
+    ],
   },
   server: {
     headers: {
