@@ -195,9 +195,10 @@ function parseTsMdModules(markdown: string, uri: string): TsMdModule[] {
 
   while (offset <= markdown.length) {
     const line = readLine(markdown, offset);
-    const opening = /^ {0,3}(`{3,}|~{3,})[ \t]*(ts|tsx)(?:[ \t]+(.+?))?[ \t]*$/.exec(
-      line.text,
-    );
+    const opening =
+      /^ {0,3}(`{3,}|~{3,})[ \t]*(ts|tsx)(?:[ \t]+(.+?))?[ \t]*$/.exec(
+        line.text,
+      );
     if (!opening) {
       if (line.nextOffset === undefined) break;
       offset = line.nextOffset;
@@ -208,7 +209,9 @@ function parseTsMdModules(markdown: string, uri: string): TsMdModule[] {
     const language = opening[2] as 'ts' | 'tsx';
     const name = opening[3]?.trim() ?? '';
     if (!name) {
-      throw new Error(`${uri}:${line.start}: TypeScript code fence requires a module name`);
+      throw new Error(
+        `${uri}:${line.start}: TypeScript code fence requires a module name`,
+      );
     }
     if (!moduleNamePattern.test(name)) {
       throw new Error(`${uri}:${line.start}: Invalid module name '${name}'`);
@@ -263,7 +266,8 @@ function readLine(source: string, start: number) {
       nextOffset: undefined,
     };
   }
-  const end = newline > start && source[newline - 1] === '\r' ? newline - 1 : newline;
+  const end =
+    newline > start && source[newline - 1] === '\r' ? newline - 1 : newline;
   return {
     start,
     text: source.slice(start, end),
@@ -322,10 +326,7 @@ function resolveTsMdImport(specifier: string, importer: string) {
   const marker = '.ts.md:';
   const markerIndex = specifier.lastIndexOf(marker);
   if (markerIndex !== -1) {
-    const documentSpecifier = specifier.slice(
-      0,
-      markerIndex + '.ts.md'.length,
-    );
+    const documentSpecifier = specifier.slice(0, markerIndex + '.ts.md'.length);
     const moduleName = specifier.slice(markerIndex + marker.length);
     if (!documentSpecifier || !moduleName) return;
     return {
