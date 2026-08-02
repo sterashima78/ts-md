@@ -10,8 +10,7 @@ const rawTypeScriptLibraries = import.meta.glob(
   },
 ) as Record<string, string>;
 
-export const defaultTypeScriptLibraryFileName =
-  '/lib.es2022.full.d.ts';
+export const defaultTypeScriptLibraryFileName = '/lib.es2022.full.d.ts';
 
 export const defaultTypeScriptLibrarySource = Object.entries(
   rawTypeScriptLibraries,
