@@ -23,11 +23,17 @@
     "@sterashima78/ts-md-tsc": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "@volar/language-service": "catalog:",
     "jsdom": "catalog:",
+    "playwright": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "volar-service-typescript": "catalog:",
+    "vscode-uri": "catalog:"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
