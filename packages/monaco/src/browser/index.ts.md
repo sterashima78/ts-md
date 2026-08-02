@@ -1,18 +1,23 @@
 # Activating TS-MD in a browser editor
 
-Importing the browser entry performs the two operations required before a `.ts.md` model can receive language features: register the language identifier with Monaco and start the Volar worker configured for TS-MD.
+Importing the browser entry performs the operations required before a `.ts.md` model can receive language features: register the language identifier and start the Volar worker configured by the host's `MonacoEnvironment.getWorker` implementation.
 
-Worker creation remains exported for hosts that need to control startup explicitly. The default side effect keeps the package's existing one-import setup behavior.
+Worker creation remains exported for hosts that need to pass a bundled worker explicitly or control its lifecycle. The default side effect keeps the package's existing one-import setup behavior.
 
 ```ts main
 import * as monaco from 'monaco-editor';
 import { createTsMdWorker } from './createWorker';
 
-export { createTsMdWorker } from './createWorker';
+export {
+  createTsMdWorker,
+  registerTsMdLanguage,
+  TS_MD_LANGUAGE_ID,
+  type TsMdWorkerOptions,
+  type TsMdWorkerRegistration,
+} from './createWorker';
 
-monaco.languages.register({ id: 'ts-md', extensions: ['.ts.md'] });
-
-createTsMdWorker(monaco).then(() => {
+const registration = createTsMdWorker(monaco);
+registration.ready.then(() => {
   console.log('TS-MD language worker ready');
 });
 ```
