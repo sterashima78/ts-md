@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest run src/workers/ts-md-language.test.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "catalog:",
