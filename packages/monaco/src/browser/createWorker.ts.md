@@ -2,7 +2,7 @@
 
 Monaco separates the editor UI from language features. The editor owns text models, while Volar exposes completion, diagnostics, navigation, and the other language-service capabilities through a web worker.
 
-`createTsMdWorker` joins those two sides for every model whose language is `ts-md`. The caller remains responsible for routing Monaco's `ts-md` worker label to a worker module; this keeps the library independent from a particular bundler while allowing Vite, webpack, and other environments to choose their own worker-loading strategy.
+`createTsMdWorker` joins those two sides for every model whose language is `ts-md`. Monaco 0.56 creates its worker bridge from an actual `Worker` rather than an AMD module identifier. A host can therefore pass a bundled worker explicitly, or provide `MonacoEnvironment.getWorker` as it already does for Monaco's other workers.
 
 ## Registering the language
 
@@ -40,18 +40,53 @@ export function registerTsMdLanguage(m: typeof monaco) {
 }
 ```
 
+## Resolving the bundled worker
+
+The explicit worker option is useful for tests and hosts that do not install a global Monaco environment. The fallback follows Monaco's own worker-loader contract and asks the environment for the worker associated with the `ts-md` label.
+
+```ts worker
+import { TS_MD_LANGUAGE_ID } from ':language';
+
+export interface TsMdWorkerOptions {
+  readonly worker?: Worker | Promise<Worker>;
+}
+
+interface MonacoWorkerEnvironment {
+  getWorker?(
+    moduleId: string,
+    label: string,
+  ): Worker | Promise<Worker>;
+}
+
+function resolveWorker(options: TsMdWorkerOptions) {
+  if (options.worker) return options.worker;
+
+  const environment = (
+    globalThis as typeof globalThis & {
+      MonacoEnvironment?: MonacoWorkerEnvironment;
+    }
+  ).MonacoEnvironment;
+  if (!environment?.getWorker) {
+    throw new Error(
+      'TS-MD requires options.worker or MonacoEnvironment.getWorker.',
+    );
+  }
+
+  return environment.getWorker('workerMain.js', TS_MD_LANGUAGE_ID);
+}
+```
+
 ## Owning the worker lifecycle
 
 Volar registers Monaco providers asynchronously because it first reads capabilities from the worker. The returned registration therefore exposes a `ready` promise for callers that need to wait before invoking a language feature, while `dispose` remains safe both before and after provider registration completes.
 
 ```ts main
-import {
-  activateMarkers,
-  registerProviders,
-} from '@volar/monaco';
+import { activateMarkers } from '@volar/monaco/lib/editor.js';
+import { registerProviders } from '@volar/monaco/lib/languages.js';
 import type { WorkerLanguageService } from '@volar/monaco/worker';
 import type * as monaco from 'monaco-editor';
 import { TS_MD_LANGUAGE_ID, registerTsMdLanguage } from ':language';
+import { type TsMdWorkerOptions, resolveWorker } from ':worker';
 
 export interface TsMdWorkerRegistration extends monaco.IDisposable {
   readonly worker: monaco.editor.MonacoWebWorker<WorkerLanguageService>;
@@ -60,12 +95,12 @@ export interface TsMdWorkerRegistration extends monaco.IDisposable {
 
 export function createTsMdWorker(
   m: typeof monaco,
+  options: TsMdWorkerOptions = {},
 ): TsMdWorkerRegistration {
   registerTsMdLanguage(m);
 
   const worker = m.editor.createWebWorker<WorkerLanguageService>({
-    moduleId: 'vs/language/ts-md/tsMdWorker',
-    label: TS_MD_LANGUAGE_ID,
+    worker: resolveWorker(options),
   });
   const getSyncedUris = () =>
     m.editor
@@ -88,7 +123,7 @@ export function createTsMdWorker(
     [TS_MD_LANGUAGE_ID],
     getSyncedUris,
     m.languages,
-  ).then((registration) => {
+  ).then((registration: monaco.IDisposable) => {
     if (disposed) {
       registration.dispose();
       return;
