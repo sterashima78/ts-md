@@ -1,3 +1,4 @@
+import { loader } from '@monaco-editor/react';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
@@ -25,6 +26,8 @@ const source = [
 ].join('\n');
 
 beforeAll(() => {
+  loader.config({ monaco });
+
   const scope = globalThis as typeof globalThis & {
     MonacoEnvironment?: {
       getWorker(moduleId: string, label: string): Worker;
