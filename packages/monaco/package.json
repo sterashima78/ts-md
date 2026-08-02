@@ -25,6 +25,7 @@
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/browser-playwright": "catalog:",
+    "@volar/language-core": "catalog:",
     "@volar/language-service": "catalog:",
     "jsdom": "catalog:",
     "playwright": "catalog:",
