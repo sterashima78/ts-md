@@ -1,20 +1,19 @@
+import {
+  createTsMdEditorPlugin,
+  resolveTsMdFileName,
+} from '@sterashima78/ts-md-ls-core';
 import type {
   LanguagePlugin,
   LanguageServiceEnvironment,
   ProjectContext,
 } from '@volar/language-service';
 import { createTypeScriptWorkerLanguageService } from '@volar/monaco/worker';
-import * as worker from 'monaco-editor/esm/vs/editor/editor.worker';
 import type * as monaco from 'monaco-editor';
+import * as worker from 'monaco-editor/esm/vs/editor/editor.worker';
 import ts from 'typescript';
 import { create as createTypeScriptServicePlugins } from 'volar-service-typescript';
 import type { URI } from 'vscode-uri';
 import { URI as Uri } from 'vscode-uri';
-
-import {
-  createTsMdEditorPlugin,
-  resolveTsMdFileName,
-} from '@sterashima78/ts-md-ls-core';
 
 self.onmessage = () => {
   worker.initialize((workerContext: monaco.worker.IWorkerContext) => {
