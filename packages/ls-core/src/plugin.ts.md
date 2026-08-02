@@ -134,6 +134,8 @@ import {
 } from ':serviceScripts';
 import { resolveTsMdFileName } from ':resolveTsMdFileName';
 
+export { resolveTsMdFileName };
+
 type TsMdPlugin = LanguagePlugin<unknown, TsMdVirtualFile> & {
   resolveFileName(specifier: string, fromFile: unknown): string | undefined;
 };
