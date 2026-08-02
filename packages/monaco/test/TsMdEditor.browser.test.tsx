@@ -63,9 +63,7 @@ describe('Monaco browser integration', () => {
     await waitFor(() => expect(editor).toBeDefined(), { timeout: 10_000 });
     expect(document.querySelector('.monaco-editor')).not.toBeNull();
     expect(editor?.getModel()?.getLanguageId()).toBe('ts-md');
-    expect(editor?.getModel()?.uri.toString()).toBe(
-      'file:///component.ts.md',
-    );
+    expect(editor?.getModel()?.uri.toString()).toBe('file:///component.ts.md');
   });
 
   it('shows TypeScript IntelliSense from another code block', async () => {
