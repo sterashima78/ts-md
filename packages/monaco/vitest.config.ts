@@ -7,21 +7,12 @@ import { tsMdBootstrapPlugin } from '../../scripts/ts-md-bootstrap-plugin.ts';
 const optimizedBrowserDependencies = [
   '@monaco-editor/react',
   '@testing-library/react',
-  '@volar/language-core',
-  '@volar/language-service',
   '@volar/monaco/lib/editor.js',
   '@volar/monaco/lib/languages.js',
-  '@volar/monaco/worker',
   'monaco-editor',
-  'monaco-editor/editor/editor.worker',
   'react',
   'react-dom',
   'react/jsx-runtime',
-  'satteri',
-  'ts-morph',
-  'typescript',
-  'volar-service-typescript',
-  'vscode-uri',
 ];
 
 export default defineConfig({
