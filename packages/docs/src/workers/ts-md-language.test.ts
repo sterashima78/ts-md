@@ -36,7 +36,7 @@ describe('Monaco playground TypeScript libraries', () => {
     const source = [
       'const values = [1, 2, 3].map((value) => value * 2);',
       "document.querySelector('body');",
-      'console.log(await Promise.resolve(values));',
+      'Promise.resolve(values).then((resolved) => console.log(resolved));',
     ].join('\n');
     const files = new Map([
       [fileName, source],
