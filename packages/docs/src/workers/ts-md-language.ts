@@ -12,12 +12,17 @@ import { URI } from 'vscode-uri';
 const virtualModuleMarker = '.__tsmd__.';
 const moduleNamePattern = /^[a-zA-Z0-9._-]+$/;
 
-interface TsMdModule {
+export interface TsMdModule {
   name: string;
   language: 'ts' | 'tsx';
   code: string;
   start: number;
   end: number;
+}
+
+interface FenceOpening {
+  fence: string;
+  info: string;
 }
 
 const typescriptFeatures = {
@@ -188,72 +193,91 @@ function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
   };
 }
 
-function parseTsMdModules(markdown: string, uri: string): TsMdModule[] {
+export function parseTsMdModules(
+  markdown: string,
+  uri: string,
+): TsMdModule[] {
   const modules: TsMdModule[] = [];
   const names = new Set<string>();
   let offset = 0;
 
   while (offset <= markdown.length) {
     const line = readLine(markdown, offset);
-    const opening =
-      /^ {0,3}(`{3,}|~{3,})[ \t]*(ts|tsx)(?:[ \t]+(.+?))?[ \t]*$/.exec(
-        line.text,
-      );
+    const opening = parseFenceOpening(line.text);
     if (!opening) {
       if (line.nextOffset === undefined) break;
       offset = line.nextOffset;
       continue;
     }
 
-    const fence = opening[1];
-    const language = opening[2] as 'ts' | 'tsx';
-    const name = opening[3]?.trim() ?? '';
-    if (!name) {
-      throw new Error(
-        `${uri}:${line.start}: TypeScript code fence requires a module name`,
-      );
-    }
-    if (!moduleNamePattern.test(name)) {
-      throw new Error(`${uri}:${line.start}: Invalid module name '${name}'`);
-    }
-    if (names.has(name)) {
-      throw new Error(`${uri}:${line.start}: Duplicate module '${name}'`);
-    }
-    names.add(name);
-
     const codeStart = line.nextOffset ?? markdown.length;
-    const closingPattern = new RegExp(
-      `^ {0,3}${escapeRegExp(fence[0])}{${fence.length},}[ \\t]*$`,
-    );
-    let cursor = codeStart;
-    let codeEnd = markdown.length;
-    let nextOffset: number | undefined;
+    const closing = findClosingFence(markdown, codeStart, opening.fence);
+    const [language, ...metadata] = opening.info.split(/[ \t]+/);
 
-    while (cursor <= markdown.length) {
-      const candidate = readLine(markdown, cursor);
-      if (closingPattern.test(candidate.text)) {
-        codeEnd = trimLineBreakBefore(markdown, candidate.start);
-        nextOffset = candidate.nextOffset;
-        break;
+    if (language === 'ts' || language === 'tsx') {
+      const name = metadata.join(' ').trim();
+      if (!name) {
+        throw new Error(
+          `${uri}:${line.start}: TypeScript code fence requires a module name`,
+        );
       }
-      if (candidate.nextOffset === undefined) break;
-      cursor = candidate.nextOffset;
+      if (!moduleNamePattern.test(name)) {
+        throw new Error(`${uri}:${line.start}: Invalid module name '${name}'`);
+      }
+      if (names.has(name)) {
+        throw new Error(`${uri}:${line.start}: Duplicate module '${name}'`);
+      }
+      names.add(name);
+
+      const code = markdown.slice(codeStart, closing.codeEnd);
+      modules.push({
+        name,
+        language,
+        code,
+        start: codeStart,
+        end: codeStart + code.length,
+      });
     }
 
-    const code = markdown.slice(codeStart, codeEnd);
-    modules.push({
-      name,
-      language,
-      code,
-      start: codeStart,
-      end: codeStart + code.length,
-    });
-
-    if (nextOffset === undefined) break;
-    offset = nextOffset;
+    if (closing.nextOffset === undefined) break;
+    offset = closing.nextOffset;
   }
 
   return modules;
+}
+
+function parseFenceOpening(line: string): FenceOpening | undefined {
+  const match = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+  if (!match) return;
+
+  const fence = match[1];
+  const info = match[2].trim();
+  if (fence[0] === '`' && info.includes('`')) return;
+  return { fence, info };
+}
+
+function findClosingFence(markdown: string, codeStart: number, fence: string) {
+  const closingPattern = new RegExp(
+    `^ {0,3}${escapeRegExp(fence[0])}{${fence.length},}[ \\t]*$`,
+  );
+  let cursor = codeStart;
+
+  while (cursor <= markdown.length) {
+    const candidate = readLine(markdown, cursor);
+    if (closingPattern.test(candidate.text)) {
+      return {
+        codeEnd: trimLineBreakBefore(markdown, candidate.start),
+        nextOffset: candidate.nextOffset,
+      };
+    }
+    if (candidate.nextOffset === undefined) break;
+    cursor = candidate.nextOffset;
+  }
+
+  return {
+    codeEnd: markdown.length,
+    nextOffset: undefined,
+  };
 }
 
 function readLine(source: string, start: number) {
