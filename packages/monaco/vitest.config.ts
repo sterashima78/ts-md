@@ -29,7 +29,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: optimizedBrowserDependencies,
-    exclude: ['satteri', '@bruits/satteri-wasm32-wasi'],
   },
   server: {
     headers: {
