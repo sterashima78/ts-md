@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - agent/update-self-host-packages
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -11,9 +14,14 @@ permissions:
 
 jobs:
   update-lockfile:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.BRANCH_NAME }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
@@ -34,4 +42,4 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add pnpm-lock.yaml
           git commit -m "Update self-host lockfile"
-          git push
+          git push origin "HEAD:${BRANCH_NAME}"
