@@ -9,6 +9,10 @@ export default defineConfig({
       title: 'TS-MD Docs',
       sidebar: [
         {
+          label: 'Guide',
+          items: [{ label: 'Playground', link: '/playground/' }],
+        },
+        {
           label: 'Packages',
           items: [{ autogenerate: { directory: 'packages' } }],
         },
