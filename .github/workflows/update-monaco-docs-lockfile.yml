@@ -1,0 +1,40 @@
+name: update-monaco-docs-lockfile
+
+on:
+  push:
+    branches:
+      - agent/add-monaco-docs-playground
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/add-monaco-docs-playground
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+          cache: pnpm
+      - name: Update lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Commit lockfile
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add pnpm-lock.yaml
+          git commit -m "Update lockfile for Monaco docs playground"
+          git push
