@@ -8,13 +8,7 @@ Worker creation remains exported for hosts that need to pass a bundled worker ex
 import * as monaco from 'monaco-editor';
 import { createTsMdWorker } from './createWorker';
 
-export {
-  createTsMdWorker,
-  registerTsMdLanguage,
-  TS_MD_LANGUAGE_ID,
-  type TsMdWorkerOptions,
-  type TsMdWorkerRegistration,
-} from './createWorker';
+export { createTsMdWorker } from './createWorker';
 
 const registration = createTsMdWorker(monaco);
 registration.ready.then(() => {
