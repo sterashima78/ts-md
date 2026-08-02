@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@astrojs/starlight": "catalog:",
-    "@sterashima78/ts-md-ls-core": "workspace:*",
     "@volar/language-service": "catalog:",
     "@volar/monaco": "catalog:",
     "astro": "catalog:",
