@@ -11,6 +11,7 @@ import { create as createTypeScriptServicePlugins } from 'volar-service-typescri
 import type { URI } from 'vscode-uri';
 import { URI as Uri } from 'vscode-uri';
 import { resolveTsMdFileName, tsMdEditorPlugin } from './ts-md-language';
+import { installTypeScriptLibraries } from './typescript-libs';
 
 self.onmessage = () => {
   worker.initialize((workerContext: monaco.worker.IWorkerContext) => {
@@ -38,6 +39,7 @@ self.onmessage = () => {
       languagePlugins: [tsMdEditorPlugin as unknown as LanguagePlugin<URI>],
       languageServicePlugins: createTypeScriptServicePlugins(ts),
       setup({ project }) {
+        installTypeScriptLibraries(project);
         installTsMdModuleResolver(project);
       },
     });
