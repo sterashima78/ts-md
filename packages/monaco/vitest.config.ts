@@ -1,3 +1,5 @@
+import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 import { transformWithEsbuild } from 'vite';
 import { defineConfig } from 'vitest/config';
 import { tsMdBootstrapPlugin } from '../../scripts/ts-md-bootstrap-plugin.ts';
@@ -17,9 +19,35 @@ export default defineConfig({
         });
       },
     },
+    react(),
   ],
   test: {
-    globals: true,
-    environment: 'jsdom',
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          globals: true,
+          environment: 'jsdom',
+          include: ['test/**/*.test.ts', 'test/**/*.test.tsx'],
+          exclude: ['test/**/*.browser.test.ts', 'test/**/*.browser.test.tsx'],
+        },
+      },
+      {
+        test: {
+          name: 'browser',
+          globals: true,
+          include: [
+            'test/**/*.browser.test.ts',
+            'test/**/*.browser.test.tsx',
+          ],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+    ],
   },
 });
