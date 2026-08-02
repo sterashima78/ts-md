@@ -20,9 +20,10 @@
     "@sterashima78/ts-md-core": "workspace:*",
     "@sterashima78/ts-md-loader": "workspace:*",
     "@sterashima78/ts-md-tsc": "workspace:*",
-    "commander": "catalog:",
-    "fast-glob": "catalog:",
     "tsx": "catalog:"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "devDependencies": {
     "@sterashima78/ts-md-unplugin": "catalog:",

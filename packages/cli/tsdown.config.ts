@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: { index: 'src/index.ts.md' },
-  target: 'node18',
+  target: 'node24',
   format: ['esm'],
   shims: false,
   clean: true,
@@ -11,8 +11,6 @@ export default defineConfig({
   outExtensions: () => ({ js: '.js' }),
   deps: {
     neverBundle: [
-      'commander',
-      'fast-glob',
       '@sterashima78/ts-md-tsc',
       '@sterashima78/ts-md-core',
       '@sterashima78/ts-md-loader',

@@ -7,10 +7,14 @@ pattern が省略された場合は current working directory 以下のすべて
 ## From patterns to files
 
 ```ts expandGlobs
-import fg from 'fast-glob';
+import { glob } from 'node:fs/promises';
+import path from 'node:path';
 
 export async function expandGlobs(globs: string[]): Promise<string[]> {
-  return fg(globs.length ? globs : ['**/*.ts.md'], { absolute: true });
+  const entries = await Array.fromAsync(
+    glob(globs.length ? globs : ['**/*.ts.md']),
+  );
+  return entries.map((entry) => path.resolve(entry));
 }
 ```
 
@@ -40,6 +44,25 @@ describe('expandGlobs', () => {
     await fs.writeFile(file, '', 'utf8');
     const files = await expandGlobs([`${tmp}/*.ts.md`]);
     expect(files).toEqual([file]);
+    await fs.rm(tmp, { recursive: true, force: true });
+  });
+
+  it('expands multiple patterns', async () => {
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'globs-'));
+    const first = path.join(tmp, 'first.ts.md');
+    const second = path.join(tmp, 'nested', 'second.ts.md');
+    await fs.mkdir(path.dirname(second));
+    await Promise.all([
+      fs.writeFile(first, '', 'utf8'),
+      fs.writeFile(second, '', 'utf8'),
+    ]);
+
+    const files = await expandGlobs([
+      `${tmp}/*.ts.md`,
+      `${tmp}/**/second.ts.md`,
+    ]);
+    expect(files).toHaveLength(2);
+    expect(files).toEqual(expect.arrayContaining([first, second]));
     await fs.rm(tmp, { recursive: true, force: true });
   });
 });
