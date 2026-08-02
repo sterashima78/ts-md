@@ -15,11 +15,9 @@ vi.mock('../src/browser/createWorker', () => ({
 }));
 
 vi.mock('@monaco-editor/react', () => ({
-  default: vi.fn(
-    ({ language, path }: { language?: string; path?: string }) => (
-      <div data-language={language} data-path={path} data-testid="editor" />
-    ),
-  ),
+  default: vi.fn(({ language, path }: { language?: string; path?: string }) => (
+    <div data-language={language} data-path={path} data-testid="editor" />
+  )),
   useMonaco: vi.fn(() => mocks.monaco),
 }));
 
@@ -35,7 +33,9 @@ describe('TsMdEditor', () => {
   it('renders a ts-md model and starts the language worker', async () => {
     const rendered = render(<TsMdEditor value="" />);
 
-    await waitFor(() => expect(createTsMdWorker).toHaveBeenCalledWith(mocks.monaco));
+    await waitFor(() =>
+      expect(createTsMdWorker).toHaveBeenCalledWith(mocks.monaco),
+    );
     const editor = rendered.getByTestId('editor');
     expect(editor.dataset.language).toBe('ts-md');
     expect(editor.dataset.path).toMatch(/^file:\/\/\/ts-md-.+\.ts\.md$/);
