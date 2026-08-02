@@ -29,7 +29,7 @@ export default defineConfig({
     include: optimizedBrowserDependencies,
     exclude: [
       '@volar/monaco/worker',
-      'monaco-editor/esm/vs/editor/editor.worker',
+      'monaco-editor/esm/vs/editor/editor.worker.start',
     ],
   },
   server: {
