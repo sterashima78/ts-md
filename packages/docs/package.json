@@ -9,8 +9,15 @@
   },
   "dependencies": {
     "@astrojs/starlight": "catalog:",
+    "@sterashima78/ts-md-ls-core": "workspace:*",
+    "@volar/language-service": "catalog:",
+    "@volar/monaco": "catalog:",
     "astro": "catalog:",
     "fast-glob": "catalog:",
-    "sharp": "catalog:"
+    "monaco-editor": "catalog:",
+    "sharp": "catalog:",
+    "typescript": "catalog:",
+    "volar-service-typescript": "catalog:",
+    "vscode-uri": "catalog:"
   }
 }
