@@ -1,9 +1,6 @@
 name: prepare-monaco-browser-tests
 
 on:
-  push:
-    branches:
-      - test/monaco-browser-intellisense
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +9,7 @@ permissions:
   packages: read
 
 concurrency:
-  group: prepare-monaco-browser-tests-${{ github.event_name }}-${{ github.ref }}
+  group: prepare-monaco-browser-tests-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -34,6 +31,7 @@ jobs:
       - name: Install dependencies and update lockfile
         run: pnpm install --no-frozen-lockfile
       - name: Commit updated lockfile
+        if: github.event_name == 'pull_request'
         run: |
           if git diff --quiet -- pnpm-lock.yaml; then
             exit 0
@@ -42,7 +40,9 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add pnpm-lock.yaml
           git commit -m "chore: update pnpm lockfile"
-          git push
+          git fetch origin "${GITHUB_HEAD_REF}"
+          git rebase "origin/${GITHUB_HEAD_REF}"
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
       - name: Upload lockfile
         uses: actions/upload-artifact@v4
         with:
