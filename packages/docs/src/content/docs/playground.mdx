@@ -1,0 +1,20 @@
+---
+title: Playground
+description: Monaco Editor 上で TS-MD の補完、型情報、diagnostics を試します。
+---
+
+import TsMdPlayground from '../../components/TsMdPlayground.astro';
+
+この playground は `.ts.md` document を Monaco Editor で直接編集し、TS-MD の language plugin と TypeScript language service を Web Worker 内で実行します。
+
+<TsMdPlayground />
+
+## 試せる機能
+
+- `values` module の `User` 型が `main` module に引き継がれます
+- `user.` の位置で補完候補を表示できます
+- symbol に pointer を合わせると型情報を確認できます
+- 存在しない property や型の不一致は diagnostics として表示されます
+- `:values` のような document 内 module import を解決できます
+
+「補完を表示」を押すと `user.` の位置へ移動して候補を開きます。コードを編集して diagnostics や hover の変化も確認できます。
