@@ -160,23 +160,19 @@ class TestTsMdVirtualFile implements VirtualCode {
 }
 
 function extractMainModule(markdown: string) {
-  const opening = /^(`{3,}|~{3,})(ts|tsx)\s+main\s*$(?:\r?\n)?/m.exec(
-    markdown,
-  );
+  const opening = /^(`{3,}|~{3,})(ts|tsx)\s+main\s*$(?:\r?\n)?/m.exec(markdown);
   if (!opening) return;
 
   const start = opening.index + opening[0].length;
-  const closing = new RegExp(
-    `^${escapeRegExp(opening[1])}\\s*$`,
-    'm',
-  ).exec(markdown.slice(start));
+  const closing = new RegExp(`^${escapeRegExp(opening[1])}\\s*$`, 'm').exec(
+    markdown.slice(start),
+  );
   if (!closing) return;
 
   return {
     code: markdown.slice(start, start + closing.index),
     start,
-    scriptKind:
-      opening[2] === 'tsx' ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    scriptKind: opening[2] === 'tsx' ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   };
 }
 
