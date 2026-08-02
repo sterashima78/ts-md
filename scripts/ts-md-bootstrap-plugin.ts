@@ -6,6 +6,11 @@ interface MainModule {
   moduleType: 'ts' | 'tsx';
 }
 
+function getFileName(id: string) {
+  const queryIndex = id.indexOf('?');
+  return queryIndex === -1 ? id : id.slice(0, queryIndex);
+}
+
 function extractMainModule(markdown: string, fileName: string): MainModule {
   const lines = markdown.split(/\r?\n/);
   let main: MainModule | undefined;
@@ -47,18 +52,23 @@ export function tsMdBootstrapPlugin() {
     enforce: 'pre' as const,
 
     resolveId(source: string, importer?: string) {
-      if (!source.endsWith('.ts.md')) return;
-      if (path.isAbsolute(source)) return source;
-      return path.resolve(
-        importer ? path.dirname(importer) : process.cwd(),
-        source,
+      const fileName = getFileName(source);
+      if (!fileName.endsWith('.ts.md')) return;
+      if (path.isAbsolute(fileName)) return source;
+      const resolved = path.resolve(
+        importer ? path.dirname(getFileName(importer)) : process.cwd(),
+        fileName,
       );
+      return source.slice(fileName.length)
+        ? `${resolved}${source.slice(fileName.length)}`
+        : resolved;
     },
 
     async load(id: string) {
-      if (!id.endsWith('.ts.md')) return;
-      const markdown = await fs.readFile(id, 'utf8');
-      return extractMainModule(markdown, id);
+      const fileName = getFileName(id);
+      if (!fileName.endsWith('.ts.md')) return;
+      const markdown = await fs.readFile(fileName, 'utf8');
+      return extractMainModule(markdown, fileName);
     },
   };
 }
