@@ -25,9 +25,7 @@ function extractModule(
   let matchedModule: SourceModule | undefined;
 
   for (let index = 0; index < lines.length; index++) {
-    const opening = lines[index].match(
-      /^(`{3,}|~{3,})(ts|tsx)\s+([^\s]+)\s*$/,
-    );
+    const opening = lines[index].match(/^(`{3,}|~{3,})(ts|tsx)\s+([^\s]+)\s*$/);
     if (!opening) continue;
 
     const marker = opening[1];
@@ -57,9 +55,7 @@ function extractModule(
   }
 
   if (!matchedModule) {
-    throw new Error(
-      `Module '${expectedModuleName}' not found in ${fileName}`,
-    );
+    throw new Error(`Module '${expectedModuleName}' not found in ${fileName}`);
   }
   return matchedModule;
 }
