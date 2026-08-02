@@ -10,7 +10,7 @@ import type {
 } from '@volar/language-service';
 import { createTypeScriptWorkerLanguageService } from '@volar/monaco/worker';
 import type * as monaco from 'monaco-editor';
-import * as editorWorker from 'monaco-editor/esm/vs/editor/editor.worker';
+import { initialize } from 'monaco-editor/esm/vs/editor/editor.worker.start';
 import ts from 'typescript';
 import { create as createTypeScriptServicePlugins } from 'volar-service-typescript';
 import type { URI } from 'vscode-uri';
@@ -81,7 +81,7 @@ const testTsMdLanguagePlugin: LanguagePlugin<URI, TestTsMdVirtualFile> = {
 };
 
 self.onmessage = () => {
-  editorWorker.initialize((workerContext: monaco.worker.IWorkerContext) => {
+  initialize((workerContext: monaco.worker.IWorkerContext) => {
     const env: LanguageServiceEnvironment = {
       workspaceFolders: [Uri.parse('file:///')],
     };
