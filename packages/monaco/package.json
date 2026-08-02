@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && ts-md-tsc -p tsconfig.json --emitDeclarationOnly --rootDir src --outDir dist",
     "typecheck": "ts-md-tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
