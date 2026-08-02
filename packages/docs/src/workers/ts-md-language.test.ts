@@ -34,7 +34,7 @@ describe('Monaco playground TypeScript libraries', () => {
   it('ES2022 と DOM の標準 API を型検査できる', () => {
     const fileName = '/playground.ts';
     const source = [
-      "const values = [1, 2, 3].map((value) => value * 2);",
+      'const values = [1, 2, 3].map((value) => value * 2);',
       "document.querySelector('body');",
       'console.log(await Promise.resolve(values));',
     ].join('\n');
