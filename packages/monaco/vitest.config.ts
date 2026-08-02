@@ -1,5 +1,5 @@
-import { tsMdBootstrapPlugin } from '../../scripts/ts-md-bootstrap-plugin.ts';
 import { defineConfig } from 'vitest/config';
+import { tsMdBootstrapPlugin } from '../../scripts/ts-md-bootstrap-plugin.ts';
 
 export default defineConfig({
   plugins: [tsMdBootstrapPlugin()],
