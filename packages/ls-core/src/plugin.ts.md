@@ -120,7 +120,7 @@ plugin 本体は lifecycle の接着に集中します。
 editor 用と compiler 用で別実装を持たず、同じ plugin object を公開します。
 
 ```ts main
-import type { LanguagePlugin, VirtualCode } from '@volar/language-core';
+import type { LanguagePlugin } from '@volar/language-core';
 import { forEachEmbeddedCode } from '@volar/language-core';
 import type { TypeScriptExtraServiceScript } from '@volar/typescript';
 import ts from 'typescript';
