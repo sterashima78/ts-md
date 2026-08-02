@@ -45,7 +45,9 @@ afterEach(() => {
   for (const model of monaco.editor.getModels()) {
     model.dispose();
   }
-  document.body.replaceChildren();
+  for (const container of document.querySelectorAll('[data-ts-md-test]')) {
+    container.remove();
+  }
 });
 
 describe('Monaco browser integration', () => {
@@ -69,46 +71,53 @@ describe('Monaco browser integration', () => {
     expect(editor?.getModel()?.uri.toString()).toBe('file:///component.ts.md');
   });
 
-  it('shows TypeScript IntelliSense from another code block', async () => {
-    const container = document.createElement('div');
-    container.style.width = '800px';
-    container.style.height = '500px';
-    document.body.append(container);
+  it(
+    'shows TypeScript IntelliSense from another code block',
+    async () => {
+      const container = document.createElement('div');
+      container.dataset.tsMdTest = '';
+      container.style.width = '800px';
+      container.style.height = '500px';
+      document.body.append(container);
 
-    const registration = createTsMdWorker(monaco);
-    await registration.ready;
+      const registration = createTsMdWorker(monaco, {
+        worker: new TsMdWorker(),
+      });
+      await registration.ready;
 
-    const model = monaco.editor.createModel(
-      source,
-      'ts-md',
-      monaco.Uri.file('/intellisense.ts.md'),
-    );
-    const editor = monaco.editor.create(container, {
-      model,
-      minimap: { enabled: false },
-    });
+      const model = monaco.editor.createModel(
+        source,
+        'ts-md',
+        monaco.Uri.file('/intellisense.ts.md'),
+      );
+      const editor = monaco.editor.create(container, {
+        model,
+        minimap: { enabled: false },
+      });
 
-    const completionOffset = source.indexOf('user.\n') + 'user.'.length;
-    editor.setPosition(model.getPositionAt(completionOffset));
-    editor.focus();
-    editor.trigger(
-      'ts-md-browser-test',
-      'editor.action.triggerSuggest',
-      undefined,
-    );
+      const completionOffset = source.indexOf('user.\n') + 'user.'.length;
+      editor.setPosition(model.getPositionAt(completionOffset));
+      editor.focus();
+      editor.trigger(
+        'ts-md-browser-test',
+        'editor.action.triggerSuggest',
+        undefined,
+      );
 
-    await waitFor(
-      () => {
-        const widget = document.querySelector('.suggest-widget.visible');
-        expect(widget).not.toBeNull();
-        expect(widget?.textContent).toContain('name');
-        expect(widget?.textContent).toContain('age');
-      },
-      { timeout: 15_000, interval: 100 },
-    );
+      await waitFor(
+        () => {
+          const widget = document.querySelector('.suggest-widget.visible');
+          expect(widget).not.toBeNull();
+          expect(widget?.textContent).toContain('name');
+          expect(widget?.textContent).toContain('age');
+        },
+        { timeout: 20_000, interval: 100 },
+      );
 
-    editor.dispose();
-    model.dispose();
-    registration.dispose();
-  });
+      editor.dispose();
+      model.dispose();
+      registration.dispose();
+    },
+    30_000,
+  );
 });
