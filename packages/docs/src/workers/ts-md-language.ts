@@ -193,10 +193,7 @@ function createDocumentServiceCode(root: TsMdVirtualFile): VirtualCode {
   };
 }
 
-export function parseTsMdModules(
-  markdown: string,
-  uri: string,
-): TsMdModule[] {
+export function parseTsMdModules(markdown: string, uri: string): TsMdModule[] {
   const modules: TsMdModule[] = [];
   const names = new Set<string>();
   let offset = 0;
