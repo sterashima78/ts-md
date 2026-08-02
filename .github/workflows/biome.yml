@@ -21,6 +21,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm --filter @sterashima78/ts-md-monaco exec playwright install --with-deps chromium
       - name: Run Lint
         run: pnpm lint
       - name: Run Type Check
