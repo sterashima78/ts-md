@@ -2,62 +2,168 @@
 
 CLI entrypoint は domain logic を実装せず、command line の形を各 command function へ対応付けます。型検査、tangle、実行の詳細は別 document に置き、この file では利用者が見る command surface と process の終了方法だけを決めます。
 
-## Registering commands
+## Describing parsed commands
 
-`createCli` を関数として公開することで、実際に `process.argv` を parse せずに command 構成を test や他の entrypoint から再利用できます。
+Node.js 標準の `parseArgs` を使い、process を起動せず検証できる command model に変換します。`check` と `run` の後続引数は下位 tool に渡すため、解釈せず元の順序を保ちます。CLI 自身が所有する `tangle` の option だけを厳密に検証します。
 
-`check` と `run` は下位 tool へ未知の option を渡す必要があるため `allowUnknownOption` を使います。`tangle` は CLI 自身が `outDir` を解釈します。
+```ts parseCliArgs
+import { parseArgs } from 'node:util';
 
-```ts createCli
-import { Command } from 'commander';
-import { runCheck } from './commands/check.ts.md';
-import { runTsMd } from './commands/run.ts.md';
-import { runTangle } from './commands/tangle.ts.md';
+export type CliInvocation =
+  | { command: 'help'; subject?: 'check' | 'run' | 'tangle' }
+  | { command: 'check'; args: string[] }
+  | { command: 'run'; entry: string; args: string[] }
+  | { command: 'tangle'; globs: string[]; outDir: string };
 
-export function createCli() {
-  const program = new Command('tsmd');
+export function parseCliArgs(args: string[]): CliInvocation {
+  const topLevel = parseArgs({
+    args,
+    options: {
+      help: { type: 'boolean', short: 'h' },
+    },
+    allowPositionals: true,
+    strict: false,
+  });
+  const command = args[0];
 
-  program
-    .command('check [tscArgs...]')
-    .allowUnknownOption()
-    .description('Type-check a tsconfig project without emitting files')
-    .action((tscArgs: string[]) => {
-      process.exitCode = runCheck(tscArgs);
-    });
+  if (!command || command === '--help' || command === '-h') {
+    return { command: 'help' };
+  }
+  if (command !== 'check' && command !== 'run' && command !== 'tangle') {
+    throw new TypeError(`Unknown command: ${command}`);
+  }
 
-  program
-    .command('tangle [globs...]')
-    .option('-o, --outDir <dir>', 'output directory', 'dist')
-    .description('Write each .ts.md module to a TypeScript file')
-    .action((globs: string[], options: { outDir: string }) =>
-      runTangle(globs, options.outDir),
-    );
+  const rest = args.slice(1);
+  if (topLevel.values.help) {
+    return {
+      command: 'help',
+      subject: command,
+    };
+  }
 
-  program
-    .command('run <entry>')
-    .allowUnknownOption()
-    .description('Execute a .ts.md main or named module')
-    .action((entry: string, _options: unknown, command: Command) => {
-      const rest =
-        command.parent?.args.slice(command.parent.args.indexOf('run') + 2) ?? [];
-      runTsMd(entry, rest);
-    });
+  if (command === 'check') return { command, args: rest };
 
-  return program;
+  if (command === 'run') {
+    const [entry, ...nodeArgs] = rest;
+    if (!entry) throw new TypeError('The run command requires an entry');
+    return { command, entry, args: nodeArgs };
+  }
+
+  const tangle = parseArgs({
+    args: rest,
+    options: {
+      outDir: { type: 'string', short: 'o', default: 'dist' },
+    },
+    allowPositionals: true,
+    strict: true,
+  });
+  return {
+    command,
+    globs: tangle.positionals,
+    outDir: tangle.values.outDir,
+  };
 }
 ```
 
-`run` の entry より後ろにある引数は Node.js で実行される module へ渡すため、Commander の parsed option として消費せず元の引数列から切り出します。
+## Dispatching commands
+
+help text も小さな data として保持し、外部 framework の暗黙的な出力に依存しません。`runCli` は parse 結果を対応する command function へ渡し、終了 status が必要な `check` だけ `process.exitCode` を更新します。
+
+```ts runCli
+import { runCheck } from './commands/check.ts.md';
+import { runTsMd } from './commands/run.ts.md';
+import { runTangle } from './commands/tangle.ts.md';
+import { parseCliArgs } from ':parseCliArgs';
+
+const help = {
+  root: `Usage: tsmd <command> [options]
+
+Commands:
+  check [...tscArgs]              Type-check a tsconfig project
+  run <entry> [...nodeArgs]       Execute a .ts.md module
+  tangle [globs...] [options]     Write modules as TypeScript files`,
+  check: 'Usage: tsmd check [...tscArgs]',
+  run: 'Usage: tsmd run <entry> [...nodeArgs]',
+  tangle: `Usage: tsmd tangle [globs...] [options]
+
+Options:
+  -o, --outDir <dir>              Output directory (default: dist)`,
+};
+
+export async function runCli(args = process.argv.slice(2)) {
+  const invocation = parseCliArgs(args);
+
+  if (invocation.command === 'help') {
+    console.log(invocation.subject ? help[invocation.subject] : help.root);
+    return;
+  }
+  if (invocation.command === 'check') {
+    process.exitCode = runCheck(invocation.args);
+    return;
+  }
+  if (invocation.command === 'run') {
+    await runTsMd(invocation.entry, invocation.args);
+    return;
+  }
+  await runTangle(invocation.globs, invocation.outDir);
+}
+```
 
 ## Executable module
 
-`main` module は package の executable entry です。構成関数を再公開した後、現在の process arguments を parse します。shebang をこの小さな module に閉じ込めることで、command 定義自体は通常の TypeScript function として扱えます。
+`main` module は package の executable entry です。parse error は stack trace ではなく簡潔な message として表示し、失敗 status を設定します。
 
 ```ts main
 #!/usr/bin/env node
-import { createCli } from ':createCli';
+import { runCli } from ':runCli';
 
-export { createCli };
+export { parseCliArgs } from ':parseCliArgs';
+export { runCli };
 
-createCli().parse();
+try {
+  await runCli();
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+}
+
+if (import.meta.vitest) {
+  await import(':parseCliArgs.test');
+}
+```
+
+## Executable examples of argument parsing
+
+下位 tool へ渡す option の順序と、CLI が所有する option の解釈を固定します。
+
+```ts parseCliArgs.test
+import { describe, expect, it } from 'vitest';
+import { parseCliArgs } from ':parseCliArgs';
+
+describe('parseCliArgs', () => {
+  it('preserves compiler arguments', () => {
+    expect(parseCliArgs(['check', '-p', 'tsconfig.json'])).toEqual({
+      command: 'check',
+      args: ['-p', 'tsconfig.json'],
+    });
+  });
+
+  it('separates the run entry from module arguments', () => {
+    expect(parseCliArgs(['run', 'app.ts.md', '--answer', '42'])).toEqual({
+      command: 'run',
+      entry: 'app.ts.md',
+      args: ['--answer', '42'],
+    });
+  });
+
+  it('parses tangle options and globs', () => {
+    expect(
+      parseCliArgs(['tangle', 'src/**/*.ts.md', '--outDir', 'generated']),
+    ).toEqual({
+      command: 'tangle',
+      globs: ['src/**/*.ts.md'],
+      outDir: 'generated',
+    });
+  });
+});
 ```

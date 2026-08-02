@@ -13,7 +13,6 @@
     "@volar/language-service": "catalog:",
     "@volar/monaco": "catalog:",
     "astro": "catalog:",
-    "fast-glob": "catalog:",
     "monaco-editor": "catalog:",
     "sharp": "catalog:",
     "typescript": "catalog:",

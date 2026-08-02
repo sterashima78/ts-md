@@ -1,8 +1,7 @@
-import { promises as fs } from 'node:fs';
+import { glob, readFile } from 'node:fs/promises';
 import { dirname, join, normalize, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Loader } from 'astro/loaders';
-import fg from 'fast-glob';
 
 export function packagesLoader(): Loader {
   const root = new URL('../../..', import.meta.url);
@@ -13,10 +12,10 @@ export function packagesLoader(): Loader {
     name: 'packages-loader',
     async load(ctx) {
       const cwd = fileURLToPath(root);
-      const files = await fg(pattern, { cwd });
+      const files = await Array.fromAsync(glob(pattern, { cwd }));
       for (const entry of files) {
         const absPath = join(cwd, entry);
-        let body = await fs.readFile(absPath, 'utf8');
+        let body = await readFile(absPath, 'utf8');
         body = rewriteLinks(body, entry);
         let title: string | undefined;
         const heading = body.match(/^#\s+(.+?)(?:\r?\n|$)/);
