@@ -58,10 +58,7 @@ describe('packagesLoader', () => {
       'packages/e2e/src/fixtures/error-project/bad.ts.md',
       'packages/e2e/src/fixtures/error-project/completion.ts.md',
     ];
-    const readmeEntries = [
-      'packages/core/README.md',
-      'packages/e2e/README.md',
-    ];
+    const readmeEntries = ['packages/core/README.md', 'packages/e2e/README.md'];
 
     expect(selectPackageDocumentEntries(sourceEntries, readmeEntries)).toEqual([
       'packages/core/README.md',
