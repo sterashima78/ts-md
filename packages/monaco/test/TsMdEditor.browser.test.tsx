@@ -73,8 +73,9 @@ describe('Monaco browser integration', () => {
     container.style.height = '500px';
     document.body.append(container);
 
-    const completionProvider =
-      monaco.languages.registerCompletionItemProvider('ts-md', {
+    const completionProvider = monaco.languages.registerCompletionItemProvider(
+      'ts-md',
+      {
         triggerCharacters: ['.'],
         provideCompletionItems(model, position) {
           const word = model.getWordUntilPosition(position);
@@ -101,7 +102,8 @@ describe('Monaco browser integration', () => {
             ],
           };
         },
-      });
+      },
+    );
 
     const model = monaco.editor.createModel(
       source,
