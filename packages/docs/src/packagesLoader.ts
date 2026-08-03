@@ -94,10 +94,14 @@ export function addModuleTitles(markdown: string): string {
     const match = line.match(/^(\s*)(`{3,}|~{3,})(.*)$/);
     if (!match) return line;
 
-    const [, indentation, fence, rawInfo] = match;
+    const indentation = match[1] ?? '';
+    const fence = match[2];
+    const rawInfo = match[3] ?? '';
+    if (!fence) return line;
+
     if (openFence) {
       if (
-        fence[0] === openFence.marker &&
+        fence.charAt(0) === openFence.marker &&
         fence.length >= openFence.length &&
         rawInfo.trim() === ''
       ) {
@@ -106,11 +110,12 @@ export function addModuleTitles(markdown: string): string {
       return line;
     }
 
-    openFence = { marker: fence[0], length: fence.length };
+    openFence = { marker: fence.charAt(0), length: fence.length };
     const moduleInfo = rawInfo.trim().match(MODULE_INFO_PATTERN);
-    if (!moduleInfo) return line;
+    const language = moduleInfo?.[1];
+    const moduleName = moduleInfo?.[2];
+    if (!language || !moduleName) return line;
 
-    const [, language, moduleName] = moduleInfo;
     return `${indentation}${fence}${language} title="${moduleName}"`;
   });
 }
