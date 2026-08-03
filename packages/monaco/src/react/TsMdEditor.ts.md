@@ -1,8 +1,8 @@
-# Binding the TS-MD worker to a React editor
+# React エディターに TS-MD worker を接続する
 
-The React component renders the actual `Editor` export from `@monaco-editor/react`. The `useMonaco` hook has a different role: it yields the loaded Monaco namespace, which is then used to register TS-MD language features.
+React コンポーネントは、`@monaco-editor/react` が公開する実際の `Editor` コンポーネントを描画します。一方、`useMonaco` フックは読み込み済みの Monaco 名前空間を取得するために使い、そのインスタンスへ TS-MD の言語機能を登録します。
 
-A model path ending in `.ts.md` is essential. Volar identifies TS-MD documents from their file name, so a generic in-memory URI would leave the document outside the TS-MD language plugin even if Monaco's visible language ID were correct.
+モデルのパスが `.ts.md` で終わることは重要です。Volar はファイル名から TS-MD 文書を判定するため、Monaco 上の言語 ID が正しくても、一般的なインメモリ URI では TS-MD の言語プラグインの対象になりません。
 
 ```tsx main
 import Editor, {
