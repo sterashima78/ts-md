@@ -1,7 +1,7 @@
 import { loader } from '@monaco-editor/react';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import * as monaco from 'monaco-editor';
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { createTsMdWorker } from '../src/browser/createWorker';
 import { TsMdEditor } from '../src/react/TsMdEditor';
