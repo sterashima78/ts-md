@@ -22,9 +22,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rollup/pluginutils": "catalog:",
     "@sterashima78/ts-md-core": "workspace:*",
-    "rollup": "catalog:",
     "unplugin": "catalog:"
   },
   "devDependencies": {
