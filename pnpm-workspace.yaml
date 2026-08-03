@@ -10,7 +10,6 @@ catalog:
   '@sterashima78/ts-md-tsc': 0.2.1
   '@sterashima78/ts-md-unplugin': 0.5.0
   '@testing-library/react': 16.3.2
-  '@types/mdast': 4.0.4
   '@types/node': 26.1.2
   '@types/react': 19.2.18
   '@types/vscode': 1.125.0
