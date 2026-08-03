@@ -31,48 +31,44 @@ describe('Monaco playground parser', () => {
 });
 
 describe('Monaco playground TypeScript libraries', () => {
-  it(
-    'ES2022 と DOM の標準 API を型検査できる',
-    () => {
-      const fileName = '/playground.ts';
-      const source = [
-        'const values = [1, 2, 3].map((value) => value * 2);',
-        "document.querySelector('body');",
-        'Promise.resolve(values).then((resolved) => console.log(resolved));',
-      ].join('\n');
-      const files = new Map([
-        [fileName, source],
-        [defaultTypeScriptLibraryFileName, defaultTypeScriptLibrarySource],
-      ]);
-      const host: ts.LanguageServiceHost = {
-        getCompilationSettings: () => ({
-          module: ts.ModuleKind.ESNext,
-          strict: true,
-          target: ts.ScriptTarget.ES2022,
-        }),
-        getCurrentDirectory: () => '/',
-        getDefaultLibFileName: () => defaultTypeScriptLibraryFileName,
-        getScriptFileNames: () => [fileName],
-        getScriptSnapshot: (requestedFileName) => {
-          const content = files.get(requestedFileName);
-          return content === undefined
-            ? undefined
-            : ts.ScriptSnapshot.fromString(content);
-        },
-        getScriptVersion: () => '0',
-        fileExists: (requestedFileName) => files.has(requestedFileName),
-        readFile: (requestedFileName) => files.get(requestedFileName),
-        readDirectory: () => [],
-      };
-      const service = ts.createLanguageService(host);
+  it('ES2022 と DOM の標準 API を型検査できる', () => {
+    const fileName = '/playground.ts';
+    const source = [
+      'const values = [1, 2, 3].map((value) => value * 2);',
+      "document.querySelector('body');",
+      'Promise.resolve(values).then((resolved) => console.log(resolved));',
+    ].join('\n');
+    const files = new Map([
+      [fileName, source],
+      [defaultTypeScriptLibraryFileName, defaultTypeScriptLibrarySource],
+    ]);
+    const host: ts.LanguageServiceHost = {
+      getCompilationSettings: () => ({
+        module: ts.ModuleKind.ESNext,
+        strict: true,
+        target: ts.ScriptTarget.ES2022,
+      }),
+      getCurrentDirectory: () => '/',
+      getDefaultLibFileName: () => defaultTypeScriptLibraryFileName,
+      getScriptFileNames: () => [fileName],
+      getScriptSnapshot: (requestedFileName) => {
+        const content = files.get(requestedFileName);
+        return content === undefined
+          ? undefined
+          : ts.ScriptSnapshot.fromString(content);
+      },
+      getScriptVersion: () => '0',
+      fileExists: (requestedFileName) => files.has(requestedFileName),
+      readFile: (requestedFileName) => files.get(requestedFileName),
+      readDirectory: () => [],
+    };
+    const service = ts.createLanguageService(host);
 
-      const diagnostics = service.getProgram()?.getSemanticDiagnostics() ?? [];
-      expect(
-        diagnostics.map((diagnostic) =>
-          ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
-        ),
-      ).toEqual([]);
-    },
-    10_000,
-  );
+    const diagnostics = service.getProgram()?.getSemanticDiagnostics() ?? [];
+    expect(
+      diagnostics.map((diagnostic) =>
+        ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+      ),
+    ).toEqual([]);
+  }, 10_000);
 });
