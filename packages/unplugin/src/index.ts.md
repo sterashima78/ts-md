@@ -42,7 +42,7 @@ export async function parseFile(
 この小さな境界を自前で持つことで、plugin の実行と型定義は特定の bundler package に依存しません。
 
 ```ts createIncludeFilter
-function createIncludeFilter(include: RegExp) {
+export function createIncludeFilter(include: RegExp) {
   const pattern = new RegExp(include.source, include.flags);
   return (id: string) => {
     pattern.lastIndex = 0;
