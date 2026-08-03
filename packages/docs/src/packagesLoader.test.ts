@@ -52,6 +52,23 @@ describe('packagesLoader', () => {
     ]);
   });
 
+  it('E2E テストフィクスチャとそのパッケージ README は対象にしない', () => {
+    const sourceEntries = [
+      'packages/core/src/index.ts.md',
+      'packages/e2e/src/fixtures/error-project/bad.ts.md',
+      'packages/e2e/src/fixtures/error-project/completion.ts.md',
+    ];
+    const readmeEntries = [
+      'packages/core/README.md',
+      'packages/e2e/README.md',
+    ];
+
+    expect(selectPackageDocumentEntries(sourceEntries, readmeEntries)).toEqual([
+      'packages/core/README.md',
+      'packages/core/src/index.ts.md',
+    ]);
+  });
+
   it('TS-MD のモジュール名を Starlight のコードブロックタイトルにする', () => {
     const markdown = [
       '```ts split',
