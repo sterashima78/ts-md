@@ -10,7 +10,7 @@ import type {
 } from '@volar/language-service';
 import { createTypeScriptWorkerLanguageService } from '@volar/monaco/worker';
 import type * as monaco from 'monaco-editor';
-import { initialize } from 'monaco-editor/editor/editor.worker';
+import * as worker from 'monaco-editor/editor/editor.worker';
 import ts from 'typescript';
 import { create as createTypeScriptServicePlugins } from 'volar-service-typescript';
 import type { URI } from 'vscode-uri';
@@ -80,34 +80,36 @@ const testTsMdLanguagePlugin: LanguagePlugin<URI, TestTsMdVirtualFile> = {
   },
 };
 
-initialize((workerContext: monaco.worker.IWorkerContext) => {
-  const env: LanguageServiceEnvironment = {
-    workspaceFolders: [Uri.parse('file:///')],
-  };
+self.onmessage = () => {
+  worker.initialize((workerContext: monaco.worker.IWorkerContext) => {
+    const env: LanguageServiceEnvironment = {
+      workspaceFolders: [Uri.parse('file:///')],
+    };
 
-  return createTypeScriptWorkerLanguageService({
-    typescript: ts,
-    compilerOptions: {
-      allowNonTsExtensions: true,
-      module: ts.ModuleKind.ESNext,
-      moduleResolution: ts.ModuleResolutionKind.Bundler,
-      noEmit: true,
-      strict: true,
-      target: ts.ScriptTarget.ES2022,
-    },
-    env,
-    uriConverter: {
-      asFileName: (uri) => uri.fsPath,
-      asUri: (fileName) => Uri.file(fileName),
-    },
-    workerContext,
-    languagePlugins: [testTsMdLanguagePlugin],
-    languageServicePlugins: createTypeScriptServicePlugins(ts),
-    setup({ project }) {
-      installTypeScriptLibraries(project);
-    },
+    return createTypeScriptWorkerLanguageService({
+      typescript: ts,
+      compilerOptions: {
+        allowNonTsExtensions: true,
+        module: ts.ModuleKind.ESNext,
+        moduleResolution: ts.ModuleResolutionKind.Bundler,
+        noEmit: true,
+        strict: true,
+        target: ts.ScriptTarget.ES2022,
+      },
+      env,
+      uriConverter: {
+        asFileName: (uri) => uri.fsPath,
+        asUri: (fileName) => Uri.file(fileName),
+      },
+      workerContext,
+      languagePlugins: [testTsMdLanguagePlugin],
+      languageServicePlugins: createTypeScriptServicePlugins(ts),
+      setup({ project }) {
+        installTypeScriptLibraries(project);
+      },
+    });
   });
-});
+};
 
 class TestTsMdVirtualFile implements VirtualCode {
   readonly id = 'root';
