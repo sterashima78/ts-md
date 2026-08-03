@@ -38,7 +38,7 @@ catalog:
   tsdown: 0.22.14
   tsx: 4.23.3
   turbo: 2.10.8
-  typescript: 7.0.2
+  typescript: 6.0.3
   unplugin: 3.3.0
   vite: 8.2.0
   vitest: 4.1.10
