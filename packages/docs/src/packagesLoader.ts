@@ -21,10 +21,7 @@ export function packagesLoader(): Loader {
       const readmeEntries = await Array.fromAsync(
         glob(PACKAGE_README_PATTERN, { cwd }),
       );
-      const files = selectPackageDocumentEntries(
-        sourceEntries,
-        readmeEntries,
-      );
+      const files = selectPackageDocumentEntries(sourceEntries, readmeEntries);
 
       for (const entry of files) {
         const absPath = join(cwd, entry);
