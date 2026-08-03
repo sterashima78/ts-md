@@ -26,7 +26,7 @@ jobs:
           scope: '@sterashima78'
           cache: pnpm
       - name: Update dependencies
-        run: pnpm update --latest --recursive --no-frozen-lockfile
+        run: pnpm update --latest --recursive
       - name: Commit updated dependencies
         run: |
           if git diff --quiet -- package.json pnpm-workspace.yaml pnpm-lock.yaml packages/*/package.json; then
