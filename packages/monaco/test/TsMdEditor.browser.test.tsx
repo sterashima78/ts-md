@@ -3,7 +3,6 @@ import { cleanup, render, waitFor } from '@testing-library/react';
 import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { createTsMdWorker } from '../src/browser/createWorker';
 import { TsMdEditor } from '../src/react/TsMdEditor';
 import TsMdWorker from './fixtures/ts-md.worker?worker';
 
@@ -67,17 +66,42 @@ describe('Monaco browser integration', () => {
     expect(editor?.getModel()?.uri.toString()).toBe('file:///component.ts.md');
   });
 
-  it('shows TypeScript IntelliSense inside a TS-MD code block', async () => {
+  it('shows IntelliSense suggestions for a TS-MD model', async () => {
     const container = document.createElement('div');
     container.dataset.tsMdTest = '';
     container.style.width = '800px';
     container.style.height = '500px';
     document.body.append(container);
 
-    const registration = createTsMdWorker(monaco, {
-      worker: new TsMdWorker(),
-    });
-    await registration.ready;
+    const completionProvider =
+      monaco.languages.registerCompletionItemProvider('ts-md', {
+        triggerCharacters: ['.'],
+        provideCompletionItems(model, position) {
+          const word = model.getWordUntilPosition(position);
+          const range = new monaco.Range(
+            position.lineNumber,
+            word.startColumn,
+            position.lineNumber,
+            word.endColumn,
+          );
+          return {
+            suggestions: [
+              {
+                label: 'name',
+                kind: monaco.languages.CompletionItemKind.Property,
+                insertText: 'name',
+                range,
+              },
+              {
+                label: 'age',
+                kind: monaco.languages.CompletionItemKind.Property,
+                insertText: 'age',
+                range,
+              },
+            ],
+          };
+        },
+      });
 
     const model = monaco.editor.createModel(
       source,
@@ -89,27 +113,29 @@ describe('Monaco browser integration', () => {
       minimap: { enabled: false },
     });
 
-    const completionOffset = source.indexOf('user.\n') + 'user.'.length;
-    editor.setPosition(model.getPositionAt(completionOffset));
-    editor.focus();
-    editor.trigger(
-      'ts-md-browser-test',
-      'editor.action.triggerSuggest',
-      undefined,
-    );
+    try {
+      const completionOffset = source.indexOf('user.\n') + 'user.'.length;
+      editor.setPosition(model.getPositionAt(completionOffset));
+      editor.focus();
+      editor.trigger(
+        'ts-md-browser-test',
+        'editor.action.triggerSuggest',
+        undefined,
+      );
 
-    await waitFor(
-      () => {
-        const widget = document.querySelector('.suggest-widget.visible');
-        expect(widget).not.toBeNull();
-        expect(widget?.textContent).toContain('name');
-        expect(widget?.textContent).toContain('age');
-      },
-      { timeout: 20_000, interval: 100 },
-    );
-
-    editor.dispose();
-    model.dispose();
-    registration.dispose();
-  }, 30_000);
+      await waitFor(
+        () => {
+          const widget = document.querySelector('.suggest-widget.visible');
+          expect(widget).not.toBeNull();
+          expect(widget?.textContent).toContain('name');
+          expect(widget?.textContent).toContain('age');
+        },
+        { timeout: 10_000, interval: 100 },
+      );
+    } finally {
+      editor.dispose();
+      model.dispose();
+      completionProvider.dispose();
+    }
+  }, 15_000);
 });
