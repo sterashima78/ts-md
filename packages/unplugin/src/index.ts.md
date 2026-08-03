@@ -35,6 +35,22 @@ export async function parseFile(
 }
 ```
 
+## Filtering without a bundler dependency
+
+`include` は `RegExp` だけを受け取るため、glob を扱う汎用的な Rollup utility は必要ありません。受け取った正規表現を複製し、`g` や `y` flag が指定されていても呼び出しごとに `lastIndex` を初期化して安定して評価します。
+
+この小さな境界を自前で持つことで、plugin の実行と型定義は特定の bundler package に依存しません。
+
+```ts createIncludeFilter
+function createIncludeFilter(include: RegExp) {
+  const pattern = new RegExp(include.source, include.flags);
+  return (id: string) => {
+    pattern.lastIndex = 0;
+    return pattern.test(id);
+  };
+}
+```
+
 ## One plugin lifecycle, one module model
 
 `resolveId` は三種類の入力を同じ仮想 ID へ集約します。すでに仮想 ID ならそのまま返し、`.ts.md` document の直接 import は `main` へ、その他の TS-MD specifier は core resolver へ渡します。
@@ -45,7 +61,6 @@ export async function parseFile(
 
 ```ts main
 import path from 'node:path';
-import { createFilter } from '@rollup/pluginutils';
 import {
   createVirtualModuleFileName,
   parseVirtualModuleFileName,
@@ -53,6 +68,7 @@ import {
   type TsMdDocument,
 } from '@sterashima78/ts-md-core';
 import { createUnplugin } from 'unplugin';
+import { createIncludeFilter } from ':createIncludeFilter';
 import { parseFile } from ':parseFile';
 
 export interface Options {
@@ -61,7 +77,7 @@ export interface Options {
 
 export const unplugin = createUnplugin((options: Options | undefined) => {
   const { include = /\.ts\.md$/ } = options ?? {};
-  const filter = createFilter(include);
+  const filter = createIncludeFilter(include);
   const cache = new Map<string, TsMdDocument>();
 
   return {
