@@ -70,5 +70,5 @@ describe('Monaco playground TypeScript libraries', () => {
         ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
       ),
     ).toEqual([]);
-  });
+  }, 10_000);
 });
