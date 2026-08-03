@@ -7,7 +7,6 @@ catalog:
   '@changesets/changelog-github': 0.7.0
   '@changesets/cli': 2.31.1
   '@monaco-editor/react': 4.7.0
-  '@rollup/pluginutils': 5.4.0
   '@sterashima78/ts-md-tsc': 0.2.1
   '@sterashima78/ts-md-unplugin': 0.4.1
   '@testing-library/react': 16.3.2
@@ -32,7 +31,6 @@ catalog:
   playwright: 1.62.0
   react: 19.2.8
   react-dom: 19.2.8
-  rollup: 4.62.3
   satteri: 0.9.5
   sharp: 0.35.3
   ts-md-unplugin-build: 'npm:@sterashima78/ts-md-unplugin@0.4.1'

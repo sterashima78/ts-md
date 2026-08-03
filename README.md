@@ -86,7 +86,7 @@ src/app.ts.md:view   -> dist/app/view.tsx
 
 - `@sterashima78/ts-md-core`: document parser、module resolver、virtual module ID、tangle
 - `@sterashima78/ts-md-loader`: Node.js ESM loader
-- `@sterashima78/ts-md-unplugin`: Vite、Rollup、Webpack、esbuild integration
+- `@sterashima78/ts-md-unplugin`: Vite、Rollup、Rolldown、Webpack、esbuild integration
 - `@sterashima78/ts-md-ls-core`: Volar/TypeScript language plugin
 - `@sterashima78/ts-md-tsc`: `tsc` compatible type checking and declaration emit
 - `@sterashima78/ts-md-cli`: `check`、`run`、`tangle`

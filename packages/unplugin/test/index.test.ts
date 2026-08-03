@@ -4,10 +4,21 @@ import {
   createVirtualModuleFileName,
   parseVirtualModuleFileName,
 } from '@sterashima78/ts-md-core';
-import type { Plugin } from 'rollup';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let unpluginFactory: typeof import('../src/index.ts.md').unplugin;
+
+type LoadResult = string | { code: string } | null | undefined;
+
+interface TestPlugin {
+  resolveId(id: string, importer?: string): string | undefined;
+  load(id: string): LoadResult | Promise<LoadResult>;
+}
+
+function getRollupPlugin(options?: { include?: RegExp }): TestPlugin {
+  const plugin = unpluginFactory.rollup(options);
+  return (Array.isArray(plugin) ? plugin[0] : plugin) as unknown as TestPlugin;
+}
 
 describe('ts-md-unplugin', () => {
   const dir = path.join(__dirname, 'fixtures');
@@ -39,34 +50,40 @@ describe('ts-md-unplugin', () => {
   });
 
   it('loads the main module from a document import', async () => {
-    const plugin = unpluginFactory.rollup();
-    const instance = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
-    // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const resolved = (instance as any).resolveId('./doc.ts.md', entry);
+    const instance = getRollupPlugin();
+    const resolved = instance.resolveId('./doc.ts.md', entry);
     expect(resolved).toBe(
       createVirtualModuleFileName({
         documentPath: mdPath,
         moduleName: 'main',
       }),
     );
-    // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const loaded = await (instance as any).load(resolved);
+    const loaded = await instance.load(resolved as string);
     const code = typeof loaded === 'string' ? loaded : loaded?.code;
     expect(code?.trim()).toBe("export { msg } from ':dep'");
   });
 
   it('resolves a same-document module import', () => {
-    const plugin = unpluginFactory.rollup();
-    const instance = (Array.isArray(plugin) ? plugin[0] : plugin) as Plugin;
+    const instance = getRollupPlugin();
     const mainId = createVirtualModuleFileName({
       documentPath: mdPath,
       moduleName: 'main',
     });
-    // biome-ignore lint/suspicious/noExplicitAny: plugin context not needed for test
-    const resolved = (instance as any).resolveId(':dep', mainId);
+    const resolved = instance.resolveId(':dep', mainId);
     expect(parseVirtualModuleFileName(resolved)).toEqual({
       documentPath: mdPath,
       moduleName: 'dep',
     });
+  });
+
+  it('evaluates a global include pattern repeatedly', async () => {
+    const instance = getRollupPlugin({ include: /\.ts\.md$/g });
+    const resolved = instance.resolveId('./doc.ts.md', entry) as string;
+
+    const first = await instance.load(resolved);
+    const second = await instance.load(resolved);
+
+    expect(first).toBe("export { msg } from ':dep'");
+    expect(second).toBe(first);
   });
 });
