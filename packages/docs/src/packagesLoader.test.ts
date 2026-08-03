@@ -30,9 +30,7 @@ describe('packagesLoader', () => {
       'packages/cli/README.md',
     ];
 
-    expect(
-      selectPackageDocumentEntries(sourceEntries, readmeEntries),
-    ).toEqual([
+    expect(selectPackageDocumentEntries(sourceEntries, readmeEntries)).toEqual([
       'packages/cli/README.md',
       'packages/cli/src/index.ts.md',
       'packages/core/README.md',
