@@ -51,13 +51,17 @@ export class TsMdParseError extends Error {
 
 最初に Sätteri で Markdown を MDAST へ変換します。TS-MD が受け入れる Markdown の範囲を parser の置き換え前後で変えないため、Sätteri で既定有効の GFM と frontmatter は明示的に無効化します。
 
+Sätteri が公開する `MdastNode` は MDAST node 全体の判別可能な union です。ここでは `type` discriminant から root node を導出し、parser の実装が利用する AST 型を Sätteri の公開 API に揃えます。
+
 root 以外が返ることは API 上想定していませんが、後続処理の前提を曖昧にしないために境界で検証します。
 
 ```ts buildAst
-import type { Root } from 'mdast';
+import type { MdastNode } from 'satteri';
 import { markdownToMdast } from 'satteri';
 
-export function buildAst(markdown: string): Root {
+type MdastRoot = Extract<MdastNode, { type: 'root' }>;
+
+export function buildAst(markdown: string): MdastRoot {
   const tree = markdownToMdast(markdown, {
     features: {
       frontmatter: false,
@@ -78,17 +82,19 @@ MDAST を再帰的に歩き、`ts` または `tsx` の code node だけを選び
 位置情報では code node 全体ではなく本文を指す必要があります。opening fence の次の行から node の value を探し、Markdown parser が返す node range を越えない範囲で本文の開始位置を決めます。同じ文字列が fence header より前に現れても誤って採用しないための処理です。
 
 ```ts extractModules
-import type { Code, Root } from 'mdast';
 import type { MdastNode } from 'satteri';
 import { extIsTs } from './utils.ts.md';
 import type { TsMdLanguage, TsMdModule } from ':types';
 import { TsMdParseError } from ':types';
 
+type MdastCode = Extract<MdastNode, { type: 'code' }>;
+type MdastRoot = Extract<MdastNode, { type: 'root' }>;
+
 const MODULE_NAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
 function visitCodeNodes(
   node: MdastNode,
-  callback: (codeNode: Code) => void,
+  callback: (codeNode: MdastCode) => void,
 ): void {
   if (node.type === 'code') callback(node);
   if (!('children' in node)) return;
@@ -96,7 +102,7 @@ function visitCodeNodes(
 }
 
 export function extractModules(
-  tree: Root,
+  tree: MdastRoot,
   markdown: string,
   uri: string,
 ): TsMdModule[] {
