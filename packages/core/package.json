@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@sterashima78/ts-md-tsc": "catalog:",
-    "@sterashima78/ts-md-unplugin": "catalog:",
-    "@types/mdast": "catalog:"
+    "@sterashima78/ts-md-unplugin": "catalog:"
   }
 }
