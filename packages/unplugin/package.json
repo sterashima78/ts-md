@@ -8,6 +8,7 @@
     ".": "./dist/index.js",
     "./vite": "./dist/vite.js",
     "./rollup": "./dist/rollup.js",
+    "./rolldown": "./dist/rolldown.js",
     "./webpack": "./dist/webpack.js",
     "./esbuild": "./dist/esbuild.js"
   },
