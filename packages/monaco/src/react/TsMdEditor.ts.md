@@ -1,44 +1,58 @@
-# Binding the TS-MD worker to a React editor
+# React エディターに TS-MD worker を接続する
 
-The React component owns only UI lifecycle. It waits until Monaco is available in the browser, starts the TS-MD worker for that instance, and renders a controlled editor configured with the `ts-md` language identifier.
+React コンポーネントは、`@monaco-editor/react` が公開する実際の `Editor` コンポーネントを描画します。一方、`useMonaco` フックは読み込み済みの Monaco 名前空間を取得するために使い、そのインスタンスへ TS-MD の言語機能を登録します。
 
-Worker setup belongs in an effect because Monaco is loaded dynamically. The component remains null until that dependency is available, preventing server-side or early browser renders from touching Monaco globals.
+モデルのパスが `.ts.md` で終わることは重要です。Volar はファイル名から TS-MD 文書を判定するため、Monaco 上の言語 ID が正しくても、一般的なインメモリ URI では TS-MD の言語プラグインの対象になりません。
 
 ```tsx main
-import useMonaco from '@monaco-editor/react';
+import Editor, {
+  type EditorProps,
+  useMonaco,
+} from '@monaco-editor/react';
 import * as React from 'react';
 import { createTsMdWorker } from '../browser/createWorker';
 
-export interface TsMdEditorProps {
+export interface TsMdEditorProps
+  extends Omit<EditorProps, 'language' | 'value' | 'onChange'> {
   value: string;
-  onChange?: (v: string) => void;
-  height?: string | number;
+  onChange?: (value: string) => void;
 }
 
 export const TsMdEditor: React.FC<TsMdEditorProps> = ({
   value,
   onChange,
   height = '100%',
+  path,
+  options,
+  ...editorProps
 }) => {
-  const MonacoEditor = (
-    useMonaco as unknown as () => React.ComponentType<Record<string, unknown>>
-  )();
+  const monaco = useMonaco();
+  const generatedPath = React.useId().replaceAll(':', '_');
+  const modelPath = path ?? `file:///ts-md-${generatedPath}.ts.md`;
 
   React.useEffect(() => {
-    if (!MonacoEditor) return;
-    createTsMdWorker(MonacoEditor as unknown as typeof import('monaco-editor'));
-  }, [MonacoEditor]);
+    if (!monaco) return;
 
-  if (!MonacoEditor) return null;
+    const registration = createTsMdWorker(
+      monaco as typeof import('monaco-editor'),
+    );
+    return () => registration.dispose();
+  }, [monaco]);
 
   return (
-    <MonacoEditor
+    <Editor
+      {...editorProps}
       language="ts-md"
+      path={modelPath}
       value={value}
-      onChange={onChange}
+      onChange={(nextValue) => onChange?.(nextValue ?? '')}
       height={height}
       theme="vs-dark"
-      options={{ wordWrap: 'on', minimap: { enabled: false } }}
+      options={{
+        wordWrap: 'on',
+        minimap: { enabled: false },
+        ...options,
+      }}
     />
   );
 };

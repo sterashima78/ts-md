@@ -15,6 +15,8 @@ catalog:
   '@types/node': 26.1.2
   '@types/react': 19.2.18
   '@types/vscode': 1.125.0
+  '@vitejs/plugin-react': 6.0.4
+  '@vitest/browser-playwright': 4.1.10
   '@volar/kit': 2.4.28
   '@volar/language-core': 2.4.28
   '@volar/language-server': 2.4.28
@@ -27,6 +29,7 @@ catalog:
   astro: 7.1.6
   jsdom: 30.0.1
   monaco-editor: 0.56.0
+  playwright: 1.62.0
   react: 19.2.8
   react-dom: 19.2.8
   rollup: 4.62.3
