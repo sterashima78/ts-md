@@ -1,6 +1,6 @@
 # @sterashima78/ts-md-unplugin
 
-Vite、Rollup、Webpack、esbuild で `.ts.md` modules を読み込むための unplugin です。
+Vite、Rollup、Rolldown、Webpack、esbuild で `.ts.md` modules を読み込むための unplugin です。
 
 一つの TypeScript コードフェンスを一つの仮想 ES module として扱います。
 
@@ -9,6 +9,17 @@ Vite、Rollup、Webpack、esbuild で `.ts.md` modules を読み込むための 
 ```ts
 import tsMd from '@sterashima78/ts-md-unplugin/vite'
 import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [tsMd],
+})
+```
+
+## Rolldown
+
+```ts
+import tsMd from '@sterashima78/ts-md-unplugin/rolldown'
+import { defineConfig } from 'rolldown'
 
 export default defineConfig({
   plugins: [tsMd],
