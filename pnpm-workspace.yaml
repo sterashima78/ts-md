@@ -2,7 +2,7 @@ packages:
   - packages/*
 cleanupUnusedCatalogs: true
 catalog:
-  '@astrojs/starlight': 0.41.5
+  '@astrojs/starlight': 0.41.6
   '@biomejs/biome': 2.5.6
   '@changesets/changelog-github': 0.7.0
   '@changesets/cli': 2.31.1
@@ -14,7 +14,7 @@ catalog:
   '@types/node': 26.1.2
   '@types/react': 19.2.18
   '@types/vscode': 1.125.0
-  '@vitejs/plugin-react': 6.0.4
+  '@vitejs/plugin-react': 6.0.5
   '@vitest/browser-playwright': 4.1.10
   '@volar/kit': 2.4.28
   '@volar/language-core': 2.4.28
@@ -28,7 +28,7 @@ catalog:
   astro: 7.1.6
   jsdom: 30.0.1
   monaco-editor: 0.56.0
-  playwright: 1.62.0
+  playwright: 1.62.1
   react: 19.2.8
   react-dom: 19.2.8
   satteri: 0.9.5
@@ -36,9 +36,9 @@ catalog:
   ts-md-unplugin-build: 'npm:@sterashima78/ts-md-unplugin@0.5.0'
   ts-morph: 28.0.0
   tsdown: 0.22.14
-  tsx: 4.23.1
-  turbo: 2.10.7
-  typescript: 6.0.3
+  tsx: 4.23.3
+  turbo: 2.10.8
+  typescript: 7.0.2
   unplugin: 3.3.0
   vite: 8.2.0
   vitest: 4.1.10
