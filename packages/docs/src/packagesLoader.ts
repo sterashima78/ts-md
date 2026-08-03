@@ -6,6 +6,7 @@ import type { Loader } from 'astro/loaders';
 const TS_MD_SOURCE_PATTERN = 'packages/*/src/**/*.ts.md';
 const PACKAGE_README_PATTERN = 'packages/*/README.md';
 const PACKAGE_ENTRY_PATTERN = /^packages\/([^/]+)\//;
+const PACKAGE_FIXTURE_PATTERN = /^packages\/[^/]+\/src\/fixtures\//;
 const MODULE_INFO_PATTERN = /^(ts|tsx)\s+([a-zA-Z0-9._-]+)$/;
 
 export function packagesLoader(): Loader {
@@ -69,14 +70,17 @@ export function selectPackageDocumentEntries(
   sourceEntries: readonly string[],
   readmeEntries: readonly string[],
 ): string[] {
+  const implementationEntries = sourceEntries.filter(
+    (entry) => !PACKAGE_FIXTURE_PATTERN.test(entry),
+  );
   const packageNames = new Set<string>();
-  for (const entry of sourceEntries) {
+  for (const entry of implementationEntries) {
     const packageName = entry.match(PACKAGE_ENTRY_PATTERN)?.[1];
     if (packageName) packageNames.add(packageName);
   }
 
   return [
-    ...sourceEntries,
+    ...implementationEntries,
     ...readmeEntries.filter((entry) => {
       const packageName = entry.match(PACKAGE_ENTRY_PATTERN)?.[1];
       return packageName !== undefined && packageNames.has(packageName);
