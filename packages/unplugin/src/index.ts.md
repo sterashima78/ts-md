@@ -1,6 +1,6 @@
 # Adapting TS-MD to bundlers
 
-Vite、Rollup、Webpack、esbuild は plugin API が異なりますが、TS-MD に必要な処理は共通です。specifier を仮想 module ID へ変換し、その ID が指す code fence の source を返します。
+Vite、Rollup、Rolldown、Webpack、esbuild は plugin API が異なりますが、TS-MD に必要な処理は共通です。specifier を仮想 module ID へ変換し、その ID が指す code fence の source を返します。
 
 この document では bundler 固有の adapter を `unplugin` に任せ、TS-MD の処理を三つの段階にそろえます。
 
