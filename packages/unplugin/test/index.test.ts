@@ -8,9 +8,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let unpluginFactory: typeof import('../src/index.ts.md').unplugin;
 
+type LoadResult = string | { code: string } | null | undefined;
+
 interface TestPlugin {
   resolveId(id: string, importer?: string): string | undefined;
-  load(id: string): unknown;
+  load(id: string): LoadResult | Promise<LoadResult>;
 }
 
 function getRollupPlugin(options?: { include?: RegExp }): TestPlugin {
