@@ -1,4 +1,4 @@
-import tsMd from 'ts-md-unplugin-build/rollup';
+import tsMd from 'ts-md-unplugin-build/rolldown';
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
