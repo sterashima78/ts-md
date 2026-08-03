@@ -1,0 +1,34 @@
+name: update mdast dependency
+
+on:
+  push:
+    branches:
+      - agent/use-satteri-mdast-types
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: '@sterashima78'
+      - name: Remove direct mdast type dependency
+        run: pnpm --filter @sterashima78/ts-md-core remove @types/mdast
+      - name: Commit generated manifest and lockfile changes
+        run: |
+          rm .github/workflows/update-mdast-dependency.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/core/package.json pnpm-workspace.yaml pnpm-lock.yaml .github/workflows/update-mdast-dependency.yml
+          git commit -m "Remove direct mdast type dependency"
+          git push
