@@ -1,12 +1,12 @@
-# Connecting TS-MD language features to Monaco
+# Monaco に TS-MD の言語機能を接続する
 
-Monaco separates the editor UI from language features. The editor owns text models, while Volar exposes completion, diagnostics, navigation, and the other language-service capabilities through a web worker.
+Monaco では、エディターの UI と言語機能が分離されています。エディターはテキストモデルを管理し、Volar は補完、診断、定義への移動などの言語サービス機能を Web Worker 経由で提供します。
 
-`createTsMdWorker` joins those two sides for every model whose language is `ts-md`. Monaco 0.56 creates its worker bridge from an actual `Worker` rather than an AMD module identifier. A host can therefore pass a bundled worker explicitly, or provide `MonacoEnvironment.getWorker` as it already does for Monaco's other workers.
+`createTsMdWorker` は、言語が `ts-md` である各モデルについて、この2つを接続します。Monaco 0.56 では AMD のモジュール識別子ではなく、実際の `Worker` を使って worker との橋渡しを作成します。そのため、ホストはバンドル済みの worker を明示的に渡すか、Monaco のほかの worker と同様に `MonacoEnvironment.getWorker` を提供できます。
 
-## Registering the language
+## 言語を登録する
 
-Language registration must happen before a model is synchronized with the worker. Registration is idempotent so several editors can be mounted without asking Monaco to define the same language repeatedly.
+モデルを worker と同期する前に、言語を登録しておく必要があります。複数のエディターをマウントしても同じ言語を重複して定義しないように、登録処理は冪等にしています。
 
 ```ts language
 import type * as monaco from 'monaco-editor';
@@ -40,9 +40,9 @@ export function registerTsMdLanguage(m: typeof monaco) {
 }
 ```
 
-## Resolving the bundled worker
+## バンドル済み worker を解決する
 
-The explicit worker option is useful for tests and hosts that do not install a global Monaco environment. The fallback follows Monaco's own worker-loader contract and asks the environment for the worker associated with the `ts-md` label.
+worker を明示的に指定できるオプションは、テストやグローバルな Monaco 環境を設定しないホストで利用できます。明示的な指定がない場合は Monaco の worker ローダーの規約に従い、`ts-md` ラベルに対応する worker を環境から取得します。
 
 ```ts worker
 import { TS_MD_LANGUAGE_ID } from ':language';
@@ -76,9 +76,9 @@ export function resolveWorker(options: TsMdWorkerOptions) {
 }
 ```
 
-## Owning the worker lifecycle
+## worker のライフサイクルを管理する
 
-Volar registers Monaco providers asynchronously because it first reads capabilities from the worker. The returned registration therefore exposes a `ready` promise for callers that need to wait before invoking a language feature, while `dispose` remains safe both before and after provider registration completes.
+Volar は最初に worker から機能情報を読み取るため、Monaco の provider を非同期に登録します。そこで、言語機能を呼び出す前に待機したい利用者向けに `ready` Promise を公開します。また、provider の登録前後のどちらでも安全に破棄できるように `dispose` を実装します。
 
 ```ts main
 import { activateMarkers } from '@volar/monaco/lib/editor.js';
