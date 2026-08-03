@@ -51,7 +51,7 @@ export class TsMdParseError extends Error {
 
 最初に Sätteri で Markdown を MDAST へ変換します。TS-MD が受け入れる Markdown の範囲を parser の置き換え前後で変えないため、Sätteri で既定有効の GFM と frontmatter は明示的に無効化します。
 
-Sätteri が公開する `MdastNode` は MDAST node 全体の判別可能な union です。ここでは `type` discriminant から root node を導出し、parser の実装が利用する AST 型を Sätteri の公開 API に揃えます。
+Sätteri が公開する `MdastNode` は MDAST node 全体の判別可能な共用体型です。ここでは `type` discriminant から root node を導出し、parser の実装が利用する AST 型を Sätteri の公開 API に揃えます。
 
 root 以外が返ることは API 上想定していませんが、後続処理の前提を曖昧にしないために境界で検証します。
 
