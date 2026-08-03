@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-monaco
 
+## 0.1.2
+
+### Patch Changes
+
+- [#255](https://github.com/sterashima78/ts-md/pull/255) [`30d62ba`](https://github.com/sterashima78/ts-md/commit/30d62bad574904f733c564e1a54be7aec05bcef9) Thanks [@sterashima78](https://github.com/sterashima78)! - React 版 Monaco editor が実際の `Editor` component を描画し、`.ts.md` model に Volar の補完・診断 provider を接続するよう修正しました。
+
 ## 0.1.1
 
 ### Patch Changes

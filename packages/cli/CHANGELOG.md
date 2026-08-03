@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-cli
 
+## 0.6.0
+
+### Minor Changes
+
+- [#256](https://github.com/sterashima78/ts-md/pull/256) [`fa700f7`](https://github.com/sterashima78/ts-md/commit/fa700f7a576a26bae17e5b9e862aa20141b6fec3) Thanks [@sterashima78](https://github.com/sterashima78)! - Node.js 24 の標準 glob と引数 parser を使用し、外部 CLI utility への依存を削除しました。
+
 ## 0.5.0
 
 ### Minor Changes

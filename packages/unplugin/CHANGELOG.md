@@ -1,5 +1,11 @@
 # @sterashima78/ts-md-unplugin
 
+## 0.5.0
+
+### Minor Changes
+
+- [#259](https://github.com/sterashima78/ts-md/pull/259) [`1ee3e37`](https://github.com/sterashima78/ts-md/commit/1ee3e373e1baf7fadab14e9d833fd4e1f4ebf8e3) Thanks [@sterashima78](https://github.com/sterashima78)! - Rolldown 向けプラグインを `@sterashima78/ts-md-unplugin/rolldown` から利用できるようにしました。
+
 ## 0.4.1
 
 ### Patch Changes
