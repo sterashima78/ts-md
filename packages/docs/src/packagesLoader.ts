@@ -3,20 +3,32 @@ import { dirname, join, normalize, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Loader } from 'astro/loaders';
 
+const TS_MD_SOURCE_PATTERN = 'packages/*/src/**/*.ts.md';
+const PACKAGE_README_PATTERN = 'packages/*/README.md';
+const PACKAGE_ENTRY_PATTERN = /^packages\/([^/]+)\//;
+const PACKAGE_FIXTURE_PATTERN = /^packages\/[^/]+\/src\/fixtures\//;
+const MODULE_INFO_PATTERN = /^(ts|tsx)\s+([a-zA-Z0-9._-]+)$/;
+
 export function packagesLoader(): Loader {
   const root = new URL('../../..', import.meta.url);
-  const pattern =
-    'packages/{cli,core,loader,ls-core,unplugin}/{README.md,src/**/*.ts.md}';
 
   return {
     name: 'packages-loader',
     async load(ctx) {
       const cwd = fileURLToPath(root);
-      const files = await Array.fromAsync(glob(pattern, { cwd }));
+      const sourceEntries = await Array.fromAsync(
+        glob(TS_MD_SOURCE_PATTERN, { cwd }),
+      );
+      const readmeEntries = await Array.fromAsync(
+        glob(PACKAGE_README_PATTERN, { cwd }),
+      );
+      const files = selectPackageDocumentEntries(sourceEntries, readmeEntries);
+
       for (const entry of files) {
         const absPath = join(cwd, entry);
         let body = await readFile(absPath, 'utf8');
         body = rewriteLinks(body, entry);
+        body = addModuleTitles(body);
         let title: string | undefined;
         const heading = body.match(/^#\s+(.+?)(?:\r?\n|$)/);
         if (heading) {
@@ -52,6 +64,61 @@ export function packagesLoader(): Loader {
       }
     },
   };
+}
+
+export function selectPackageDocumentEntries(
+  sourceEntries: readonly string[],
+  readmeEntries: readonly string[],
+): string[] {
+  const implementationEntries = sourceEntries.filter(
+    (entry) => !PACKAGE_FIXTURE_PATTERN.test(entry),
+  );
+  const packageNames = new Set<string>();
+  for (const entry of implementationEntries) {
+    const packageName = entry.match(PACKAGE_ENTRY_PATTERN)?.[1];
+    if (packageName) packageNames.add(packageName);
+  }
+
+  return [
+    ...implementationEntries,
+    ...readmeEntries.filter((entry) => {
+      const packageName = entry.match(PACKAGE_ENTRY_PATTERN)?.[1];
+      return packageName !== undefined && packageNames.has(packageName);
+    }),
+  ].sort();
+}
+
+export function addModuleTitles(markdown: string): string {
+  let openFence: { marker: string; length: number } | undefined;
+
+  return markdown.replace(/^.*$/gm, (line) => {
+    const match = line.match(/^(\s*)(`{3,}|~{3,})(.*)$/);
+    if (!match) return line;
+
+    const indentation = match[1] ?? '';
+    const fence = match[2];
+    const rawInfo = match[3] ?? '';
+    if (!fence) return line;
+
+    if (openFence) {
+      if (
+        fence.charAt(0) === openFence.marker &&
+        fence.length >= openFence.length &&
+        rawInfo.trim() === ''
+      ) {
+        openFence = undefined;
+      }
+      return line;
+    }
+
+    openFence = { marker: fence.charAt(0), length: fence.length };
+    const moduleInfo = rawInfo.trim().match(MODULE_INFO_PATTERN);
+    const language = moduleInfo?.[1];
+    const moduleName = moduleInfo?.[2];
+    if (!language || !moduleName) return line;
+
+    return `${indentation}${fence}${language} title="${moduleName}"`;
+  });
 }
 
 function rewriteLinks(md: string, entry: string): string {
