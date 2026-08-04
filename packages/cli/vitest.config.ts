@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     include: ['test/**/*.test.ts'],
+    includeSource: ['src/**/*.ts.md'],
   },
   resolve: {
     alias: {
