@@ -344,18 +344,6 @@ function resolveTsMdImport(specifier: string, importer: string) {
     return { documentPath: base, moduleName };
   }
 
-  const marker = '.ts.md:';
-  const markerIndex = specifier.lastIndexOf(marker);
-  if (markerIndex !== -1) {
-    const documentSpecifier = specifier.slice(0, markerIndex + '.ts.md'.length);
-    const moduleName = specifier.slice(markerIndex + marker.length);
-    if (!documentSpecifier || !moduleName) return;
-    return {
-      documentPath: resolvePath(dirname(base), documentSpecifier),
-      moduleName,
-    };
-  }
-
   if (specifier.endsWith('.ts.md')) {
     return {
       documentPath: resolvePath(dirname(base), specifier),
