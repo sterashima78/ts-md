@@ -7,8 +7,9 @@
 - 一つの `ts` / `tsx` コードフェンスは一つの TypeScript module
 - module 名は必須かつ document 内で一意
 - 同名フェンスの暗黙的な連結は行わない
-- `:module` は同じ document、`./file.ts.md:module` は別 document の module を参照
-- module 指定のない `.ts.md` import は `main` を参照
+- `:module` は同じ document の名前付き module を参照
+- module 指定のない `.ts.md` import は別 document の `main` を参照
+- 別 document の名前付き module は参照できない
 
 ## Main APIs
 
