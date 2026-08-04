@@ -1,9 +1,6 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import {
-  createVirtualModuleFileName,
-  resolveImport,
-} from '../src/index.ts';
+import { createVirtualModuleFileName, resolveImport } from '../src/index.ts';
 
 describe('resolveImport', () => {
   it('別 document の import を main module として解決する', () => {
