@@ -1,1 +1,1 @@
-import '../src/index.ts.md:loader.test';
+import '../src/index.ts.md';
