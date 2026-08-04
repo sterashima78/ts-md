@@ -4,7 +4,7 @@ Node.js の loader hook は、module specifier を URL へ変える `resolve` �
 
 TS-MD loader もこの境界に合わせます。`resolve` は document と module 名を共通の仮想 file name へ変換し、`load` はその identity を元に Markdown から一つの code fence を取り出して JavaScript へ変換します。
 
-この分担により、同一 document 内 import、別 document の named module、`.ts.md` document を直接 entry にした場合を、すべて同じ仮想 module の経路へ集約できます。
+この分担により、同一 document 内の named module import、別 document の `main` module import、`.ts.md` document を直接 entry にした場合を、すべて同じ仮想 module の経路へ集約できます。別 document の named module は import として解決しません。
 
 ## Loader hook contracts
 
@@ -34,7 +34,7 @@ export type Load = (
 
 ## Resolving every TS-MD form to one identity
 
-最初に、すでに仮想 module となっている specifier はそのまま受理します。次に parent URL を元 document へ戻し、core の `resolveImport` で `:module` と `.ts.md` import を解釈します。
+最初に、すでに仮想 module となっている specifier はそのまま受理します。次に parent URL を元 document へ戻し、core の `resolveImport` で同一 document の `:module` と別 document の `.ts.md` import を解釈します。
 
 最後に、document 自体が entry point として渡された場合は `main` module の仮想 file name を作ります。いずれにも当てはまらない import は `defaultResolve` に委譲します。
 
@@ -158,7 +158,7 @@ export const load: Load = async (url, context, defaultLoad) => {
 
 ## Public hook module
 
-Node.js が参照する `main` module から二つの hook を公開します。テストは Vitest 実行時だけ named module として読み込みます。
+Node.js が参照する `main` module から二つの hook を公開します。テストは Vitest 実行時だけ同一 document の named module として読み込みます。
 
 ```ts main
 export { load } from ':load';
@@ -173,7 +173,7 @@ if (import.meta.vitest) {
 
 unit test だけでは hook の接続方法を検証できないため、fixture document と built loader を使って実際の Node.js process を起動します。
 
-最初の例は document を直接 entry にして `main` が実行されることを確認します。二つ目は named module の仮想 file name を entry にできることを確認します。
+最初の例は document を直接 entry にして `main` が実行されることを確認します。二つ目は named module の仮想 file name を entry にできることを確認します。仮想 file name は tool 内部の identity であり、別 document からの import specifier ではありません。
 
 ```ts loader.test
 import { execSync } from 'node:child_process';

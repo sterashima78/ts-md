@@ -26,15 +26,17 @@ export default defineConfig({
 })
 ```
 
-通常の TypeScript から document の `main` module をimportできます。
+通常の TypeScript から document の `main` module を import できます。
 
 ```ts
 import './app.ts.md'
 ```
 
-`.ts.md` 内では次の記法を使用します。
+`.ts.md` 内では、同じ document の名前付き module と別 document の `main` module を次のように import します。
 
 ```ts
 import { value } from ':values'
-import type { User } from './user.ts.md:types'
+import type { User } from './user.ts.md'
 ```
+
+`./user.ts.md:types` のように、別 document の名前付き module を指定する形式はサポートしません。

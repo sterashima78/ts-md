@@ -102,6 +102,12 @@ describe('ts-md language plugin', () => {
     expect(resolveTsMdFileName('./dep.ts.md', '/test.ts.md')).toBe(
       path.resolve('/dep.ts.md'),
     );
+    expect(
+      resolveTsMdFileName('./dep.ts.md:foo', '/test.ts.md'),
+    ).toBeUndefined();
+    expect(
+      resolveTsMdFileName('./dep.ts.md:main', '/test.ts.md'),
+    ).toBeUndefined();
     expect(resolveTsMdFileName('#foo', '/test.ts.md')).toBeUndefined();
   });
 });

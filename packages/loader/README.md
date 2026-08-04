@@ -9,5 +9,6 @@ node --import tsx/esm --loader @sterashima78/ts-md-loader app.ts.md
 ```
 
 - `app.ts.md` は `main` module を読み込みます
-- `:module` は同じ document 内の module を読み込みます
-- `./other.ts.md:module` は別 document の名前付き module を読み込みます
+- `:module` は同じ document 内の名前付き module を読み込みます
+- `./other.ts.md` は別 document の `main` module を読み込みます
+- 別 document の名前付き module は読み込めません

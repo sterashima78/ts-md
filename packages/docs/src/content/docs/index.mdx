@@ -34,8 +34,9 @@ console.log(value)
 ```ts
 import { value } from ':values'
 import { start } from './app.ts.md'
-import type { User } from './user.ts.md:types'
 ```
+
+名前付き module は同じ document 内から `:module` 形式で参照します。別 document はファイル名だけを指定し、その document の `main` module を import します。`./app.ts.md:module` のような別 document の名前付き module import はサポートしません。
 
 型検査、補完、Node.js実行、bundler integration、tangleはすべて同じmodule modelを使用します。
 

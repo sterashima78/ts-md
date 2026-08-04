@@ -1,6 +1,7 @@
+import path from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
-import { parseTsMdModules } from './ts-md-language';
+import { parseTsMdModules, resolveTsMdFileName } from './ts-md-language';
 import {
   defaultTypeScriptLibraryFileName,
   defaultTypeScriptLibrarySource,
@@ -27,6 +28,29 @@ describe('Monaco playground parser', () => {
         code: 'export const actual = 1;',
       }),
     ]);
+  });
+});
+
+describe('Monaco playground module resolver', () => {
+  it('同じ document の名前付き module を解決する', () => {
+    expect(resolveTsMdFileName(':types', '/src/app.ts.md')).toContain(
+      'app.ts.md.__tsmd__.types.ts',
+    );
+  });
+
+  it('別 document は main module として解決する', () => {
+    expect(resolveTsMdFileName('./models.ts.md', '/src/app.ts.md')).toBe(
+      path.resolve('/src/models.ts.md'),
+    );
+  });
+
+  it('別 document の名前付き module を解決しない', () => {
+    expect(
+      resolveTsMdFileName('./models.ts.md:types', '/src/app.ts.md'),
+    ).toBeUndefined();
+    expect(
+      resolveTsMdFileName('./models.ts.md:main', '/src/app.ts.md'),
+    ).toBeUndefined();
   });
 });
 
