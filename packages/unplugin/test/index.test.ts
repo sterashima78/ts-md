@@ -76,6 +76,12 @@ describe('ts-md-unplugin', () => {
     });
   });
 
+  it('does not resolve named modules in another document', () => {
+    const instance = getRollupPlugin();
+    expect(instance.resolveId('./doc.ts.md:dep', entry)).toBeUndefined();
+    expect(instance.resolveId('./doc.ts.md:main', entry)).toBeUndefined();
+  });
+
   it('evaluates a global include pattern repeatedly', async () => {
     const instance = getRollupPlugin({ include: /\.ts\.md$/g });
     const resolved = instance.resolveId('./doc.ts.md', entry) as string;
