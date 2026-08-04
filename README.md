@@ -47,13 +47,9 @@ import { value } from ':values'
 import { start } from './app.ts.md'
 ```
 
-別 document の名前付き module:
+名前付き module は、その module を定義した document の内部から `:module` 形式でのみ参照できます。`./user.ts.md:types` や `./user.ts.md:main` のように、別 document の module 名を指定する形式はサポートしません。
 
-```ts
-import type { User } from './user.ts.md:types'
-```
-
-`#module` 形式はサポートしません。
+`#module` 形式もサポートしません。
 
 ## Quick Start
 
