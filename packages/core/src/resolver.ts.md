@@ -2,11 +2,12 @@
 
 TS-MD では、一つの Markdown document の中に複数の TypeScript module が存在します。通常の module resolver が扱う path に加えて、どの module を指すかも解決しなければなりません。
 
-この文書は import を三つの形に限定します。
+この文書は import を二つの形に限定します。
 
 - `:module` は同じ document の名前付き module
 - `./other.ts.md` は別 document の `main` module
-- `./other.ts.md:module` は別 document の名前付き module
+
+別 document の名前付き module を `./other.ts.md:module` のように参照することはできません。`main` 以外の module は、その module を定義した document の内部でのみ参照できます。
 
 npm package や通常の TypeScript import はここでは解決せず、呼び出し元の既定 resolver に残します。
 
@@ -36,11 +37,11 @@ export function cleanImporter(importer: string): string {
 }
 ```
 
-## Interpreting the three supported forms
+## Interpreting the two supported forms
 
 解決結果は document の絶対 path と module 名に正規化します。この形は loader、bundler、language service のすべてで共有され、各 adapter は必要に応じて仮想ファイル名へ変換します。
 
-同一 document の `:module` では importer 自体が document path です。別 document の場合は importer のディレクトリを基準に path を解決します。空の module 名や不完全な記法は TS-MD import として受理しません。
+同一 document の `:module` では importer 自体が document path です。別 document の場合は importer のディレクトリを基準に path を解決し、常に `main` module を返します。空の module 名や別 document に対する module suffix は TS-MD import として受理しません。
 
 ```ts resolveImport
 import path from 'node:path';
@@ -61,21 +62,6 @@ export function resolveImport(
     const chunk = specifier.slice(1);
     if (!chunk) return;
     return { absPath: path.resolve(base), chunk };
-  }
-
-  const marker = '.ts.md:';
-  const markerIndex = specifier.lastIndexOf(marker);
-  if (markerIndex !== -1) {
-    const documentSpecifier = specifier.slice(
-      0,
-      markerIndex + '.ts.md'.length,
-    );
-    const chunk = specifier.slice(markerIndex + marker.length);
-    if (!documentSpecifier || !chunk) return;
-    return {
-      absPath: path.resolve(path.dirname(base), documentSpecifier),
-      chunk,
-    };
   }
 
   if (specifier.endsWith('.ts.md')) {
@@ -105,7 +91,7 @@ if (import.meta.vitest) {
 
 ## Executable examples
 
-テストは三つの import 形式と、仮想 module から元 document へ戻る経路を固定します。また、以前の `#module` shorthand を受理しないことも仕様として残します。
+テストは二つの import 形式と、仮想 module から元 document へ戻る経路を固定します。別 document の module suffix と、以前の `#module` shorthand を受理しないことも仕様として残します。
 
 ```ts resolveImport.test
 import path from 'node:path';
@@ -128,13 +114,6 @@ describe('resolveImport', () => {
     });
   });
 
-  it('resolves a named module in another document', () => {
-    expect(resolveImport('../foo.ts.md:qux', '/a/b/c/app.ts.md')).toEqual({
-      absPath: path.resolve('/a/b/foo.ts.md'),
-      chunk: 'qux',
-    });
-  });
-
   it('uses the source document when importer is a virtual module', () => {
     const importer = createVirtualModuleFileName({
       documentPath: '/a/b/doc.ts.md',
@@ -144,6 +123,15 @@ describe('resolveImport', () => {
       absPath: path.resolve('/a/b/doc.ts.md'),
       chunk: 'qux',
     });
+  });
+
+  it('does not resolve module suffixes on another document', () => {
+    expect(
+      resolveImport('../foo.ts.md:qux', '/a/b/c/app.ts.md'),
+    ).toBeUndefined();
+    expect(
+      resolveImport('../foo.ts.md:main', '/a/b/c/app.ts.md'),
+    ).toBeUndefined();
   });
 
   it('does not support the legacy hash shorthand', () => {
