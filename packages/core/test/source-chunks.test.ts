@@ -1,1 +1,1 @@
-import '../src/resolver.ts.md:resolveImport.test';
+import '../src/resolver.ts.md';
