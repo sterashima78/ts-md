@@ -1,10 +1,7 @@
 import path from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
-import {
-  parseTsMdModules,
-  resolveTsMdFileName,
-} from './ts-md-language';
+import { parseTsMdModules, resolveTsMdFileName } from './ts-md-language';
 import {
   defaultTypeScriptLibraryFileName,
   defaultTypeScriptLibrarySource,
