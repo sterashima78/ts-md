@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseEntry } from '../src/commands/run.ts.md';
-import { parseCliArgs } from '../src/index.ts.md';
+import { parseCliArgs } from '../src/parse-cli-args.ts.md';
 import { expandGlobs } from '../src/utils/globs.ts.md';
 import { spawnNode } from '../src/utils/spawn.ts.md';
 
