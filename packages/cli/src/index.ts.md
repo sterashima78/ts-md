@@ -111,20 +111,31 @@ export async function runCli(args = process.argv.slice(2)) {
 
 ## Executable module
 
-`main` module は package の executable entry です。parse error は stack trace ではなく簡潔な message として表示し、失敗 status を設定します。
+`main` module は package の executable entry であると同時に、別 module から import できる public module でもあります。`import.meta.url` と process entry を比較し、直接実行された場合だけ CLI を起動します。これにより、ファイル名だけを指定する通常の `.ts.md` import から `parseCliArgs` と `runCli` を副作用なく利用できます。
+
+parse error は stack trace ではなく簡潔な message として表示し、失敗 status を設定します。
 
 ```ts main
 #!/usr/bin/env node
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { runCli } from ':runCli';
 
 export { parseCliArgs } from ':parseCliArgs';
 export { runCli };
 
-try {
-  await runCli();
-} catch (error) {
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
+const processEntry = process.argv[1];
+const isDirectExecution =
+  processEntry !== undefined &&
+  import.meta.url === pathToFileURL(path.resolve(processEntry)).href;
+
+if (isDirectExecution) {
+  try {
+    await runCli();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  }
 }
 
 if (import.meta.vitest) {
