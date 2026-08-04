@@ -35,10 +35,9 @@ describe('ts-md-loader', () => {
   });
 
   it('Markdown document の main module を実行する', () => {
-    const output = execSync(
-      `node --loader ${builtLoader} ${markdownFile}`,
-      { encoding: 'utf8' },
-    );
+    const output = execSync(`node --loader ${builtLoader} ${markdownFile}`, {
+      encoding: 'utf8',
+    });
     expect(output.trim()).toBe('loader works');
   });
 
