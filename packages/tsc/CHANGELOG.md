@@ -1,5 +1,16 @@
 # @sterashima78/ts-md-tsc
 
+## 0.3.0
+
+### Minor Changes
+
+- [#262](https://github.com/sterashima78/ts-md/pull/262) [`3448aab`](https://github.com/sterashima78/ts-md/commit/3448aab9bb78fdc980aef3b9c4c5c752c41aabbf) Thanks [@sterashima78](https://github.com/sterashima78)! - 別ファイルの `.ts.md` import は `main` module のみに限定し、名前付き module は `:module` で同じ document 内からだけ参照できるようにしました。
+
+### Patch Changes
+
+- Updated dependencies [[`3448aab`](https://github.com/sterashima78/ts-md/commit/3448aab9bb78fdc980aef3b9c4c5c752c41aabbf)]:
+  - @sterashima78/ts-md-ls-core@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes
