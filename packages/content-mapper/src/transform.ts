@@ -4,6 +4,7 @@ import {
   TsMdParseError,
 } from '@sterashima78/ts-md-core';
 import {
+  type MappedOutput,
   type MapperDiagnostic,
   SpanMapKind,
   type TransformParams,
@@ -11,6 +12,8 @@ import {
 } from './protocol.js';
 
 export const DIAGNOSTIC_SOURCE = 'ts-md-content-mapper';
+
+const MODULE_MARKER = '\nexport {};';
 
 function diagnosticLength(content: string, start: number): number {
   return start < content.length ? 1 : 0;
@@ -34,12 +37,18 @@ function errorResult(
   };
 }
 
-function mapMainModule(main: TsMdModule): TransformResult {
+function mapModule(module: TsMdModule): MappedOutput {
   return {
-    text: main.code,
-    extension: main.language === 'tsx' ? '.tsx' : '.ts',
+    text: `${module.code}${MODULE_MARKER}`,
+    extension: module.language === 'tsx' ? '.tsx' : '.ts',
     mappings: [
-      [0, main.code.length, main.start, main.code.length, SpanMapKind.Verbatim],
+      [
+        0,
+        module.code.length,
+        module.start,
+        module.code.length,
+        SpanMapKind.Verbatim,
+      ],
     ],
   };
 }
@@ -56,7 +65,12 @@ export function transformTsMd(params: TransformParams): TransformResult {
       );
     }
 
-    return mapMainModule(main);
+    return {
+      ...mapModule(main),
+      supplemental: document.modules
+        .filter((module) => module.name !== 'main')
+        .map(mapModule),
+    };
   } catch (error) {
     if (error instanceof TsMdParseError) {
       return errorResult(params, error.message, error.offset);
