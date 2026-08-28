@@ -120,6 +120,8 @@ document.ts.md.0.ts
 
 この一点が現在の Content Mapper と TS-MD の module model の差です。
 
+TypeScript 側でも、外部 language tooling の module resolution について callback ではなく static mapping API を用意する方向が議論されています。TS-MD に必要なのも、この種類の API です。
+
 ## 検討した解決方法
 
 ### compiler-assigned supplemental filename への書き換え
@@ -182,16 +184,18 @@ import { value } from ':helper';
 }
 ```
 
-Content Mapper は各 module の source mapping と Program への参加を担当し、`:helper` からこの identity への module resolution は別レイヤーとして扱います。
-
-TypeScript 側でも、外部 language tooling の module resolution について callback ではなく static mapping API を用意する方向が議論されています。この API が提供されれば、TS-MD は概念的に次の mapping だけを渡せばよくなります。
+必要な resolver は実質的に次の一つだけです。
 
 ```text
-(importer: example.ts.md / main, specifier: :helper)
-  -> (example.ts.md, helper)
+(importerDocument: /src/example.ts.md, specifier: :helper)
+  -> (/src/example.ts.md, helper)
 ```
 
-この形ならドキュメント外の named chunk を公開する必要はありません。
+別ドキュメントの named chunk を lookup する必要はありません。この制約により mapping table は document-local に閉じられます。
+
+Content Mapper は各 module の source mapping と Program への参加を担当し、`:helper` からこの identity への module resolution は別レイヤーとして扱います。将来 TypeScript の static module mapping API が提供されれば、この document-local mapping をそのまま compiler に渡す構成が最も自然です。
+
+それまでは既存の TS-MD language service / compiler adapter が `:helper` resolution を担当し、Content Mapper 側で ES module semantics を再実装しない方針とします。
 
 ## JavaScript Module Declarations との関係
 
