@@ -1,0 +1,29 @@
+{
+  "name": "@sterashima78/ts-md-content-mapper",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sterashima78/ts-md-core": "workspace:*"
+  },
+  "typescript": {
+    "contentMapper": {
+      "exec": [
+        "node",
+        "dist/server.js"
+      ]
+    }
+  }
+}
