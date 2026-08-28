@@ -1,11 +1,11 @@
-import { pathToFileURL } from 'node:url';
 import type { Readable, Writable } from 'node:stream';
-import {
-  type InitializeParams,
-  type JsonRpcId,
-  type JsonRpcRequest,
-  type JsonRpcResponse,
-  type TransformParams,
+import { pathToFileURL } from 'node:url';
+import type {
+  InitializeParams,
+  JsonRpcId,
+  JsonRpcRequest,
+  JsonRpcResponse,
+  TransformParams,
 } from './protocol.js';
 import { DIAGNOSTIC_SOURCE, transformTsMd } from './transform.js';
 
@@ -50,7 +50,11 @@ function success(id: JsonRpcId, result: unknown): JsonRpcResponse {
   return { jsonrpc: '2.0', id, result };
 }
 
-function failure(id: JsonRpcId, code: number, message: string): JsonRpcResponse {
+function failure(
+  id: JsonRpcId,
+  code: number,
+  message: string,
+): JsonRpcResponse {
   return {
     jsonrpc: '2.0',
     id,
@@ -66,7 +70,11 @@ function handleRequest(request: JsonRpcRequest): JsonRpcResponse | undefined {
       case 'initialize': {
         const params = request.params as InitializeParams;
         if (params.protocolVersion !== 1) {
-          return failure(id, -32602, 'Unsupported content mapper protocol version.');
+          return failure(
+            id,
+            -32602,
+            'Unsupported content mapper protocol version.',
+          );
         }
         if (!params.positionEncodings.includes('utf-16')) {
           return failure(id, -32602, 'UTF-16 position encoding is required.');
@@ -108,7 +116,8 @@ export function runServer(
         if (response) writeMessage(output, response);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.stack ?? error.message : String(error);
+      const message =
+        error instanceof Error ? (error.stack ?? error.message) : String(error);
       process.stderr.write(`${message}\n`);
     }
   });
