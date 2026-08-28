@@ -1,6 +1,6 @@
 # @sterashima78/ts-md-content-mapper
 
-TypeScript 7.1 nightly の Content Mapper API を使い、`.ts.md` の `main` チャンクを canonical source、その他の named chunk を supplemental source として公開する PoC です。
+TypeScript 7.1 の Content Mapper API を使い、`.ts.md` の `main` チャンクを canonical source、その他の named chunk を supplemental source として公開する PoC です。
 
 このパッケージは API と TS-MD のモデルがどこまで直接対応できるかを確認するための実験用で、現在は `private` package としています。
 
@@ -44,7 +44,7 @@ export {};
 
 ## TypeScript 側の設定
 
-この PoC は現在の TypeScript 7.1 nightly の manifest 形式を使います。package.json には次の設定が含まれています。
+package.json には現在の Content Mapper manifest 形式を設定します。
 
 ```json
 {
@@ -72,16 +72,6 @@ export {};
 
 外部 Content Mapper の実行には現在の native compiler で `--runExternalCode` が必要です。
 
-```sh
-npx tsc --runExternalCode -p tsconfig.json
-```
-
-利用前に mapper package 自体を build してください。
-
-```sh
-pnpm --filter @sterashima78/ts-md-content-mapper build
-```
-
 ## TS-MD の module model
 
 この PoC では次を前提とします。
@@ -102,7 +92,58 @@ import { publicValue } from './other.ts.md';
 import { privateValue } from ':helper';
 ```
 
-前者は Content Mapper の canonical output と通常の module resolution で表現できます。残る課題は後者だけです。
+前者は Content Mapper の canonical output と通常の module resolution で表現できます。残る課題は後者です。
+
+## 実コンパイラでの型チェック確認
+
+2026-08-29 に `microsoft/typescript-go` の commit `89d5d5b2849a0db0957065889ca58536fa6d2e4a` を build し、この PoC の mapper を実際に `--runExternalCode` で読み込ませて確認しました。
+
+検証した入力は次の形です。
+
+```md
+\`\`\`ts helper
+export const value: string = 42;
+\`\`\`
+
+\`\`\`ts main
+import { value } from ':helper';
+const answer: number = value;
+export { answer };
+\`\`\`
+```
+
+compiler は次の二つの diagnostic を返しました。
+
+```text
+example.ts.md(8,23): error TS2307: Cannot find module ':helper' or its corresponding type declarations.
+example.ts.md.0.ts(4,14): error TS2322: Type 'number' is not assignable to type 'string'.
+```
+
+この結果から、現行 Content Mapper について次を確認できました。
+
+1. named chunk は supplemental source として Program に入り、そのチャンク自身の型チェックは実行される。
+2. supplemental source は独立した TypeScript module なので、他チャンクと lexical scope を共有しない。
+3. `:helper` は module resolver の target にならないため、main と helper の間で export/import を介した型チェックは成立しない。
+4. したがって Content Mapper 単独では「ドキュメント内チャンク間の型チェック」までは実現できない。
+
+例えば `helper` が次の型を export していても、
+
+```ts
+export const value: string = 'value';
+```
+
+`main` の
+
+```ts
+import { value } from ':helper';
+const answer: number = value;
+```
+
+を `string` から `number` への代入として検査するには、まず `:helper` をその supplemental module に module resolution できる必要があります。
+
+また、今回の実行では supplemental 内の diagnostic は `example.ts.md.0.ts` という compiler-assigned virtual filename で報告されました。Verbatim mapping 自体は mapper から返していますが、supplemental diagnostic が元 `.ts.md` の位置として表示されるところまでは確認できていません。これは module resolution とは別の確認事項として残します。
+
+なお npm の `typescript@7.1.0-dev.20260826.1` でも試しましたが、PoC が追従している現在の Content Mapper protocol と npm nightly の protocol に差があり initialize で拒否されたため、上記確認では現在の source implementation を直接 build しています。
 
 ## supplemental だけでは `:helper` を解決できない
 
@@ -119,8 +160,6 @@ document.ts.md.0.ts
 ```
 
 この一点が現在の Content Mapper と TS-MD の module model の差です。
-
-TypeScript 側でも、外部 language tooling の module resolution について callback ではなく static mapping API を用意する方向が議論されています。TS-MD に必要なのも、この種類の API です。
 
 ## 検討した解決方法
 
@@ -147,7 +186,7 @@ declare module ':helper' {
 
 一般解としては採用しません。
 
-正確な declaration を作るには named chunk 自身を type check して export type を推論する必要があります。Content Mapper 自身が別の TypeScript compiler を持つことになり、循環依存、generic、re-export、default export なども二重に処理する必要があります。
+正確な declaration を作るには named chunk 自身を type check して export type を推論する必要があります。Content Mapper 自身が別の TypeScript compiler を持つことになり、generic、re-export、default export なども二重に処理する必要があります。
 
 ### namespace や IIFE への変換
 
@@ -155,7 +194,7 @@ declare module ':helper' {
 
 採用しません。
 
-lexical scope 自体は分離できますが、ES module の import/export、type-only import、re-export、live binding、circular dependency、top-level await などを別の仕組みとして再実装することになります。TS-MD が TypeScript module semantics をそのまま利用するという利点を失います。
+lexical scope 自体は分離できますが、ES module の import/export、type-only import、re-export、live binding、circular dependency、top-level await などを別の仕組みとして再実装することになります。
 
 ### generated physical files
 
@@ -163,7 +202,7 @@ named chunk を hidden `.ts` file として filesystem に生成する案です�
 
 採用しません。
 
-module resolution は容易になりますが、編集時の同期、watch、cleanup、cache、navigation が生成ファイルへ向く問題が発生します。Content Mapper が in-memory mapping を提供する利点も小さくなります。
+module resolution は容易になりますが、編集時の同期、watch、cleanup、cache、navigation が生成ファイルへ向く問題が発生します。
 
 ## 現時点の方針
 
@@ -175,7 +214,7 @@ import { value } from ':helper';
 
 これは「同じ `.ts.md` document に属する `helper` module」という論理 identity として維持します。
 
-内部実装では module identity を文字列の virtual filename ではなく、引き続き次の組として扱うのが適切です。
+内部実装では module identity を文字列の virtual filename ではなく、引き続き次の組として扱います。
 
 ```ts
 {
@@ -184,22 +223,22 @@ import { value } from ':helper';
 }
 ```
 
-必要な resolver は実質的に次の一つだけです。
+必要な resolver は実質的に次の一つです。
 
 ```text
 (importerDocument: /src/example.ts.md, specifier: :helper)
   -> (/src/example.ts.md, helper)
 ```
 
-別ドキュメントの named chunk を lookup する必要はありません。この制約により mapping table は document-local に閉じられます。
+別ドキュメントの named chunk を lookup する必要はありません。
 
-Content Mapper は各 module の source mapping と Program への参加を担当し、`:helper` からこの identity への module resolution は別レイヤーとして扱います。将来 TypeScript の static module mapping API が提供されれば、この document-local mapping をそのまま compiler に渡す構成が最も自然です。
+Content Mapper は各 module の source mapping と Program への参加を担当できますが、現在の API だけでは `:helper` から supplemental module への module resolution を登録できません。
 
-それまでは既存の TS-MD language service / compiler adapter が `:helper` resolution を担当し、Content Mapper 側で ES module semantics を再実装しない方針とします。
+したがって、チャンク間の型チェックまで Content Mapper ベースへ移行する条件は、TypeScript が document-local な static module mapping を受け取れることです。それまでは既存の TS-MD language service / compiler adapter が `:helper` resolution を担当する構成が必要です。
 
 ## JavaScript Module Declarations との関係
 
-TC39 の Module Declarations proposal は、TS-MD が named chunk に求めている semantics とかなり近いものです。
+TC39 の Module Declarations proposal は、TS-MD が named chunk に求めている semantics と近いものです。
 
 ```js
 module helper {
@@ -209,18 +248,13 @@ module helper {
 import { value } from helper;
 ```
 
-proposal では各 inline module が独立した lexical scope を持ち、同じ外側の module から static import できます。現在 Stage 2 なので TS-MD の構文として直接採用する段階ではありませんが、「一つの source document の中に独立した複数 module が存在する」という model 自体の妥当性を確認する参考になります。
+各 inline module が独立した lexical scope を持つという model は TS-MD の named chunk と対応します。TS-MD では Markdown の code fence が module boundary に相当し、`main` だけを document 外へ公開する、より制限された model と考えられます。
 
-TS-MD は Markdown の code fence がこの inline module boundary に相当し、`main` だけを document 外へ公開する、より制限された model と考えられます。
+## 次に確認すること
 
-## 次の検証
+PoC から残る論点は次の二つです。
 
-次の PoC では nightly compiler を使った end-to-end test で境界を固定します。
+1. TypeScript の static module mapping API で `:helper` を supplemental module に結び付けられるか。
+2. supplemental diagnostic を元 `.ts.md` の code fence 位置へ戻せるか。
 
-1. `main` と named chunk に同名の変数を宣言しても衝突しない
-2. named chunk の diagnostic が元の fence 位置へ戻る
-3. named chunk 内の通常の npm/file import が解決できる
-4. `main` から別 `.ts.md` の `main` を import できる
-5. `:helper` だけが現行 Content Mapper API では解決不能であることを確認する
-
-これにより、今後 TypeScript に必要なのが Content Mapper の追加機能なのか、module resolution mapping API なのかを切り分けます。
+この二つが成立すれば、各チャンクの独立 scope を維持しながら、通常の TypeScript module semantics でドキュメント内チャンク間の型チェックを行えます。
