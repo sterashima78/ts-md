@@ -67,7 +67,7 @@ jobs:
           MARKDOWN
 
           set +e
-          output=$(cd "$fixture" && pnpm dlx typescript@7.1.0-dev.20260826.1 tsc --runExternalCode -p tsconfig.json 2>&1)
+          output=$(cd "$fixture" && pnpm --package=typescript@7.1.0-dev.20260826.1 dlx tsc --runExternalCode -p tsconfig.json 2>&1)
           status=$?
           set -e
 
