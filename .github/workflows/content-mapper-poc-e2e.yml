@@ -1,0 +1,73 @@
+name: content-mapper-poc-e2e
+
+on:
+  push:
+    branches:
+      - poc/typescript-content-mapper
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build content mapper
+        run: pnpm --filter @sterashima78/ts-md-content-mapper... build
+      - name: Verify chunk type checking with TypeScript nightly
+        shell: bash
+        run: |
+          set -euo pipefail
+          fixture="$RUNNER_TEMP/ts-md-content-mapper-poc"
+          mkdir -p "$fixture/node_modules/@sterashima78"
+          ln -s "$GITHUB_WORKSPACE/packages/content-mapper" "$fixture/node_modules/@sterashima78/ts-md-content-mapper"
+
+          cat > "$fixture/tsconfig.json" <<'JSON'
+          {
+            "compilerOptions": {
+              "strict": true,
+              "noEmit": true,
+              "module": "esnext",
+              "moduleResolution": "bundler"
+            },
+            "contentMappers": [
+              {
+                "package": "@sterashima78/ts-md-content-mapper",
+                "extensions": [".ts.md"]
+              }
+            ],
+            "include": ["example.ts.md"]
+          }
+          JSON
+
+          cat > "$fixture/example.ts.md" <<'MARKDOWN'
+          # example
+
+          ```ts helper
+          export const value: string = 42;
+          ```
+
+          ```ts main
+          import { value } from ':helper';
+          const answer: number = value;
+          export { answer };
+          ```
+          MARKDOWN
+
+          set +e
+          output=$(cd "$fixture" && pnpm dlx typescript@7.1.0-dev.20260826.1 tsc --runExternalCode -p tsconfig.json 2>&1)
+          status=$?
+          set -e
+
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          grep -F "Type 'number' is not assignable to type 'string'" <<<"$output"
+          grep -F "Cannot find module ':helper'" <<<"$output"
