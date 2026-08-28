@@ -86,7 +86,7 @@ function handleRequest(request: JsonRpcRequest): JsonRpcResponse | undefined {
         });
       }
       case 'openProject':
-        return success(id, { configIdentity: 'ts-md-content-mapper-poc-v1' });
+        return success(id, {});
       case 'closeProject':
         return success(id, null);
       case 'transform':
