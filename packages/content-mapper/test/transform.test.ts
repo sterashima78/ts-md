@@ -15,7 +15,10 @@ ${mainCode}
 \`\`\`
 `;
 
-    const result = transformTsMd({ fileName: '/project/example.ts.md', content });
+    const result = transformTsMd({
+      fileName: '/project/example.ts.md',
+      content,
+    });
 
     expect(result.text).toBe(mainCode);
     expect(result.extension).toBe('.ts');
@@ -52,7 +55,10 @@ export const helper = 1;
 \`\`\`
 `;
 
-    const result = transformTsMd({ fileName: '/project/example.ts.md', content });
+    const result = transformTsMd({
+      fileName: '/project/example.ts.md',
+      content,
+    });
 
     expect(result.text).toBe('');
     expect(result.diagnostics?.[0]?.messageText).toContain("named 'main'");
@@ -68,10 +74,15 @@ export const second = 2;
 \`\`\`
 `;
 
-    const result = transformTsMd({ fileName: '/project/example.ts.md', content });
+    const result = transformTsMd({
+      fileName: '/project/example.ts.md',
+      content,
+    });
 
     expect(result.text).toBe('');
-    expect(result.diagnostics?.[0]?.messageText).toContain("Duplicate module 'main'");
+    expect(result.diagnostics?.[0]?.messageText).toContain(
+      "Duplicate module 'main'",
+    );
     expect(result.diagnostics?.[0]?.start).toBeGreaterThan(0);
   });
 });
