@@ -1,11 +1,11 @@
 import {
   parseDocument,
-  TsMdParseError,
   type TsMdModule,
+  TsMdParseError,
 } from '@sterashima78/ts-md-core';
 import {
-  SpanMapKind,
   type MapperDiagnostic,
+  SpanMapKind,
   type TransformParams,
   type TransformResult,
 } from './protocol.js';
@@ -39,13 +39,7 @@ function mapMainModule(main: TsMdModule): TransformResult {
     text: main.code,
     extension: main.language === 'tsx' ? '.tsx' : '.ts',
     mappings: [
-      [
-        0,
-        main.code.length,
-        main.start,
-        main.code.length,
-        SpanMapKind.Verbatim,
-      ],
+      [0, main.code.length, main.start, main.code.length, SpanMapKind.Verbatim],
     ],
   };
 }
