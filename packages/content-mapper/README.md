@@ -112,7 +112,7 @@ export { answer };
 \`\`\`
 ```
 
-compiler は次の二つの diagnostic を返しました。
+compiler は次の diagnostic を返しました。
 
 ```text
 example.ts.md(8,23): error TS2307: Cannot find module ':helper' or its corresponding type declarations.
@@ -141,7 +141,7 @@ const answer: number = value;
 
 を `string` から `number` への代入として検査するには、まず `:helper` をその supplemental module に module resolution できる必要があります。
 
-また、今回の実行では supplemental 内の diagnostic は `example.ts.md.0.ts` という compiler-assigned virtual filename で報告されました。Verbatim mapping 自体は mapper から返していますが、supplemental diagnostic が元 `.ts.md` の位置として表示されるところまでは確認できていません。これは module resolution とは別の確認事項として残します。
+今回の実行では supplemental 内の diagnostic は `example.ts.md.0.ts` という compiler-assigned virtual filename で報告されました。Verbatim mapping 自体は mapper から返しており、tuple も現行 `spanmap` の `[virtualStart, virtualLength, originalStart, originalLength, kind]` 形式に一致しています。そのため、supplemental diagnostic の元 `.ts.md` への表示上の remapping は、module resolution とは別の Content Mapper 側の確認事項として残します。
 
 なお npm の `typescript@7.1.0-dev.20260826.1` でも試しましたが、PoC が追従している現在の Content Mapper protocol と npm nightly の protocol に差があり initialize で拒否されたため、上記確認では現在の source implementation を直接 build しています。
 
