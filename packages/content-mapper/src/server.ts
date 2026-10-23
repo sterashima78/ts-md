@@ -69,7 +69,10 @@ function handleRequest(request: JsonRpcRequest): JsonRpcResponse | undefined {
     switch (request.method) {
       case 'initialize': {
         const params = request.params as InitializeParams;
-        if (!Array.isArray(params?.positionEncodings) || !params.positionEncodings.includes('utf-16')) {
+        if (
+          !Array.isArray(params?.positionEncodings) ||
+          !params.positionEncodings.includes('utf-16')
+        ) {
           return failure(id, -32602, 'UTF-16 position encoding is required.');
         }
         return success(id, {

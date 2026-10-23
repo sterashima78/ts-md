@@ -21,8 +21,6 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Install Chromium
-        run: pnpm --filter @sterashima78/ts-md-monaco exec playwright install --with-deps chromium
       - name: Run Lint
         run: pnpm lint
       - name: Run Type Check
@@ -35,5 +33,7 @@ jobs:
         env:
           TSMD_TSC_PATH: ${{ runner.temp }}/ts-md-typescript-beta/node_modules/typescript/bin/tsc
         run: pnpm --filter @sterashima78/ts-md-content-mapper test:beta
+      - name: Install Chromium
+        run: pnpm --filter @sterashima78/ts-md-monaco exec playwright install --with-deps chromium
       - name: Run Tests
         run: pnpm test

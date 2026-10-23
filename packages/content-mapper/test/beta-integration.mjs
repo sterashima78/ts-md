@@ -12,7 +12,10 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const tscPath = process.env.TSMD_TSC_PATH;
-assert.ok(tscPath, 'TSMD_TSC_PATH must point to the TypeScript 7.1 Beta bin/tsc file');
+assert.ok(
+  tscPath,
+  'TSMD_TSC_PATH must point to the TypeScript 7.1 Beta bin/tsc file',
+);
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const root = mkdtempSync(join(tmpdir(), 'ts-md-content-mapper-beta-'));
@@ -62,7 +65,10 @@ function runCase(name, files, expectedStatus, expectedPatterns = []) {
   if (result.error) throw result.error;
   const output = (result.stdout ?? '') + (result.stderr ?? '');
   const ok = expectedStatus === 0 ? result.status === 0 : result.status !== 0;
-  assert.ok(ok, `${name}: unexpected compiler exit code ${result.status}\n${output}`);
+  assert.ok(
+    ok,
+    `${name}: unexpected compiler exit code ${result.status}\n${output}`,
+  );
   for (const pattern of expectedPatterns) {
     assert.match(output, pattern, `${name}: expected ${pattern}\n${output}`);
   }
@@ -73,8 +79,10 @@ try {
   runCase(
     'valid',
     {
-      'demo.ts.md': '# 😀\n\n```ts helper\nconst internal = 12;\n```\n\n```ts main\nexport const answer: number = 42;\n```\n',
-      'consumer.ts': "import { answer } from './demo.ts.md';\nexport const result: number = answer;\n",
+      'demo.ts.md':
+        '# 😀\n\n```ts helper\nconst internal = 12;\n```\n\n```ts main\nexport const answer: number = 42;\n```\n',
+      'consumer.ts':
+        "import { answer } from './demo.ts.md';\nexport const result: number = answer;\n",
     },
     0,
   );
@@ -82,7 +90,8 @@ try {
   runCase(
     'type-errors',
     {
-      'demo.ts.md': '```ts helper\nexport const invalid: string = 123;\n```\n\n```ts main\nexport const invalidMain: string = 456;\n```\n',
+      'demo.ts.md':
+        '```ts helper\nexport const invalid: string = 123;\n```\n\n```ts main\nexport const invalidMain: string = 456;\n```\n',
     },
     1,
     [/TS2322/, /string/],
@@ -98,7 +107,8 @@ try {
   runCase(
     'local-import-not-supported',
     {
-      'demo.ts.md': "```ts helper\nexport const answer = 42;\n```\n\n```ts main\nimport { answer } from ':helper';\nconsole.log(answer);\n```\n",
+      'demo.ts.md':
+        "```ts helper\nexport const answer = 42;\n```\n\n```ts main\nimport { answer } from ':helper';\nconsole.log(answer);\n```\n",
     },
     1,
     [/TS2307/],

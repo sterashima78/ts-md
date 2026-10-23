@@ -15,7 +15,9 @@ function createClient() {
     const body = JSON.stringify(request);
     input.write(
       Buffer.concat([
-        Buffer.from(`Content-Length: ${Buffer.byteLength(body, 'utf8')}\r\n\r\n`),
+        Buffer.from(
+          `Content-Length: ${Buffer.byteLength(body, 'utf8')}\r\n\r\n`,
+        ),
         Buffer.from(body),
       ]),
     );
