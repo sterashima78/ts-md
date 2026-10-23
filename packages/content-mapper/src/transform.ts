@@ -23,9 +23,11 @@ function errorResult(
   params: TransformParams,
   messageText: string,
   start = 0,
+  code = 1001,
 ): TransformResult {
   const diagnostic: MapperDiagnostic = {
     messageText,
+    code,
     start,
     length: diagnosticLength(params.content, start),
   };
@@ -73,7 +75,7 @@ export function transformTsMd(params: TransformParams): TransformResult {
     };
   } catch (error) {
     if (error instanceof TsMdParseError) {
-      return errorResult(params, error.message, error.offset);
+      return errorResult(params, error.message, error.offset, 1002);
     }
 
     throw error;

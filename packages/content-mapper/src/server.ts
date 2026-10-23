@@ -69,18 +69,10 @@ function handleRequest(request: JsonRpcRequest): JsonRpcResponse | undefined {
     switch (request.method) {
       case 'initialize': {
         const params = request.params as InitializeParams;
-        if (params.protocolVersion !== 1) {
-          return failure(
-            id,
-            -32602,
-            'Unsupported content mapper protocol version.',
-          );
-        }
-        if (!params.positionEncodings.includes('utf-16')) {
+        if (!Array.isArray(params?.positionEncodings) || !params.positionEncodings.includes('utf-16')) {
           return failure(id, -32602, 'UTF-16 position encoding is required.');
         }
         return success(id, {
-          protocolVersion: 1,
           positionEncoding: 'utf-16',
           diagnosticSource: DIAGNOSTIC_SOURCE,
         });

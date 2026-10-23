@@ -1,7 +1,6 @@
 export type PositionEncoding = 'utf-8' | 'utf-16';
 
 export interface InitializeParams {
-  protocolVersion: 1;
   positionEncodings: PositionEncoding[];
   locale?: string;
 }
@@ -39,7 +38,7 @@ export interface MapperDiagnostic {
   messageText: string;
   start: number;
   length: number;
-  code?: number;
+  code: number;
 }
 
 export interface MappedOutput {
