@@ -29,5 +29,11 @@ jobs:
         run: pnpm typecheck
       - name: Run Build
         run: pnpm build
+      - name: Install TypeScript 7.1 Beta
+        run: npm install --prefix "$RUNNER_TEMP/ts-md-typescript-beta" --no-save --no-audit --no-fund --ignore-scripts --package-lock=false typescript@7.1.0-beta
+      - name: Run native TypeScript Content Mapper integration
+        env:
+          TSMD_TSC_PATH: ${{ runner.temp }}/ts-md-typescript-beta/node_modules/typescript/bin/tsc
+        run: pnpm --filter @sterashima78/ts-md-content-mapper test:beta
       - name: Run Tests
         run: pnpm test

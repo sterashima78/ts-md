@@ -4,6 +4,22 @@ TypeScript 7.1 の Content Mapper API を使い、`.ts.md` の `main` チャン�
 
 このパッケージは API と TS-MD のモデルがどこまで直接対応できるかを確認するための実験用で、現在は `private` package としています。
 
+## TypeScript 7.1.0-beta での検証
+
+7.1 Beta の Content Mapper protocol では initialize の protocolVersion は廃止されました。
+本パッケージはホストから提示された位置エンコーディングから utf-16 を選択し、
+positionEncoding と diagnosticSource を返します。
+
+PR の CI では標準の TypeScript 6 環境とは別に typescript@7.1.0-beta をインストールして、
+ビルド済みの Mapper を実際の tsc --runExternalCode で読み込む統合テストを実行します。
+型検査成功、main と supplemental の型エラー、main 不在の診断、
+名前付きモジュールの :helper import が未解決になる既知の制約を確認します。
+
+ローカルでは事前にワークスペースをビルドし、
+TSMD_TSC_PATH 環境変数に 7.1 Beta の bin/tsc のパスを設定して
+pnpm --filter @sterashima78/ts-md-content-mapper test:beta を実行してください。
+
+このテストが成功しても :helper の module resolution を Content Mapper が提供するわけではありません。
 ## 現在の変換
 
 入力:

@@ -15,7 +15,7 @@ function createClient() {
     const body = JSON.stringify(request);
     input.write(
       Buffer.concat([
-        Buffer.from(\`Content-Length: \${Buffer.byteLength(body, 'utf8')}\r\n\r\n\`),
+        Buffer.from(`Content-Length: ${Buffer.byteLength(body, 'utf8')}\r\n\r\n`),
         Buffer.from(body),
       ]),
     );
@@ -91,7 +91,7 @@ describe('Content Mapper JSON-RPC server', () => {
       method: 'transform',
       params: {
         fileName: '/project/sample.ts.md',
-        content: '# 😀\n\n\`\`\`ts main\nexport const number = 42;\n\`\`\`\n',
+        content: '# 😀\n\n```ts main\nexport const number = 42;\n```\n',
         projectHandle: 'p',
       },
     });
